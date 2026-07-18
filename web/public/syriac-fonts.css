@@ -1,0 +1,52 @@
+/* Served from public/ so urls stay relative to the site root (incl. basePath). */
+@font-face {
+  font-family: "East Syriac Adiabene";
+  src: url("./fonts/SyrCOMAdiabene.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "East Syriac Ctesiphon";
+  src: url("./fonts/SyrCOMCtesiphon.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ramsina";
+  src:
+    url("./fonts/Ramsina-Regular.woff2") format("woff2"),
+    url("./fonts/Ramsina-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Idiqlat";
+  src:
+    url("./fonts/Idiqlat-Regular.woff2") format("woff2"),
+    url("./fonts/Idiqlat-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "East Syriac Malankara Classical";
+  src: url("./fonts/EastSyriacMalankaraClassical.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "East Syriac Malankara";
+  src: url("./fonts/EastSyriacMalankara.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
