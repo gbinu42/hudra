@@ -1,0 +1,280 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "East Syriac Adiabene";
+  src: url("/fonts/SyrCOMAdiabene.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "East Syriac Ctesiphon";
+  src: url("/fonts/SyrCOMCtesiphon.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Ramsina";
+  src:
+    url("/fonts/Ramsina-Regular.woff2") format("woff2"),
+    url("/fonts/Ramsina-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Idiqlat";
+  src:
+    url("/fonts/Idiqlat-Regular.woff2") format("woff2"),
+    url("/fonts/Idiqlat-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "East Syriac Malankara Classical";
+  src: url("/fonts/EastSyriacMalankaraClassical.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "East Syriac Malankara";
+  src: url("/fonts/EastSyriacMalankara.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --paper: #e4e8e2;
+  --paper-deep: #d5dbd3;
+  --ink: #14261c;
+  --ink-soft: #3a4a40;
+  --teal: #1a5f6a;
+  --teal-deep: #0f3f47;
+  --gold: #8a7340;
+  --gold-soft: #c4b48a;
+  --line: rgba(20, 38, 28, 0.12);
+  --glow: rgba(26, 95, 106, 0.14);
+  --font-syriac: "East Syriac Adiabene", serif;
+  /* Default reading size (was ~1.25–1.4rem); scale multiplies this. */
+  --syr-scale: 1;
+  --syr-body-size: calc(1.625rem * var(--syr-scale));
+  /* Labels / bilingual meta — larger than English chrome by default. */
+  --syr-meta-size: calc(1.375rem * var(--syr-scale));
+  --syr-label-size: calc(1.5rem * var(--syr-scale));
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-teal: var(--teal);
+  --color-teal-deep: var(--teal-deep);
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-line: var(--line);
+  --font-display: var(--font-fraunces);
+  --font-body: var(--font-source-serif);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    radial-gradient(ellipse 90% 55% at 10% -10%, var(--glow), transparent 55%),
+    radial-gradient(ellipse 70% 45% at 100% 0%, rgba(138, 115, 64, 0.1), transparent 50%),
+    linear-gradient(165deg, #eef1ec 0%, var(--paper) 42%, #dde3db 100%);
+  font-family: var(--font-body), "Noto Serif", Georgia, serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.35;
+  background-image:
+    repeating-linear-gradient(
+      -18deg,
+      transparent,
+      transparent 11px,
+      rgba(20, 38, 28, 0.025) 11px,
+      rgba(20, 38, 28, 0.025) 12px
+    );
+}
+
+main,
+header,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
+@layer base {
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* Font only — safe inside LTR bilingual UI */
+.syr {
+  font-family: var(--font-syriac);
+  font-feature-settings: "liga" 1, "calt" 1;
+  line-height: 1.9;
+}
+
+/* Full RTL block (titles, prayer body) */
+.syr-block {
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: right;
+}
+
+/*
+  Syriac in bilingual UI: RTL shaping without forcing a new line,
+  so English + Syriac can sit on one baseline.
+*/
+.syr-meta {
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: left;
+  display: inline-block;
+  max-width: 100%;
+  vertical-align: baseline;
+  font-size: var(--syr-meta-size);
+}
+
+.syr-inline {
+  direction: rtl;
+  unicode-bidi: isolate;
+  display: inline;
+  font-size: var(--syr-label-size);
+}
+
+.fade-up {
+  animation: fadeUp 0.7s ease both;
+}
+
+.fade-up-delay {
+  animation: fadeUp 0.85s ease 0.12s both;
+}
+
+.fade-up-delay-2 {
+  animation: fadeUp 0.9s ease 0.22s both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-8px);
+  }
+}
+
+.drift {
+  animation: drift 5s ease-in-out infinite alternate;
+}
+
+.hour-spine::before {
+  content: "";
+  position: absolute;
+  top: 0.7rem;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    var(--teal),
+    rgba(26, 95, 106, 0.25) 55%,
+    transparent
+  );
+  transform: translateX(-50%);
+}
+
+.hour-step {
+  animation: fadeUp 0.65s ease both;
+}
+
+.hour-dot {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--paper) 85%, transparent);
+  transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.hour-step:hover .hour-dot {
+  transform: scale(1.25);
+  background-color: var(--teal);
+}
+
+.prayer-body {
+  font-family: var(--font-syriac);
+  font-size: var(--syr-body-size);
+  direction: rtl;
+  unicode-bidi: isolate;
+}
+
+.prayer-body p {
+  margin: 0 0 1.15rem;
+  text-align: justify;
+  text-align-last: right;
+  line-height: 2;
+}
+
+.prayer-body p.align-center {
+  text-align: center;
+  text-align-last: center;
+}
+
+.prayer-body p.align-left {
+  text-align: left;
+  text-align-last: left;
+}
+
+.prayer-body p.align-right {
+  text-align: right;
+  text-align-last: right;
+}
+
+.prayer-body p.align-justify {
+  text-align: justify;
+  text-align-last: right;
+}
+
+.prayer-body p:last-child {
+  margin-bottom: 0;
+}
+
+::selection {
+  background: rgba(26, 95, 106, 0.22);
+}

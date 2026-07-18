@@ -1,0 +1,28 @@
+{
+  "name": "hudra-web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prebuild": "node scripts/prepare-static.mjs",
+    "dev": "node scripts/prepare-static.mjs && next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "serve:static": "npx --yes serve out -p 3010"
+  },
+  "dependencies": {
+    "next": "16.2.10",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.10",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

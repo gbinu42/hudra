@@ -1,0 +1,39 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+*~
+.idea/
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Extract / scrape caches (regenerate with scripts/extract_prayers.py)
+data/raw/
+data/extract.log
+
+# Aggregated text dumps (too large for GitHub; regenerable from data/prayers)
+prayers/ALL_PRAYERS.txt
+prayers/_by_season/
+
+# Web app dependencies & build output
+web/node_modules/
+web/.next/
+web/out/
+web/build/
+web/public/data/
+web/public/.nojekyll
+web/*.tsbuildinfo
+web/next-env.d.ts
+web/.env*
+web/.vercel/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
