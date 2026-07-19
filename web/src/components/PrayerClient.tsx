@@ -99,6 +99,14 @@ export function PrayerClient({
         >
           {prayer?.itemName || summary.name}
         </h1>
+        {(summary.holidayEn || season?.english) && (
+          <p
+            className="mt-2 text-base text-ink-soft"
+            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+          >
+            {summary.holidayEn || season?.english}
+          </p>
+        )}
         <dl className="mt-6 grid gap-x-8 gap-y-4 text-sm sm:grid-cols-2">
           <MetaRow
             label="Season"

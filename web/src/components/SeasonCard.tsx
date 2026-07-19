@@ -7,20 +7,9 @@ function corpusSyriac(s: string): string | null {
   return s;
 }
 
-/** English label without embedded Syriac remnants from catalog build. */
-function englishLabel(s: string): string {
-  const cleaned = s
-    .replace(/[\u0700-\u074F\u200e\u200f\u200c]+/g, "")
-    .replace(/\s*[—–-]\s*/g, " — ")
-    .replace(/\s+/g, " ")
-    .replace(/^—\s*|\s*—$/g, "")
-    .trim();
-  return cleaned || s;
-}
-
 export function SeasonCard({ season }: { season: Season }) {
   const syr = corpusSyriac(season.syriac);
-  const en = englishLabel(season.english);
+  const en = season.english?.trim() || "";
 
   return (
     <Link
@@ -29,18 +18,20 @@ export function SeasonCard({ season }: { season: Season }) {
     >
       <div className="absolute inset-y-0 left-0 w-0.5 bg-teal/0 transition group-hover:bg-teal" />
       <div className="flex items-start justify-between gap-3">
-        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+        <div className="min-w-0">
           {syr ? (
             <h3 className="syr syr-meta text-3xl text-ink transition group-hover:text-teal-deep">
               {syr}
             </h3>
           ) : null}
-          <p
-            className="text-sm text-ink-soft"
-            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-          >
-            {en}
-          </p>
+          {en ? (
+            <p
+              className={`text-sm text-ink-soft ${syr ? "mt-1.5" : ""}`}
+              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+            >
+              {en}
+            </p>
+          ) : null}
         </div>
         <span className="shrink-0 rounded-sm bg-paper-deep/80 px-2 py-1 text-xs tabular-nums text-ink-soft">
           {season.count}

@@ -80,6 +80,83 @@ DAY_EN = {
     "ܫܒܬܐ": "Saturday",
 }
 
+# English titles for feast / dukrana / baʿutha holidays (corpus Syriac → EN).
+HOLIDAY_EN: dict[str, str] = {
+    # Baʿutha of the Ninevites
+    "ܐܪܒܥܒܫܒܐ ܕܒܥܘܬܐ": "Wednesday of the Rogation",
+    "ܬܠܬܒܫܒܐ ܕܒܥܘܬܐ": "Tuesday of the Rogation",
+    "ܬܪܝܢܒܫܒܐ ܕܒܥܘܬܐ": "Monday of the Rogation",
+    # Feasts
+    "ܥܐܕܐ ܕܝܠܝܕܘܬܗ ܕܡܪܬܝ ܡܪܝܡ": "Nativity of Mart Maryam",
+    "ܥܐܕܐ ܕܝܫܘܥ ܡܠܟܐ": "Jesus the King",
+    "ܥܐܕܐ ܕܡܛܒܬܢܘܬ ܝܠܕܬ ܐܠܗܐ ܡܪܝܡ": "Immaculate Conception of the Mother of God Mary",
+    "ܥܐܕܐ ܕܡܥܠܬܗ ܕܡܪܢ ܠܗܝܟܠܐ": "Entrance of our Lord into the Temple",
+    "ܥܐܕܐ ܕܡܪܝ ܝܘܣܦ": "Mar Joseph",
+    "ܥܐܕܐ ܕܣܘܒܪܗ ܕܡܪܬܝ ܡܪܝܡ": "Annunciation of Mart Maryam",
+    "ܥܐܕܐ ܕܨܠܝܒܐ ܩܕܝܫܐ": "Holy Cross",
+    "ܥܐܕܐ ܕܫܘܢܝܐ ܕܡܪܬܝ ܡܪܝܡ": "Dormition of Mart Maryam",
+    "ܥܐܕܐ ܩܕܝܫܐ ܕܐܝܩܪ ܦܓܪܗ ܕܡܪܢ": "Corpus Christi",
+    "ܥܐܕܐ ܩܕܝܫܐ ܕܓܠܝܢܗ ܕܡܪܢ": "Transfiguration of our Lord",
+    "ܥܪܘܒܬܐ ܕܕܗܒܐ": "Golden Friday",
+    "ܥܪܘܒܬܐ ܕܡܘܕܝ̈ܢܐ": "Friday of the Confessors",
+    "ܥܪܘܒܬܐ ܕܥܢܝ̈ܕܐ": "Friday of the Departed",
+    # Commemorations
+    "ܕܘܟܪܢܐ ܕܐܪܒܥܐ ܐܘܢܓܠܣܛ̈ܐ": "Commemoration of the Four Evangelists",
+    "ܕܘܟܪܢܐ ܕܐܪܒܥܝܢ ܣܗ̈ܕܐ": "Commemoration of the Forty Martyrs",
+    "ܕܘܟܪܢܐ ܕܒܛܝܢܘܬ ܡܪܝܡ ܒܠܥܕ ܚܛܝܬܐ ܟܝܢܝܬܐ": "Conception of Mary without Original Sin",
+    "ܕܘܟܪܢܐ ܕܚܕ ܦܪܨܘܦܐ": "Commemoration of the One Person",
+    "ܕܘܟܪܢܐ ܕܡܐܙܠܬܐ ܕܡܪܬܝ ܡܪܝܡ ܠܘܬ ܐܠܝܫܒܥ": "Visitation of Mart Maryam to Elizabeth",
+    "ܕܘܟܪܢܐ ܕܡܠܦܢ̈ܐ ܝܘܢܝ̈ܐ": "Commemoration of the Greek Teachers",
+    "ܕܘܟܪܢܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪܗ̄ܘܡܝ̈ܐ": "Commemoration of the Syriac and Roman Teachers",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܒܪܗܡ": "Commemoration of Mar Abraham",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܕܝ ܫܠܝܚܐ": "Commemoration of Mar Addai the Apostle",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܘܓܝܢ ܘܚܒ̈ܪܘܗܝ": "Commemoration of Mar Awgin and his Companions",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܝܠܝܐ ܬܫܒܝܝܐ": "Commemoration of Mar Elijah the Tishbite",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܢܛܘܢܝܘܣ": "Commemoration of Mar Anthony",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܣܛܦܢܘܣ": "Commemoration of Mar Stephen",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܦܪܝܡ ܡܠܦܢܐ": "Commemoration of Mar Ephrem the Teacher",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܓܝܘܪܓܝܣ": "Commemoration of Mar Gewargis",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܝܘܚܢܢ ܡܥܡܕܢܐ": "Commemoration of Mar John the Baptist",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܝܥܩܘܒ ܕܢܨܝܒܝܢ": "Commemoration of Mar Jacob of Nisibis",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܝܥܩܘܒ ܡܦܣܩܐ": "Commemoration of Mar Jacob the Intercisus",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܡܐܪܝ ܫܠܝܚܐ": "Commemoration of Mar Mari the Apostle",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܡܝܟܐ ܕܢܘܗܕܪܐ": "Commemoration of Mar Mikha of Nuḥadra",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܡܝܟܐܝܠ ܚܒܪܐ ܕܡܠܐܟܐ": "Commemoration of Mar Michael the Archangel",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܢܝܩܠܘܣ": "Commemoration of Mar Nicolas",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܦܛܪܘܣ ܘܦܘܠܘܣ": "Commemoration of Mar Peter and Paul",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܦܦܐ": "Commemoration of Mar Papa",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܦܬܝܘܢ": "Commemoration of Mar Pethion",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܩܘܪܝܩܘܣ ܘܕܝܘܠܝܛܐ ܐܡܗ": "Commemoration of Mar Cyriacus and Julitta his Mother",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܩܪܕܓ ܣܗܕܐ": "Commemoration of Mar Qardagh the Martyr",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܫܡܥܘܢ ܒܪܨܒ̈ܥܐ": "Commemoration of Mar Simeon bar Sabbaʿe",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܬܐܘܡܐ ܫܠܝܚܐ": "Commemoration of Mar Thomas the Apostle",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܒܪܒܪܐ": "Commemoration of Mart Barbara",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ  ܒܐܝܪ": "Commemoration of Mart Maryam in Iyar",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ ܐܡܐ ܕܥܘܕܪܢܐ ܐܡܝܢܐ": "Commemoration of Mart Maryam, Mother of Perpetual Help",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ ܒܣܬܘܐ": "Commemoration of Mart Maryam in Winter",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ ܒܩܝܛܐ": "Commemoration of Mart Maryam in Summer",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ ܡܛܠ ܢܛܝܪܘܬ ܙܪ̈ܥܐ": "Commemoration of Mart Maryam for the Protection of Seeds",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ ܡܠܟܬܐ ܕܫܡܝܐ ܘܐܪܥܐ": "Commemoration of Mart Maryam, Queen of Heaven and Earth",
+    "ܕܘܟܪܢܐ ܕܩܛܠܐ ܕܝܠܘܕ̈ܐ": "Commemoration of the Massacre of the Infants",
+    "ܕܘܟܪܢܐ ܕܪܒܢ ܗܘܪܡܝܙܕ ܥܓܡܝܐ": "Commemoration of Rabban Hormizd the Persian",
+    "ܕܘܟܪܢܐ ܕܫܒܥܝܢ ܘܬܪܝܢ ܬܠܡܝܕ̈ܐ": "Commemoration of the Seventy-two Disciples",
+    "ܕܘܟܪܢܐ ܕܫܡܘܢܝ ܘܕܒܢܝ̈ܗ": "Commemoration of Shmuni and her Sons",
+    "ܕܘܟܪܢܐ ܕܬܪܥܣܪ ܫܠܝܚ̈ܐ": "Commemoration of the Twelve Apostles",
+    "ܕܘܟܪܢܐ ܩܕܝܫܐ ܕܠܒܗ ܕܡܪܢ": "Commemoration of the Sacred Heart of our Lord",
+}
+
+
+def holiday_english(h: str, group: str) -> str:
+    if h in HOLIDAY_EN:
+        return HOLIDAY_EN[h]
+    if group == "commemoration":
+        return "Commemoration"
+    if group == "feast":
+        return "Feast"
+    if group == "baotha":
+        return "Rogation"
+    return "Other"
+
 
 def main() -> None:
     idx = json.loads(INDEX.read_text(encoding="utf-8"))
@@ -114,22 +191,19 @@ def main() -> None:
         slug = ascii_slug or f"feast-{abs(hash(h)) % 10**8:x}"
         if h.startswith("ܕܘܟܪܢܐ"):
             group = "commemoration"
-            en = f'Commemoration — {h.replace("ܕܘܟܪܢܐ ܕ", "").strip()}'
         elif h.startswith("ܥܐܕܐ") or h.startswith("ܥܪܘܒܬܐ"):
             group = "feast"
-            en = "Feast"
         elif "ܒܥܘܬܐ" in h:
             group = "baotha"
-            en = "Rogation"
         else:
             group = "other"
-            en = "Other"
+        en = holiday_english(h, group)
         seasons.append(
             {
                 "id": slug,
                 "syriac": h,
                 "english": en,
-                "description": h,
+                "description": en if h in HOLIDAY_EN else h,
                 "order": order,
                 "group": group,
                 "sourceHoliday": h,
@@ -150,6 +224,7 @@ def main() -> None:
     )
 
     holiday_to_season = {s["sourceHoliday"]: s["id"] for s in seasons}
+    holiday_to_en = {s["sourceHoliday"]: s["english"] for s in seasons}
     prayers_out = []
     for p in idx["prayers"]:
         holiday = p["holiday"] or "ܠܐ_ܝܕܝܥܐ"
@@ -158,6 +233,7 @@ def main() -> None:
                 "id": p["itemId"],
                 "name": p["itemName"],
                 "holiday": holiday,
+                "holidayEn": holiday_to_en.get(holiday, ""),
                 "seasonId": holiday_to_season.get(holiday, "unassigned"),
                 "week": p["week"] or "",
                 "day": p["day"] or "",

@@ -49,7 +49,7 @@ export function searchPrayers(query: string, limit = 60): PrayerSummary[] {
   if (!q) return [];
   const results: PrayerSummary[] = [];
   for (const p of getCatalog().prayers) {
-    const hay = `${p.name} ${p.holiday} ${p.week} ${p.day} ${p.hour} ${p.hourEn} ${p.dayEn}`.toLowerCase();
+    const hay = `${p.name} ${p.holiday} ${p.holidayEn || ""} ${p.week} ${p.day} ${p.dayEn} ${p.hour} ${p.hourEn}`.toLowerCase();
     if (hay.includes(q) || p.name.includes(query.trim())) {
       results.push(p);
       if (results.length >= limit) break;

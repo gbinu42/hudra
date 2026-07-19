@@ -29,6 +29,8 @@ export interface PrayerSummary {
   id: string;
   name: string;
   holiday: string;
+  /** English feast / dukrana title when known. */
+  holidayEn?: string;
   seasonId: string;
   week: string;
   day: string;

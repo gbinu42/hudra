@@ -20,7 +20,7 @@ export function SearchClient({ prayers }: { prayers: PrayerSummary[] }) {
         )
         .join(" ");
       const hay =
-        `${p.name} ${p.holiday} ${p.week} ${p.day} ${p.dayEn} ${p.hour} ${p.hourEn} ${traditionHay}`.toLowerCase();
+        `${p.name} ${p.holiday} ${p.holidayEn || ""} ${p.week} ${p.day} ${p.dayEn} ${p.hour} ${p.hourEn} ${traditionHay}`.toLowerCase();
       if (hay.includes(needle) || p.name.includes(deferred)) {
         out.push(p);
         if (out.length >= 80) break;
@@ -65,7 +65,12 @@ export function SearchClient({ prayers }: { prayers: PrayerSummary[] }) {
                   <div>
                     <p className="syr syr-meta text-2xl text-ink">{p.name}</p>
                     <p className="mt-1 text-sm text-ink-soft">
-                      {[p.hourEn || p.hour, p.dayEn || p.day, p.week]
+                      {[
+                        p.holidayEn,
+                        p.hourEn || p.hour,
+                        p.dayEn || p.day,
+                        p.week,
+                      ]
                         .filter(Boolean)
                         .join(" · ")}
                     </p>
