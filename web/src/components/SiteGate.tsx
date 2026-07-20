@@ -20,7 +20,12 @@ export function SiteGate({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      setUnlocked(sessionStorage.getItem(STORAGE_KEY) === "1");
+      const fromLocal = localStorage.getItem(STORAGE_KEY) === "1";
+      const fromSession = sessionStorage.getItem(STORAGE_KEY) === "1";
+      if (fromLocal || fromSession) {
+        if (!fromLocal) localStorage.setItem(STORAGE_KEY, "1");
+        setUnlocked(true);
+      }
     } catch {
       /* ignore */
     }
@@ -30,7 +35,7 @@ export function SiteGate({ children }: { children: ReactNode }) {
   const unlock = useCallback((password: string) => {
     if (password === PASSWORD) {
       try {
-        sessionStorage.setItem(STORAGE_KEY, "1");
+        localStorage.setItem(STORAGE_KEY, "1");
       } catch {
         /* ignore */
       }
