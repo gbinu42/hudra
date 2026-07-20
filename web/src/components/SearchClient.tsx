@@ -1,52 +1,128 @@
 "use client";
 
-import { useDeferredValue, useMemo, useState } from "react";
 import Link from "next/link";
-import type { PrayerSummary, PsalmSummary } from "@/lib/types";
-import { psalmEnglishName, psalmMatchesQuery } from "@/lib/psalm-label";
-import { TraditionPills } from "./SeasonCard";
+import {
+  useDeferredValue,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { TraditionPills } from "@/components/SeasonCard";
+import { depointSyriac } from "@/lib/depoint-syriac";
+import type { Tradition } from "@/lib/types";
 
-type SearchHit =
-  | { kind: "prayer"; item: PrayerSummary }
-  | { kind: "psalm"; item: PsalmSummary };
+type PagefindApi = {
+  options: (opts: Record<string, unknown>) => Promise<void>;
+  init: () => Promise<void>;
+  search: (
+    query: string,
+  ) => Promise<{
+    results: { id: string; data: () => Promise<PagefindHit> }[];
+  }>;
+};
 
-export function SearchClient({
-  prayers,
-  psalms,
-}: {
-  prayers: PrayerSummary[];
-  psalms: PsalmSummary[];
-}) {
+type PagefindHit = {
+  url: string;
+  excerpt: string;
+  meta: {
+    title?: string;
+    kind?: string;
+    subtitle?: string;
+    tradition?: string;
+  };
+};
+
+function assetUrl(path: string): string {
+  const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  return `${base}${path}`;
+}
+
+/** Strip basePath from Pagefind URLs for Next.js Link hrefs. */
+function appPath(url: string): string {
+  const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
+  if (base && url.startsWith(base)) return url.slice(base.length) || "/";
+  try {
+    const u = new URL(url, "https://example.local");
+    return u.pathname + u.search + u.hash;
+  } catch {
+    return url;
+  }
+}
+
+function parseTradition(raw?: string): Tradition[] {
+  if (!raw) return [];
+  return raw
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean) as Tradition[];
+}
+
+export function SearchClient() {
   const [q, setQ] = useState("");
   const deferred = useDeferredValue(q.trim());
+  const [pagefind, setPagefind] = useState<PagefindApi | null>(null);
+  const [loadError, setLoadError] = useState(false);
+  const [loadingIndex, setLoadingIndex] = useState(true);
+  const [searching, setSearching] = useState(false);
+  const [hits, setHits] = useState<PagefindHit[]>([]);
 
-  const results = useMemo(() => {
-    if (!deferred) return [] as SearchHit[];
-    const needle = deferred.toLowerCase();
-    const out: SearchHit[] = [];
-
-    for (const p of psalms) {
-      if (psalmMatchesQuery(p, deferred)) {
-        out.push({ kind: "psalm", item: p });
-        if (out.length >= 80) return out;
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const base = process.env.NEXT_PUBLIC_BASE_PATH || "";
+        const mod = (await import(
+          /* webpackIgnore: true */
+          assetUrl("/pagefind/pagefind.js")
+        )) as PagefindApi;
+        await mod.options({
+          baseUrl: base ? `${base}/` : "/",
+          excerptLength: 40,
+        });
+        await mod.init();
+        if (!cancelled) {
+          setPagefind(mod);
+          setLoadError(false);
+        }
+      } catch {
+        if (!cancelled) setLoadError(true);
+      } finally {
+        if (!cancelled) setLoadingIndex(false);
       }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const needle = useMemo(() => depointSyriac(deferred).trim(), [deferred]);
+
+  useEffect(() => {
+    if (!pagefind || !needle) {
+      setHits([]);
+      setSearching(false);
+      return;
     }
 
-    for (const p of prayers) {
-      const traditionHay = p.tradition
-        .map((t) =>
-          t === "syriac" ? "assyrian syriac" : t === "chaldean" ? "chaldean" : t,
-        )
-        .join(" ");
-      const hay =
-        `${p.name} ${p.holiday} ${p.holidayEn || ""} ${p.week} ${p.day} ${p.dayEn} ${p.hour} ${p.hourEn} ${traditionHay}`.toLowerCase();
-      if (hay.includes(needle) || p.name.includes(deferred)) {
-        out.push({ kind: "prayer", item: p });
-        if (out.length >= 80) break;
+    let cancelled = false;
+    setSearching(true);
+    (async () => {
+      try {
+        const search = await pagefind.search(needle);
+        const top = search.results.slice(0, 60);
+        const data = await Promise.all(top.map((r) => r.data()));
+        if (!cancelled) setHits(data);
+      } catch {
+        if (!cancelled) setHits([]);
+      } finally {
+        if (!cancelled) setSearching(false);
       }
-    }
-    return out;
-  }, [deferred, prayers, psalms]);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [pagefind, needle]);
 
   return (
     <div>
@@ -60,74 +136,78 @@ export function SearchClient({
         <input
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="Name, season, day, hour, psalm number…"
+          placeholder="Syriac text (with or without points), season, psalm…"
           className="w-full rounded-sm border border-line bg-paper/80 px-4 py-3 text-base text-ink outline-none ring-teal/30 placeholder:text-ink-soft/50 focus:ring-2"
           dir="auto"
+          disabled={loadingIndex || loadError}
         />
       </label>
 
       <div className="mt-6">
-        {!deferred ? (
+        {loadingIndex ? (
+          <p className="text-sm text-ink-soft">Loading search index…</p>
+        ) : loadError ? (
           <p className="text-sm text-ink-soft">
-            Try a season name, weekday, hour, or psalm number.
+            Search index not found. Run{" "}
+            <code className="text-ink">npm run index:search</code> (dev) or{" "}
+            <code className="text-ink">npm run build</code> to generate it.
           </p>
-        ) : results.length === 0 ? (
+        ) : !deferred ? (
+          <p className="text-sm text-ink-soft">
+            Full-text search ignores vowel points — pointed or unpointed queries
+            both work.
+          </p>
+        ) : searching && hits.length === 0 ? (
+          <p className="text-sm text-ink-soft">Searching…</p>
+        ) : hits.length === 0 ? (
           <p className="text-sm text-ink-soft">
             Nothing matched “{deferred}”.
           </p>
         ) : (
           <ul className="divide-y divide-line border border-line bg-paper/60">
-            {results.map((hit) =>
-              hit.kind === "psalm" ? (
-                <li key={`psalm-${hit.item.id}`}>
+            {hits.map((hit) => {
+              const kind = hit.meta.kind || "prayer";
+              const tradition = parseTradition(hit.meta.tradition);
+              return (
+                <li key={hit.url}>
                   <Link
-                    href={`/psalm/${hit.item.id}`}
-                    className="flex flex-col gap-1 px-4 py-4 transition hover:bg-paper-deep/50 sm:flex-row sm:items-center sm:justify-between"
+                    href={appPath(hit.url)}
+                    className="flex flex-col gap-2 px-4 py-4 transition hover:bg-paper-deep/50 sm:flex-row sm:items-start sm:justify-between"
                   >
-                    <div>
+                    <div className="min-w-0">
                       <p className="syr syr-meta text-2xl text-ink">
-                        {hit.item.name}
+                        {hit.meta.title || "Result"}
                       </p>
-                      <p className="mt-1 text-sm text-ink-soft">
-                        {psalmEnglishName(hit.item)}
-                      </p>
+                      {hit.meta.subtitle ? (
+                        <p className="mt-1 text-sm text-ink-soft">
+                          {hit.meta.subtitle}
+                        </p>
+                      ) : null}
+                      {hit.excerpt ? (
+                        <p
+                          className="syr syr-meta mt-2 text-lg leading-relaxed text-ink-soft [&_mark]:bg-gold/25 [&_mark]:text-ink"
+                          dir="rtl"
+                          dangerouslySetInnerHTML={{ __html: hit.excerpt }}
+                        />
+                      ) : null}
                     </div>
-                    <span
-                      className="text-xs tracking-wide text-ink-soft uppercase"
-                      style={{
-                        fontFamily: "var(--font-display), Georgia, serif",
-                      }}
-                    >
-                      Psalm
-                    </span>
+                    <div className="flex shrink-0 flex-col items-start gap-2 sm:items-end">
+                      <span
+                        className="text-xs tracking-wide text-ink-soft uppercase"
+                        style={{
+                          fontFamily: "var(--font-display), Georgia, serif",
+                        }}
+                      >
+                        {kind === "psalm" ? "Psalm" : "Prayer"}
+                      </span>
+                      {tradition.length > 0 ? (
+                        <TraditionPills tradition={tradition} />
+                      ) : null}
+                    </div>
                   </Link>
                 </li>
-              ) : (
-                <li key={`prayer-${hit.item.id}`}>
-                  <Link
-                    href={`/prayer/${hit.item.id}`}
-                    className="flex flex-col gap-2 px-4 py-4 transition hover:bg-paper-deep/50 sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <div>
-                      <p className="syr syr-meta text-2xl text-ink">
-                        {hit.item.name}
-                      </p>
-                      <p className="mt-1 text-sm text-ink-soft">
-                        {[
-                          hit.item.holidayEn,
-                          hit.item.hourEn || hit.item.hour,
-                          hit.item.dayEn || hit.item.day,
-                          hit.item.week,
-                        ]
-                          .filter(Boolean)
-                          .join(" · ")}
-                      </p>
-                    </div>
-                    <TraditionPills tradition={hit.item.tradition} />
-                  </Link>
-                </li>
-              ),
-            )}
+              );
+            })}
           </ul>
         )}
       </div>

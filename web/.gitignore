@@ -19,6 +19,7 @@
 
 # static corpus mirror (copied at build from ../data)
 /public/data/
+/public/pagefind/
 /public/.nojekyll
 
 # production

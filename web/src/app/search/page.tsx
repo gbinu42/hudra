@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
 import { SearchClient } from "@/components/SearchClient";
-import { getCatalog, getPsalms } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Search",
 };
 
 export default function SearchPage() {
-  const catalog = getCatalog();
-
   return (
     <main className="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
       <header className="mb-10">
@@ -24,8 +21,12 @@ export default function SearchPage() {
         >
           Search
         </h1>
+        <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink-soft">
+          Search the full Hudra and psalms. Syriac queries match without vowel
+          points.
+        </p>
       </header>
-      <SearchClient prayers={catalog.prayers} psalms={getPsalms()} />
+      <SearchClient />
     </main>
   );
 }

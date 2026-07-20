@@ -5,7 +5,8 @@
   "scripts": {
     "prebuild": "node scripts/prepare-static.mjs",
     "dev": "node scripts/prepare-static.mjs && next dev",
-    "build": "next build",
+    "build": "rm -rf public/pagefind && next build && node scripts/build-pagefind.mjs",
+    "index:search": "node scripts/build-pagefind.mjs --dev",
     "start": "next start",
     "lint": "eslint",
     "serve:static": "npx --yes serve out -p 3010"
@@ -22,6 +23,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
+    "pagefind": "^1.5.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
