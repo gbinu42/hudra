@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DayOfficeList } from "@/components/DayOfficeList";
 import {
   buildLiturgicalYear,
@@ -14,6 +14,8 @@ import {
   toISO,
 } from "@/lib/liturgical-calendar";
 import {
+  feastSeasonIdForTitle,
+  feastSeasonIdsForDay,
   groupPrayersByHour,
   matchPrayersForDay,
 } from "@/lib/prayer-day";
@@ -60,12 +62,17 @@ export function CalendarClient({
   prayers,
   seasonLabels,
   embedded = false,
+  selected: controlledSelected,
+  onSelect,
 }: {
   prayers: PrayerSummary[];
   /** Syriac season titles from the prayer corpus, keyed by season id. */
   seasonLabels: Record<string, string>;
   /** Use when nested on another page (avoids a second page-level h1). */
   embedded?: boolean;
+  /** Controlled selected liturgical day (YYYY-MM-DD). */
+  selected?: string;
+  onSelect?: (iso: string) => void;
 }) {
   const today = useMemo(() => new Date(), []);
   const litTodayDate = useMemo(() => toLiturgicalDate(today), [today]);
@@ -73,7 +80,16 @@ export function CalendarClient({
   const fromEvening = useMemo(() => isLiturgicalEvening(today), [today]);
   const [year, setYear] = useState(litTodayDate.getFullYear());
   const [month, setMonth] = useState(litTodayDate.getMonth());
-  const [selected, setSelected] = useState(litTodayIso);
+  const [internalSelected, setInternalSelected] = useState(litTodayIso);
+
+  const selected = controlledSelected ?? internalSelected;
+
+  useEffect(() => {
+    if (!controlledSelected) return;
+    const [y, m] = controlledSelected.split("-").map(Number);
+    setYear(y);
+    setMonth(m - 1);
+  }, [controlledSelected]);
 
   const lit = useMemo(() => buildLiturgicalYear(year), [year]);
   const days = useMemo(() => daysInMonth(year, month), [year, month]);
@@ -98,6 +114,9 @@ export function CalendarClient({
     selectedDay.seasonSyr || seasonLabels[selectedDay.seasonId] || "";
   const todaySeasonSyr =
     todayInfo.seasonSyr || seasonLabels[todayInfo.seasonId] || "";
+  const selectedFeastSeasonIds = feastSeasonIdsForDay(selectedDay);
+  const selectedPrimarySeasonId =
+    selectedFeastSeasonIds[0] || selectedDay.seasonId;
 
   const firstWeekday = new Date(year, month, 1).getDay(); // Sun=0
   const lead = firstWeekday;
@@ -114,17 +133,16 @@ export function CalendarClient({
   }
 
   function selectDay(iso: string) {
-    setSelected(iso);
+    onSelect?.(iso);
+    if (controlledSelected === undefined) setInternalSelected(iso);
     const [y, m] = iso.split("-").map(Number);
     setYear(y);
     setMonth(m - 1);
-    if (!embedded) {
-      requestAnimationFrame(() => {
-        document
-          .getElementById("day-offices")
-          ?.scrollIntoView({ behavior: "smooth", block: "start" });
-      });
-    }
+    requestAnimationFrame(() => {
+      document
+        .getElementById("day-offices")
+        ?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   }
 
   return (
@@ -155,7 +173,7 @@ export function CalendarClient({
                 </h1>
               )}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex w-full items-center justify-end gap-2 sm:w-auto">
               {(year !== litTodayDate.getFullYear() ||
                 month !== litTodayDate.getMonth()) && (
                 <button
@@ -271,22 +289,13 @@ export function CalendarClient({
                 {todayInfo.weekdaySyr}
               </span>
             </p>
-            {!embedded ? (
-              <button
-                type="button"
-                onClick={() => selectDay(litTodayIso)}
-                className="mt-4 text-sm text-teal hover:underline"
-              >
-                Show today&apos;s offices →
-              </button>
-            ) : (
-              <Link
-                href="/calendar"
-                className="mt-4 inline-block text-sm text-teal hover:underline"
-              >
-                Open full calendar →
-              </Link>
-            )}
+            <button
+              type="button"
+              onClick={() => selectDay(litTodayIso)}
+              className="mt-4 text-sm text-teal hover:underline"
+            >
+              Show today&apos;s offices →
+            </button>
           </section>
 
           <section className="rounded-sm border border-line bg-paper/70 p-5">
@@ -319,7 +328,7 @@ export function CalendarClient({
 
           <p className="text-xs leading-relaxed text-ink-soft/80">
             {embedded
-              ? "The liturgical day begins at evening (6 PM local time). Calendar after Isaac, Ph., 2007, "
+              ? "Click a day to open its offices below. The liturgical day begins at evening (6 PM local time). Calendar after Isaac, Ph., 2007, "
               : "Click a day to open its offices. The liturgical day begins at evening (6 PM local time). Calendar after Isaac, Ph., 2007, "}
             <em>The Perpetual Calendar</em>.
           </p>
@@ -365,20 +374,32 @@ export function CalendarClient({
             </p>
             {selectedDay.feasts.length > 0 && (
               <ul className="mt-4 space-y-1.5">
-                {selectedDay.feasts.map((f) => (
-                  <li key={f.en} className="text-sm text-gold">
-                    {f.en}
-                  </li>
-                ))}
+                {selectedDay.feasts.map((f) => {
+                  const feastId = feastSeasonIdForTitle(f.en);
+                  const feastSyr =
+                    f.syr || (feastId ? seasonLabels[feastId] : "") || "";
+                  return (
+                    <li key={f.en} className="text-sm text-gold">
+                      <span>{f.en}</span>
+                      {feastSyr ? (
+                        <span className="syr syr-meta mt-0.5 block text-base text-gold/90">
+                          {feastSyr}
+                        </span>
+                      ) : null}
+                    </li>
+                  );
+                })}
               </ul>
             )}
             </div>
 
             <Link
-              href={`/season/${selectedDay.seasonId}`}
+              href={`/season/${selectedPrimarySeasonId}`}
               className="mt-6 inline-block text-sm text-teal underline-offset-4 hover:underline"
             >
-              Full season →
+              {selectedFeastSeasonIds.length > 0
+                ? "Feast offices →"
+                : "Full season →"}
             </Link>
           </div>
 
@@ -388,7 +409,7 @@ export function CalendarClient({
                 className="text-xl text-ink sm:text-2xl"
                 style={{ fontFamily: "var(--font-display), Georgia, serif" }}
               >
-                Offices
+                {selectedFeastSeasonIds.length > 0 ? "Feast offices" : "Offices"}
               </h2>
               {selectedHours.length > 0 && (
                 <p className="text-xs tracking-wide text-ink-soft tabular-nums">
@@ -400,9 +421,34 @@ export function CalendarClient({
             </div>
             <DayOfficeList
               prayers={selectedOffice.prayers}
-              seasonId={selectedDay.seasonId}
+              seasonId={selectedPrimarySeasonId}
               exact={selectedOffice.exact}
             />
+            {selectedOffice.seasonPrayers &&
+            selectedOffice.seasonPrayers.length > 0 ? (
+              <div className="mt-12 border-t border-line/80 pt-8">
+                <div className="mb-5 flex items-baseline justify-between gap-3">
+                  <h3
+                    className="text-lg text-ink sm:text-xl"
+                    style={{
+                      fontFamily: "var(--font-display), Georgia, serif",
+                    }}
+                  >
+                    Season offices
+                  </h3>
+                  <p className="text-xs tracking-wide text-ink-soft">
+                    {selectedDay.seasonEn}
+                    <span className="mx-1.5 opacity-40">·</span>
+                    Week {selectedDay.week}
+                  </p>
+                </div>
+                <DayOfficeList
+                  prayers={selectedOffice.seasonPrayers}
+                  seasonId={selectedDay.seasonId}
+                  exact={selectedOffice.seasonExact}
+                />
+              </div>
+            ) : null}
           </div>
         </div>
       </section>

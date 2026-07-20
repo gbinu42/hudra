@@ -99,6 +99,8 @@ export type TodaysPrayers = {
   prayers: PrayerSummary[];
   /** True when week+day matched; false if we fell back to day-only or season. */
   exact: boolean;
+  seasonPrayers?: PrayerSummary[];
+  seasonExact?: boolean;
   /** True when the civil clock is at/after 18:00 (day already advanced). */
   fromEvening: boolean;
 };
@@ -107,12 +109,14 @@ export type TodaysPrayers = {
 export function getPrayersForLiturgicalDate(iso: string): TodaysPrayers {
   const [y, m, d] = iso.split("-").map(Number);
   const lit = getLiturgicalDay(new Date(y, m - 1, d));
-  const { prayers, exact } = matchPrayersForDay(getCatalog().prayers, lit);
+  const office = matchPrayersForDay(getCatalog().prayers, lit);
   return {
     lit,
     season: getSeason(lit.seasonId),
-    prayers,
-    exact,
+    prayers: office.prayers,
+    exact: office.exact,
+    seasonPrayers: office.seasonPrayers,
+    seasonExact: office.seasonExact,
     fromEvening: false,
   };
 }
@@ -120,12 +124,14 @@ export function getPrayersForLiturgicalDate(iso: string): TodaysPrayers {
 /** Prayers for the current liturgical day (season + week + weekday). */
 export function getTodaysPrayers(date: Date = new Date()): TodaysPrayers {
   const lit = getLiturgicalDay(date);
-  const { prayers, exact } = matchPrayersForDay(getCatalog().prayers, lit);
+  const office = matchPrayersForDay(getCatalog().prayers, lit);
   return {
     lit,
     season: getSeason(lit.seasonId),
-    prayers,
-    exact,
+    prayers: office.prayers,
+    exact: office.exact,
+    seasonPrayers: office.seasonPrayers,
+    seasonExact: office.seasonExact,
     fromEvening: isLiturgicalEvening(date),
   };
 }

@@ -1,10 +1,10 @@
 {
   "itemId": "c71079a0-d2e6-44e8-a516-4b5ffb416ea4",
-  "itemName": "ܬܠܬܒܫܒܐ ܕ ܕܡܪܝ ܡܘܫܐ.",
-  "itemRelatedHoliday": "ܡܘܫܐ",
-  "week": "ܫܒܬܐ ܕ",
-  "day": "ܬܠܬܒܫܒܐ",
-  "prayerTime": "ܨܦܪܐ",
+  "itemName": "ܬ݂ܠܵܬ݂ܒ݁ܫܲܒܵܐ ܕ ܕܡܵܪܝ ܡܘܼܫܹܐ.",
+  "itemRelatedHoliday": "ܡܘܼܫܹܐ",
+  "week": "ܫܲܒ݁ܬ݂ܵܐ ܕ",
+  "day": "ܬ݂ܠܵܬ݂ܒ݁ܫܲܒܵܐ",
+  "prayerTime": "ܨܲܦܪܵܐ",
   "tradition": [
     "syriac"
   ],

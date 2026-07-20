@@ -1,10 +1,10 @@
 {
   "itemId": "b047e226-8284-426d-b51d-4ce002aa82f7",
-  "itemName": "ܐܪܒܥܒܫܒܐ ܕ ܕܨܘܡܐ",
-  "itemRelatedHoliday": "ܨܘܡܐ ܪܒܐ",
-  "week": "ܫܒܬܐ ܕ",
-  "day": "ܐܪܒܥܒܫܒܐ",
-  "prayerTime": "ܥܕܢܐ",
+  "itemName": "ܐܲܪܒܲܥܒ݁ܫܲܒܵܐ ܕ ܕܨܵܘܡܵܐ",
+  "itemRelatedHoliday": "ܨܵܘܡܵܐ ܪܲܒܵܐ",
+  "week": "ܫܲܒ݁ܬ݂ܵܐ ܕ",
+  "day": "ܐܲܪܒܲܥܒ݁ܫܲܒܵܐ",
+  "prayerTime": "ܥܸܕܵܢܵܐ",
   "tradition": [
     "chaldean"
   ],

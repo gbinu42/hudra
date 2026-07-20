@@ -1,15 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { DayOfficeList } from "@/components/DayOfficeList";
+import { getLiturgicalDay, toISO } from "@/lib/liturgical-calendar";
 import {
-  getLiturgicalDay,
-  isLiturgicalEvening,
-  liturgicalTodayIso,
-  toISO,
-} from "@/lib/liturgical-calendar";
-import {
+  feastSeasonIdForTitle,
+  feastSeasonIdsForDay,
   groupPrayersByHour,
   matchPrayersForDay,
 } from "@/lib/prayer-day";
@@ -44,49 +41,40 @@ function shiftIso(iso: string, delta: number): string {
 export function TodaysPrayers({
   prayers,
   seasonLabels,
+  iso,
+  todayIso,
+  fromEvening = false,
+  onIsoChange,
 }: {
   prayers: PrayerSummary[];
   seasonLabels: Record<string, string>;
+  /** Selected liturgical day (YYYY-MM-DD). */
+  iso: string;
+  todayIso: string;
+  fromEvening?: boolean;
+  onIsoChange: (iso: string) => void;
 }) {
-  const [todayIso, setTodayIso] = useState<string | null>(null);
-  const [fromEvening, setFromEvening] = useState(false);
-  const [iso, setIso] = useState<string | null>(null);
-
-  useEffect(() => {
-    const now = new Date();
-    const t = liturgicalTodayIso(now);
-    setTodayIso(t);
-    setIso(t);
-    setFromEvening(isLiturgicalEvening(now));
-  }, []);
-
   const lit = useMemo(() => {
-    if (!iso) return null;
     const [y, m, d] = iso.split("-").map(Number);
     return getLiturgicalDay(new Date(y, m - 1, d));
   }, [iso]);
 
-  const office = useMemo(() => {
-    if (!lit) return null;
-    return matchPrayersForDay(prayers, lit);
-  }, [prayers, lit]);
-
-  if (!iso || !todayIso || !lit || !office) {
-    return (
-      <section className="border-t border-line/80">
-        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-          <p className="text-sm text-ink-soft">Loading today&apos;s offices…</p>
-        </div>
-      </section>
-    );
-  }
+  const office = useMemo(
+    () => matchPrayersForDay(prayers, lit),
+    [prayers, lit],
+  );
 
   const isToday = iso === todayIso;
   const hours = groupPrayersByHour(office.prayers);
+  const feastSeasonIds = feastSeasonIdsForDay(lit);
+  const primarySeasonId = feastSeasonIds[0] || lit.seasonId;
   const seasonSyr = lit.seasonSyr || seasonLabels[lit.seasonId] || "";
 
   return (
-    <section className="relative overflow-hidden border-t border-line/80">
+    <section
+      id="day-offices"
+      className="relative scroll-mt-8 overflow-hidden border-t border-line/80"
+    >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_0%_0%,rgba(26,95,106,0.12),transparent_50%),radial-gradient(ellipse_at_100%_80%,rgba(138,115,64,0.08),transparent_45%)]" />
       <div className="relative mx-auto grid max-w-6xl gap-12 px-5 py-14 sm:px-8 sm:py-16 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] lg:gap-16 lg:items-start">
         <div className="fade-up">
@@ -101,7 +89,7 @@ export function TodaysPrayers({
               {!isToday && (
                 <button
                   type="button"
-                  onClick={() => setIso(todayIso)}
+                  onClick={() => onIsoChange(todayIso)}
                   className="rounded-sm border border-line bg-paper/80 px-3 py-1.5 text-sm text-ink-soft transition hover:border-teal/40 hover:text-ink"
                 >
                   Today
@@ -109,7 +97,7 @@ export function TodaysPrayers({
               )}
               <button
                 type="button"
-                onClick={() => setIso((d) => (d ? shiftIso(d, -1) : d))}
+                onClick={() => onIsoChange(shiftIso(iso, -1))}
                 className="rounded-sm border border-line bg-paper/80 px-3 py-1.5 text-sm text-ink-soft transition hover:border-teal/40 hover:text-ink"
                 aria-label="Previous day"
               >
@@ -123,7 +111,7 @@ export function TodaysPrayers({
               </span>
               <button
                 type="button"
-                onClick={() => setIso((d) => (d ? shiftIso(d, 1) : d))}
+                onClick={() => onIsoChange(shiftIso(iso, 1))}
                 className="rounded-sm border border-line bg-paper/80 px-3 py-1.5 text-sm text-ink-soft transition hover:border-teal/40 hover:text-ink"
                 aria-label="Next day"
               >
@@ -166,21 +154,31 @@ export function TodaysPrayers({
             </p>
             {lit.feasts.length > 0 && (
               <ul className="mt-4 space-y-1.5">
-                {lit.feasts.map((f) => (
-                  <li key={f.en} className="text-sm text-gold">
-                    {f.en}
-                  </li>
-                ))}
+                {lit.feasts.map((f) => {
+                  const feastId = feastSeasonIdForTitle(f.en);
+                  const feastSyr =
+                    f.syr || (feastId ? seasonLabels[feastId] : "") || "";
+                  return (
+                    <li key={f.en} className="text-sm text-gold">
+                      <span>{f.en}</span>
+                      {feastSyr ? (
+                        <span className="syr syr-meta mt-0.5 block text-base text-gold/90">
+                          {feastSyr}
+                        </span>
+                      ) : null}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </div>
 
           <div className="mt-8 flex flex-wrap gap-4 text-sm">
             <Link
-              href={`/season/${lit.seasonId}`}
+              href={`/season/${primarySeasonId}`}
               className="text-teal underline-offset-4 hover:underline"
             >
-              Full season
+              {feastSeasonIds.length > 0 ? "Feast offices" : "Full season"}
             </Link>
             <Link
               href="/calendar"
@@ -197,7 +195,9 @@ export function TodaysPrayers({
               className="text-xl text-ink sm:text-2xl"
               style={{ fontFamily: "var(--font-display), Georgia, serif" }}
             >
-              The day&apos;s offices
+              {feastSeasonIds.length > 0
+                ? "Feast offices"
+                : "The day's offices"}
             </h2>
             {hours.length > 0 && (
               <p className="text-xs tracking-wide text-ink-soft tabular-nums">
@@ -207,9 +207,31 @@ export function TodaysPrayers({
           </div>
           <DayOfficeList
             prayers={office.prayers}
-            seasonId={lit.seasonId}
+            seasonId={primarySeasonId}
             exact={office.exact}
           />
+          {office.seasonPrayers && office.seasonPrayers.length > 0 ? (
+            <div className="mt-12 border-t border-line/80 pt-8">
+              <div className="mb-6 flex items-baseline justify-between gap-3">
+                <h3
+                  className="text-lg text-ink sm:text-xl"
+                  style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+                >
+                  Season offices
+                </h3>
+                <p className="text-xs tracking-wide text-ink-soft">
+                  {lit.seasonEn}
+                  <span className="mx-1.5 opacity-40">·</span>
+                  Week {lit.week}
+                </p>
+              </div>
+              <DayOfficeList
+                prayers={office.seasonPrayers}
+                seasonId={lit.seasonId}
+                exact={office.seasonExact}
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     </section>

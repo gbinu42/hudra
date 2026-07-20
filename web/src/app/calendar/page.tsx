@@ -20,10 +20,7 @@ export default function CalendarPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
-      <CalendarClient
-        prayers={catalog.prayers}
-        seasonLabels={seasonLabels}
-      />
+      <CalendarClient prayers={catalog.prayers} seasonLabels={seasonLabels} />
     </main>
   );
 }

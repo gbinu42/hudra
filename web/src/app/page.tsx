@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { CalendarClient } from "@/components/CalendarClient";
-import { TodaysPrayers } from "@/components/TodaysPrayers";
+import { HomeLiturgy } from "@/components/HomeLiturgy";
 import { getCatalog } from "@/lib/data";
 import { isPlaceholderSyriac } from "@/lib/syriac-text";
 import { HudraMark } from "@/components/HudraMark";
@@ -83,17 +82,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <TodaysPrayers prayers={catalog.prayers} seasonLabels={seasonLabels} />
-
-      <section className="border-t border-line/80 bg-paper/40">
-        <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-          <CalendarClient
-            prayers={catalog.prayers}
-            seasonLabels={seasonLabels}
-            embedded
-          />
-        </div>
-      </section>
+      <HomeLiturgy prayers={catalog.prayers} seasonLabels={seasonLabels} />
     </main>
   );
 }

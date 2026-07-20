@@ -23,7 +23,7 @@ export function SiteHeader() {
             ܚܘܼܕܪܵܐ
           </span>
           <span
-            className="hidden font-[family-name:var(--font-display)] text-sm tracking-[0.22em] text-gold uppercase transition group-hover:text-gold-soft sm:inline"
+            className="font-[family-name:var(--font-display)] text-sm tracking-[0.22em] text-gold uppercase transition group-hover:text-gold-soft"
             style={{ fontFamily: "var(--font-display), Georgia, serif" }}
           >
             Hudra

@@ -36,7 +36,7 @@ export const SYRIAC_SIZES = [
 export type SyriacSizeId = (typeof SYRIAC_SIZES)[number]["id"];
 
 export const DEFAULT_SYRIAC_FONT: SyriacFontId = "adiabene";
-export const DEFAULT_SYRIAC_SIZE: SyriacSizeId = "md";
+export const DEFAULT_SYRIAC_SIZE: SyriacSizeId = "lg";
 
 export const SYRIAC_FONT_KEY = "hudra.syriacFont";
 export const SYRIAC_SIZE_KEY = "hudra.syriacSize";

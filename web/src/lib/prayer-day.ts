@@ -1,6 +1,55 @@
 import type { LitDay } from "./liturgical-calendar";
 import type { PrayerSummary } from "./types";
 
+/**
+ * Calendar feast English titles → catalog season id(s) with their own offices.
+ * When a LitDay lists one of these feasts, those seasons' prayers are shown
+ * for that day (in addition to / instead of only the ferial cycle match).
+ */
+export const CALENDAR_FEAST_SEASONS: Record<string, string[]> = {
+  Transfiguration: ["feast-45311e1"],
+  "Assumption of the Virgin Mary": ["feast-303eec5"],
+  "Solemnity of the Holy Cross": ["feast-11e9713"],
+  "Golden Friday": ["feast-212f9da"],
+  Ascension: ["ascension"],
+  Pentecost: ["pentecost"],
+  "Nativity of the Lord": ["yalda"],
+  "Circumcision of the Lord": ["circumcision"],
+  "Solemnity of Epiphany": ["denha-feast"],
+  "Entrance of Jesus to the Temple": ["feast-2b5dba7"],
+  "Feast of Saint Joseph": ["feast-3f9b938"],
+  "Annunciation of the Virgin Mary": ["feast-2df153b"],
+  "Saints Peter and Paul": ["feast-4b785d5"],
+  "Saint Thomas the Apostle": ["feast-2055d26"],
+  "Nativity of the Virgin Mary": ["feast-3771c71"],
+  "Saint Nicolas": ["feast-442545c"],
+  "Immaculate Conception": ["feast-5394124"],
+  "Holy Innocents": ["feast-5f093b8"],
+  "Great Sunday of the Resurrection": ["easter"],
+  "Hosanna Sunday": ["hosannas"],
+  "Passover Thursday": ["passover"],
+  "Friday of the Passion": ["passion"],
+  "Great Saturday": ["great-saturday"],
+  "Baʿutha of the Ninevites (day 1)": ["feast-5a85414"],
+  "Baʿutha of the Ninevites (day 2)": ["feast-131e365"],
+  "Baʿutha of the Ninevites (day 3)": ["feast-2bed1c"],
+};
+
+/** Catalog season ids for any feasts listed on this liturgical day. */
+export function feastSeasonIdsForDay(lit: LitDay): string[] {
+  const ids: string[] = [];
+  for (const f of lit.feasts) {
+    const mapped = CALENDAR_FEAST_SEASONS[f.en];
+    if (mapped) ids.push(...mapped);
+  }
+  return [...new Set(ids)];
+}
+
+/** First catalog season id for a calendar feast English title, if any. */
+export function feastSeasonIdForTitle(en: string): string | undefined {
+  return CALENDAR_FEAST_SEASONS[en]?.[0];
+}
+
 /** Syriac alphabetic numerals used in week labels (ܫܒܬܐ ܐ …). */
 const WEEK_LETTERS = "ܐܒܓܕܗܘܙܚܛܝܟܠܡܢܣܥܦܨܩܪܫܬ";
 
@@ -167,10 +216,39 @@ export type DayOffice = {
   prayers: PrayerSummary[];
   /** True when week+day matched; false if we fell back to day-only or season. */
   exact: boolean;
+  /**
+   * Cycle-season offices for the same calendar day, when a feast corpus
+   * is also shown. Rendered as a separate list after `prayers`.
+   */
+  seasonPrayers?: PrayerSummary[];
+  seasonExact?: boolean;
 };
 
 /** Match catalog summaries to a liturgical day (season + week + weekday). */
 export function matchPrayersForDay(
+  prayers: PrayerSummary[],
+  lit: LitDay,
+): DayOffice {
+  const feastIds = feastSeasonIdsForDay(lit);
+  const feastPrayers = dedupeSameSlot(
+    prayers.filter((p) => feastIds.includes(p.seasonId)),
+  );
+
+  const ferial = matchFerialPrayers(prayers, lit);
+
+  if (feastPrayers.length > 0) {
+    return {
+      prayers: feastPrayers,
+      exact: true,
+      seasonPrayers: ferial.prayers,
+      seasonExact: ferial.exact,
+    };
+  }
+
+  return ferial;
+}
+
+function matchFerialPrayers(
   prayers: PrayerSummary[],
   lit: LitDay,
 ): DayOffice {

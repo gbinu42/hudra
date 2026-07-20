@@ -12,7 +12,6 @@ import {
   organizeSeason,
 } from "@/lib/data";
 import { isPlaceholderSyriac } from "@/lib/syriac-text";
-import { makeVocalizer } from "@/lib/vocalize-syriac";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -27,24 +26,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: `${season.english} · ${season.syriac}` };
 }
 
-function vocalizeWeeks(
+function toWeekViews(
   weeks: ReturnType<typeof organizeSeason>,
-  vocalize: (s: string) => string,
 ): SeasonWeekView[] {
   return weeks.map((week) => ({
-    week: vocalize(week.week),
+    week: week.week,
     days: week.days.map((day) => ({
-      day: vocalize(day.day),
+      day: day.day,
       dayEn: day.dayEn,
       dayOrder: day.dayOrder,
-      prayers: day.hours.map((p) => ({
-        ...p,
-        name: vocalize(p.name),
-        week: vocalize(p.week),
-        day: vocalize(p.day),
-        hour: vocalize(p.hour),
-        holiday: p.holiday ? vocalize(p.holiday) : p.holiday,
-      })),
+      prayers: day.hours,
     })),
   }));
 }
@@ -54,13 +45,9 @@ export default async function SeasonPage({ params }: Props) {
   const season = getSeason(id);
   if (!season) notFound();
 
-  const catalog = getCatalog();
-  const vocalize = makeVocalizer(catalog);
   const prayers = getPrayersForSeason(id);
-  const weeks = vocalizeWeeks(organizeSeason(prayers), vocalize);
-  const seasonSyr = !isPlaceholderSyriac(season.syriac)
-    ? vocalize(season.syriac)
-    : "";
+  const weeks = toWeekViews(organizeSeason(prayers));
+  const seasonSyr = !isPlaceholderSyriac(season.syriac) ? season.syriac : "";
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">

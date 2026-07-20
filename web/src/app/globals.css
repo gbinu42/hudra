@@ -15,7 +15,7 @@
   --glow: rgba(26, 95, 106, 0.14);
   --font-syriac: "East Syriac Adiabene", serif;
   /* Default reading size (was ~1.25–1.4rem); scale multiplies this. */
-  --syr-scale: 1;
+  --syr-scale: 1.15;
   --syr-body-size: calc(1.625rem * var(--syr-scale));
   /* Labels / bilingual meta — larger than English chrome by default. */
   --syr-meta-size: calc(1.375rem * var(--syr-scale));
