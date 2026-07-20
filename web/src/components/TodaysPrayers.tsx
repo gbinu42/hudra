@@ -25,6 +25,15 @@ function formatCivilDate(iso: string): string {
   });
 }
 
+function formatNavLabel(iso: string): string {
+  const [y, m, d] = iso.split("-").map(Number);
+  const date = new Date(y, m - 1, d);
+  return date.toLocaleDateString("en-GB", {
+    day: "numeric",
+    month: "short",
+  });
+}
+
 function shiftIso(iso: string, delta: number): string {
   const [y, m, d] = iso.split("-").map(Number);
   const date = new Date(y, m - 1, d);
@@ -74,7 +83,7 @@ export function TodaysPrayers({
 
   const isToday = iso === todayIso;
   const hours = groupPrayersByHour(office.prayers);
-  const seasonSyr = seasonLabels[lit.seasonId] || "";
+  const seasonSyr = lit.seasonSyr || seasonLabels[lit.seasonId] || "";
 
   return (
     <section className="relative overflow-hidden border-t border-line/80">
@@ -89,14 +98,6 @@ export function TodaysPrayers({
               {isToday ? "Today" : "Day"}
             </p>
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setIso((d) => (d ? shiftIso(d, -1) : d))}
-                className="rounded-sm border border-line bg-paper/80 px-3 py-1.5 text-sm text-ink-soft transition hover:border-teal/40 hover:text-ink"
-                aria-label="Previous day"
-              >
-                ←
-              </button>
               {!isToday && (
                 <button
                   type="button"
@@ -108,6 +109,20 @@ export function TodaysPrayers({
               )}
               <button
                 type="button"
+                onClick={() => setIso((d) => (d ? shiftIso(d, -1) : d))}
+                className="rounded-sm border border-line bg-paper/80 px-3 py-1.5 text-sm text-ink-soft transition hover:border-teal/40 hover:text-ink"
+                aria-label="Previous day"
+              >
+                ←
+              </button>
+              <span
+                className="min-w-[4.5rem] px-1 text-center text-sm tabular-nums text-ink"
+                aria-live="polite"
+              >
+                {isToday ? "Today" : formatNavLabel(iso)}
+              </span>
+              <button
+                type="button"
                 onClick={() => setIso((d) => (d ? shiftIso(d, 1) : d))}
                 className="rounded-sm border border-line bg-paper/80 px-3 py-1.5 text-sm text-ink-soft transition hover:border-teal/40 hover:text-ink"
                 aria-label="Next day"
@@ -117,15 +132,20 @@ export function TodaysPrayers({
             </div>
           </div>
 
-          <p className="syr syr-block mt-4 text-5xl leading-none text-teal-deep sm:text-6xl">
-            {lit.weekdaySyr}
-          </p>
-          <p
-            className="mt-3 text-2xl text-ink sm:text-3xl"
-            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-          >
-            {lit.weekdayEn}
-          </p>
+          <div className="mt-4 flex items-baseline justify-between gap-4">
+            <p
+              className="text-2xl text-ink sm:text-3xl"
+              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+            >
+              {lit.weekdayEn}
+            </p>
+            <p
+              className="syr max-w-[60%] text-4xl leading-none text-teal-deep sm:text-5xl"
+              dir="rtl"
+            >
+              {lit.weekdaySyr}
+            </p>
+          </div>
           <p className="mt-1 text-sm text-ink-soft">{formatCivilDate(lit.date)}</p>
           {isToday && fromEvening ? (
             <p className="mt-1 text-xs text-ink-soft/80">
@@ -135,7 +155,9 @@ export function TodaysPrayers({
 
           <div className="mt-8 border-t border-line/80 pt-6">
             {seasonSyr ? (
-              <p className="syr syr-meta text-3xl text-ink">{seasonSyr}</p>
+              <p className="syr syr-meta text-3xl text-ink sm:text-4xl">
+                {seasonSyr}
+              </p>
             ) : null}
             <p className="mt-2 text-sm text-ink-soft">
               {lit.seasonEn}

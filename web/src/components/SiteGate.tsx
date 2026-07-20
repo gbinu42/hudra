@@ -7,6 +7,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from "react";
+import { HudraMark } from "@/components/HudraMark";
 
 const STORAGE_KEY = "hudra.siteUnlocked";
 const PASSWORD = "marthoma";
@@ -62,15 +63,20 @@ export function SiteGate({ children }: { children: ReactNode }) {
           onSubmit={onSubmit}
           className="relative w-full max-w-sm border border-line bg-paper/80 p-8 backdrop-blur-sm"
         >
-          <p
-            className="text-xs tracking-[0.22em] text-gold uppercase"
-            style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-          >
-            Hudra
-          </p>
-          <p className="syr syr-block mt-4 text-4xl leading-none text-teal-deep">
-            ܚܘܼܕܪܵܐ
-          </p>
+          <div className="flex items-center justify-between gap-4">
+            <p
+              className="text-xs tracking-[0.22em] text-gold uppercase"
+              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+            >
+              Hudra
+            </p>
+            <div className="flex items-center gap-2.5 text-teal-deep">
+              <p className="syr syr-inline text-3xl !leading-none" dir="rtl">
+                ܚܘܼܕܪܵܐ
+              </p>
+              <HudraMark className="h-10 w-auto" />
+            </div>
+          </div>
           <p className="mt-4 text-sm leading-relaxed text-ink-soft">
             Enter the password to continue.
           </p>

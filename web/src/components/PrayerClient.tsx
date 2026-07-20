@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { TraditionPills } from "@/components/SeasonCard";
 import { prayerParagraphs } from "@/lib/prayer-text";
+import { isPlaceholderSyriac } from "@/lib/syriac-text";
 import type { PrayerRecord, PrayerSummary, Season } from "@/lib/types";
 
 function assetUrl(path: string): string {
@@ -74,7 +75,9 @@ export function PrayerClient({
   const paragraphs = prayer ? prayerParagraphs(prayer.text) : [];
   const hasHtml = Boolean(prayer?.html?.trim());
   const seasonSyr =
-    season?.syriac && season.syriac !== "ܠܐ ܝܕܝܥܐ" ? season.syriac : "";
+    season?.syriac && !isPlaceholderSyriac(season.syriac)
+      ? season.syriac
+      : "";
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
@@ -110,26 +113,21 @@ export function PrayerClient({
         <dl className="mt-6 grid gap-x-8 gap-y-4 text-sm sm:grid-cols-2">
           <MetaRow
             label="Season"
-            syriac={
-              seasonSyr ||
-              prayer?.itemRelatedHoliday ||
-              summary.holiday ||
-              ""
-            }
+            syriac={seasonSyr || summary.holiday || ""}
             english={season?.english}
           />
-          <MetaRow label="Week" syriac={prayer?.week || summary.week || ""} />
+          <MetaRow label="Week" syriac={summary.week || prayer?.week || ""} />
           <MetaRow
             label="Day"
-            syriac={prayer?.day || summary.day || ""}
+            syriac={summary.day || prayer?.day || ""}
             english={summary.dayEn || undefined}
           />
           <MetaRow
             label="Hour"
-            syriac={prayer?.prayerTime || summary.hour || ""}
+            syriac={summary.hour || prayer?.prayerTime || ""}
             english={
               summary.hourEn &&
-              summary.hourEn !== (prayer?.prayerTime || summary.hour)
+              summary.hourEn !== (summary.hour || prayer?.prayerTime)
                 ? summary.hourEn
                 : undefined
             }
@@ -163,16 +161,7 @@ export function PrayerClient({
 
       {prayer ? (
         <p className="mt-14 border-t border-line pt-6 text-xs text-ink-soft">
-          Source:{" "}
-          <a
-            href={prayer.source}
-            className="text-teal hover:underline"
-            target="_blank"
-            rel="noreferrer"
-          >
-            {prayer.source}
-          </a>{" "}
-          · ID {prayer.itemId}
+          ID {prayer.itemId}
         </p>
       ) : null}
     </main>

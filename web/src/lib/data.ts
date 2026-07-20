@@ -1,22 +1,39 @@
 import { readFileSync, existsSync } from "fs";
 import path from "path";
-import type { Catalog, PrayerRecord, PrayerSummary, Season } from "./types";
+import type {
+  Catalog,
+  PrayerRecord,
+  PrayerSummary,
+  PsalmRecord,
+  PsalmSummary,
+  Season,
+} from "./types";
 import {
   getLiturgicalDay,
   isLiturgicalEvening,
   type LitDay,
 } from "./liturgical-calendar";
 import { matchPrayersForDay } from "./prayer-day";
+import { comparePsalms } from "./psalm-label";
 
 /** Catalog ships with the app; full prayer bodies live in the repo data/ tree. */
 const CATALOG_PATH = path.join(process.cwd(), "data", "catalog.json");
 const PRAYERS_DIR = path.resolve(process.cwd(), "..", "data", "prayers");
+const PSALMS_DIR = path.resolve(process.cwd(), "..", "data", "psalms");
 
 let catalogCache: Catalog | null = null;
 
 export function getCatalog(): Catalog {
   if (catalogCache) return catalogCache;
-  catalogCache = JSON.parse(readFileSync(CATALOG_PATH, "utf8")) as Catalog;
+  const raw = JSON.parse(readFileSync(CATALOG_PATH, "utf8")) as Catalog;
+  catalogCache = {
+    ...raw,
+    psalms: raw.psalms ?? [],
+    counts: {
+      ...raw.counts,
+      psalms: raw.counts.psalms ?? raw.psalms?.length ?? 0,
+    },
+  };
   return catalogCache;
 }
 
@@ -42,6 +59,24 @@ export function getPrayer(id: string): PrayerRecord | null {
   const file = path.join(PRAYERS_DIR, `${id}.json`);
   if (!existsSync(file)) return null;
   return JSON.parse(readFileSync(file, "utf8")) as PrayerRecord;
+}
+
+export function getPsalms(): PsalmSummary[] {
+  return [...(getCatalog().psalms ?? [])].sort(comparePsalms);
+}
+
+export function getPsalmSummary(id: string): PsalmSummary | undefined {
+  return getPsalms().find((p) => p.id === id);
+}
+
+export function getPsalmByNumber(number: number): PsalmSummary | undefined {
+  return getPsalms().find((p) => p.number === number);
+}
+
+export function getPsalm(id: string): PsalmRecord | null {
+  const file = path.join(PSALMS_DIR, `${id}.json`);
+  if (!existsSync(file)) return null;
+  return JSON.parse(readFileSync(file, "utf8")) as PsalmRecord;
 }
 
 export function searchPrayers(query: string, limit = 60): PrayerSummary[] {

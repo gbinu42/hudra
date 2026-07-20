@@ -43,6 +43,14 @@ export interface PrayerSummary {
   chars: number;
 }
 
+export interface PsalmSummary {
+  id: string;
+  name: string;
+  number: number;
+  order: number;
+  chars: number;
+}
+
 export interface Catalog {
   source: string;
   counts: {
@@ -50,11 +58,13 @@ export interface Catalog {
     seasons: number;
     syriac: number;
     chaldean: number;
+    psalms: number;
   };
   hours: HourMeta[];
   days: DayMeta[];
   seasons: Season[];
   prayers: PrayerSummary[];
+  psalms: PsalmSummary[];
 }
 
 export interface PrayerRecord {
@@ -67,6 +77,17 @@ export interface PrayerRecord {
   tradition: Tradition[];
   text: string;
   /** Colored HTML from Quill (rubrics, alignments). */
+  html?: string;
+  source: string;
+}
+
+export interface PsalmRecord {
+  itemId: string;
+  itemName: string;
+  number: number;
+  numberRaw?: string;
+  order: number;
+  text: string;
   html?: string;
   source: string;
 }

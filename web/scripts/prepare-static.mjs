@@ -12,8 +12,10 @@ const webRoot = path.join(__dirname, "..");
 const repoRoot = path.join(webRoot, "..");
 const publicData = path.join(webRoot, "public", "data");
 const prayersSrc = path.join(repoRoot, "data", "prayers");
+const psalmsSrc = path.join(repoRoot, "data", "psalms");
 const catalogSrc = path.join(webRoot, "data", "catalog.json");
 const prayersDest = path.join(publicData, "prayers");
+const psalmsDest = path.join(publicData, "psalms");
 
 fs.mkdirSync(publicData, { recursive: true });
 
@@ -34,6 +36,15 @@ fs.rmSync(prayersDest, { recursive: true, force: true });
 console.log("Copying prayers (this may take a minute)…");
 fs.cpSync(prayersSrc, prayersDest, { recursive: true });
 console.log("Copied prayers");
+
+if (fs.existsSync(psalmsSrc)) {
+  fs.rmSync(psalmsDest, { recursive: true, force: true });
+  console.log("Copying psalms…");
+  fs.cpSync(psalmsSrc, psalmsDest, { recursive: true });
+  console.log("Copied psalms");
+} else {
+  console.warn("No psalms corpus at", psalmsSrc);
+}
 
 fs.writeFileSync(path.join(webRoot, "public", ".nojekyll"), "");
 console.log("Wrote public/.nojekyll");

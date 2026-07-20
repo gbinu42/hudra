@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { SearchClient } from "@/components/SearchClient";
-import { getCatalog } from "@/lib/data";
+import { getCatalog, getPsalms } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Search",
 };
 
 export default function SearchPage() {
-  const prayers = getCatalog().prayers;
+  const catalog = getCatalog();
 
   return (
     <main className="mx-auto max-w-3xl px-5 py-12 sm:px-8 sm:py-16">
@@ -16,7 +16,7 @@ export default function SearchPage() {
           className="text-xs tracking-[0.22em] text-gold uppercase"
           style={{ fontFamily: "var(--font-display), Georgia, serif" }}
         >
-          Find a prayer
+          Find a prayer or psalm
         </p>
         <h1
           className="mt-3 text-4xl text-ink"
@@ -25,7 +25,7 @@ export default function SearchPage() {
           Search
         </h1>
       </header>
-      <SearchClient prayers={prayers} />
+      <SearchClient prayers={catalog.prayers} psalms={getPsalms()} />
     </main>
   );
 }

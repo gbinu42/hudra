@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "data" / "index.json"
+PSALMS_INDEX = ROOT / "data" / "psalms_index.json"
 OUT = ROOT / "data" / "catalog.json"
 WEB_COPY = ROOT / "web" / "data" / "catalog.json"
 
@@ -52,7 +53,7 @@ HOUR_ORDER = {
 HOUR_EN = {
     "ܪܡܫܐ": "Evening (Ramsha)",
     "ܣܘܒܥܐ": "Compline (Sutoraya)",
-    "ܠܠܝܐ ܘܡܘܬܒܐ": "Night & Mottava",
+    "ܠܠܝܐ ܘܡܘܬܒܐ": "Night & Mawtwa",
     "ܩܠ̈ܐ ܕܫܗܪܐ": "Qale d-Shahra",
     "ܨܦܪܐ": "Morning (Sapra)",
     "ܥܕܢܐ": "Third Hour",
@@ -145,6 +146,124 @@ HOLIDAY_EN: dict[str, str] = {
     "ܕܘܟܪܢܐ ܩܕܝܫܐ ܕܠܒܗ ܕܡܪܢ": "Commemoration of the Sacred Heart of our Lord",
 }
 
+# Bare corpus titles → East Syriac vocalized display forms.
+VOCALIZED: dict[str, str] = {
+    # Cycle seasons
+    "ܣܘܒܪܐ": "ܣܘܼܒܵܪܵܐ",
+    "ܥܐܕܐ ܩܕܝܫܐ ܕܝܠܕܗ ܕܡܪܢ": "ܥܹܐܕ݂ܵܐ ܩܲܕܝܼܫܵܐ ܕܝܲܠܕܹܗ ܕܡܵܪܲܢ",
+    "ܚܕܒܫܒ̈ܐ ܕܒܬܪ ܝܠܕܐ": "ܚܲܕ݂ܒ݁ܫܲܒܹ̈ܐ ܕܒ݂ܵܬܲܪ ܝܲܠܕܵܐ",
+    "ܥܐܕܐ ܕܓܙܘܪܬܗ ܕܡܪܢ": "ܥܹܐܕ݂ܵܐ ܕܓ݂ܙܘܼܪܬܹ݁ܗ ܕܡܵܪܲܢ",
+    "ܕܢܚܐ": "ܕܸܢܚܵܐ",
+    "ܕܢܚܐ0": "ܕܸܢܚܵܐ",
+    "ܥܐܕܐ ܕܕܢܚܐ": "ܥܹܐܕ݂ܵܐ ܕܕܸܢܚܵܐ",
+    "ܨܘܡܐ ܪܒܐ": "ܨܵܘܡܵܐ ܪܲܒܵܐ",
+    "ܥܪܘܒܬܐ ܕܠܥܙܪ": "ܥܪܘܼܒ݂ܬܵܐ ܕܠܵܥܵܙܲܪ",
+    "ܥܐܕܐ ܫܒܝܚܐ ܕܐܘܫܥܢ̈ܐ": "ܥܹܐܕ݂ܵܐ ܫܒ݂ܝܼܚܵܐ ܕܐܘܿܫܲܥܢܹ̈ܐ",
+    "ܚܡܫܒܫܒܐ ܕܦܨܚܐ": "ܚܲܡܫܵܒ݁ܫܲܒܵܐ ܕܦܸܨܚܵܐ",
+    "ܥܪܘܒܬܐ ܕܚܫܐ": "ܥܪܘܼܒ݂ܬܵܐ ܕܚܲܫܵܐ",
+    "ܫܒܬܐ ܪܒܬܐ": "ܫܲܒ݁ܬ݂ܵܐ ܪܲܒܬ݂ܵܐ",
+    "ܚܕܒܫܒܐ ܪܒܐ ܕܩܝܡܬܗ ܕܡܪܢ": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܪܲܒܵܐ ܕܩܝܵܡܬܹ݁ܗ ܕܡܵܪܲܢ",
+    "ܩܝܡܬܐ": "ܩܝܵܡܬܵܐ",
+    "ܥܐܕܐ ܩܕܝܫܐ ܕܣܘܠܩܗ ܕܡܪܢ": "ܥܹܐܕ݂ܵܐ ܩܲܕܝܼܫܵܐ ܕܣܘܼܠܵܩܹܗ ܕܡܵܪܲܢ",
+    "ܥܐܕܐ ܕܦܢܛܝܩܘܣܛܐ": "ܥܹܐܕ݂ܵܐ ܕܦܸܢܛܝܼܩܘܿܣܛܹܐ",
+    "ܫܠܝ̈ܚܐ": "ܫܠܝܼ̈ܚܹܐ",
+    "ܩܝܛܐ": "ܩܲܝܛܵܐ",
+    "ܐܠܝܐ - ܨܠܝܒܐ": "ܐܹܠܝܼܵܐ — ܨܠܝܼܒ݂ܵܐ",
+    "ܡܘܫܐ": "ܡܘܼܫܹܐ",
+    "ܩܘܕܫ ܥܕܬܐ - ܡܥܠܬܐ": "ܩܘܼܕܵܫ ܥܹܕܬܵܐ — ܡܲܥܲܠܬܵܐ",
+    # Days
+    "ܚܕܒܫܒܐ": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ",
+    "ܬܪܝܢܒܫܒܐ": "ܬܪܹܝܢܒ݁ܫܲܒܵܐ",
+    "ܬܠܬܒܫܒܐ": "ܬ݂ܠܵܬ݂ܒ݁ܫܲܒܵܐ",
+    "ܐܪܒܥܒܫܒܐ": "ܐܲܪܒܲܥܒ݁ܫܲܒܵܐ",
+    "ܚܡܫܒܫܒܐ": "ܚܲܡܫܵܒ݁ܫܲܒܵܐ",
+    "ܥܪܘܒܬܐ": "ܥܪܘܼܒ݂ܬܵܐ",
+    "ܫܒܬܐ": "ܫܲܒ݁ܬ݂ܵܐ",
+    # Hours
+    "ܪܡܫܐ": "ܪܲܡܫܵܐ",
+    "ܣܘܒܥܐ": "ܣܘܼܒܵܥܵܐ",
+    "ܠܠܝܐ ܘܡܘܬܒܐ": "ܠܸܠܝܵܐ ܘܡܵܘܬ݁ܒ݂ܵܐ",
+    "ܩܠ̈ܐ ܕܫܗܪܐ": "ܩܵܠܹ̈ܐ ܕܫܲܗܪܵܐ",
+    "ܨܦܪܐ": "ܨܲܦܪܵܐ",
+    "ܥܕܢܐ": "ܥܸܕܵܢܵܐ",
+    "ܩܘܛܥܐ": "ܩܘܼܛܵܥܵܐ",
+    "ܐ̄ܪ̈ܙܐ ܐܠܗܝ̈ܐ": "ܐ݇ܪ̈ܵܙܹܐ ܐܲܠܵܗܵܝܹ̈ܐ",
+    # Baʿutha
+    "ܐܪܒܥܒܫܒܐ ܕܒܥܘܬܐ": "ܐܲܪܒܲܥܒ݁ܫܲܒܵܐ ܕܒ݂ܵܥܘܼܬ݂ܵܐ",
+    "ܬܠܬܒܫܒܐ ܕܒܥܘܬܐ": "ܬ݂ܠܵܬ݂ܒ݁ܫܲܒܵܐ ܕܒ݂ܵܥܘܼܬ݂ܵܐ",
+    "ܬܪܝܢܒܫܒܐ ܕܒܥܘܬܐ": "ܬܪܹܝܢܒ݁ܫܲܒܵܐ ܕܒ݂ܵܥܘܼܬ݂ܵܐ",
+    # Feasts
+    "ܥܐܕܐ ܕܝܠܝܕܘܬܗ ܕܡܪܬܝ ܡܪܝܡ": "ܥܹܐܕ݂ܵܐ ܕܝܲܠܝܼܕܘܼܬܹܗ ܕܡܵܪܬ݁ܝ ܡܲܪܝܲܡ",
+    "ܥܐܕܐ ܕܝܫܘܥ ܡܠܟܐ": "ܥܹܐܕ݂ܵܐ ܕܝܸܫܘܿܥ ܡܲܠܟܵܐ",
+    "ܥܐܕܐ ܕܡܛܒܬܢܘܬ ܝܠܕܬ ܐܠܗܐ ܡܪܝܡ": "ܥܹܐܕ݂ܵܐ ܕܡܛܲܒܲܬܵܢܘܼܬ ܝܵܠܕܲܬ ܐܲܠܵܗܵܐ ܡܲܪܝܲܡ",
+    "ܥܐܕܐ ܕܡܥܠܬܗ ܕܡܪܢ ܠܗܝܟܠܐ": "ܥܹܐܕ݂ܵܐ ܕܡܲܥܲܠܬܹ݁ܗ ܕܡܵܪܲܢ ܠܗܲܝܟ݁ܠܵܐ",
+    "ܥܐܕܐ ܕܡܪܝ ܝܘܣܦ": "ܥܹܐܕ݂ܵܐ ܕܡܵܪܝ ܝܵܘܣܸܦ",
+    "ܥܐܕܐ ܕܣܘܒܪܗ ܕܡܪܬܝ ܡܪܝܡ": "ܥܹܐܕ݂ܵܐ ܕܣܘܼܒܵܪܹܗ ܕܡܵܪܬ݁ܝ ܡܲܪܝܲܡ",
+    "ܥܐܕܐ ܕܨܠܝܒܐ ܩܕܝܫܐ": "ܥܹܐܕ݂ܵܐ ܕܨܠܝܼܒ݂ܵܐ ܩܲܕܝܼܫܵܐ",
+    "ܥܐܕܐ ܕܫܘܢܝܐ ܕܡܪܬܝ ܡܪܝܡ": "ܥܹܐܕ݂ܵܐ ܕܫܘܼܢܵܝܵܐ ܕܡܵܪܬ݁ܝ ܡܲܪܝܲܡ",
+    "ܥܐܕܐ ܩܕܝܫܐ ܕܐܝܩܪ ܦܓܪܗ ܕܡܪܢ": "ܥܹܐܕ݂ܵܐ ܩܲܕܝܼܫܵܐ ܕܐܝܼܩܵܪ ܦܲܓܪܹܗ ܕܡܵܪܲܢ",
+    "ܥܐܕܐ ܩܕܝܫܐ ܕܓܠܝܢܗ ܕܡܪܢ": "ܥܹܐܕ݂ܵܐ ܩܲܕܝܼܫܵܐ ܕܓܸܠܝܵܢܹܗ ܕܡܵܪܲܢ",
+    "ܥܪܘܒܬܐ ܕܕܗܒܐ": "ܥܪܘܼܒ݂ܬܵܐ ܕܕܲܗܒ݂ܵܐ",
+    "ܥܪܘܒܬܐ ܕܡܘܕܝ̈ܢܐ": "ܥܪܘܼܒ݂ܬܵܐ ܕܡܵܘܕܝܵܢܹ̈ܐ",
+    "ܥܪܘܒܬܐ ܕܥܢܝ̈ܕܐ": "ܥܪܘܼܒ݂ܬܵܐ ܕܥܲܢܝܼܕܹ̈ܐ",
+    # Commemorations
+    "ܕܘܟܪܢܐ ܕܐܪܒܥܐ ܐܘܢܓܠܣܛ̈ܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܐܲܪܒܥܵܐ ܐܸܘܲܢܓܸܠܣܛܹ̈ܐ",
+    "ܕܘܟܪܢܐ ܕܐܪܒܥܝܢ ܣܗ̈ܕܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܐܲܪܒܥܝܼܢ ܣܵܗ̈ܕܹܐ",
+    "ܕܘܟܪܢܐ ܕܒܛܝܢܘܬ ܡܪܝܡ ܒܠܥܕ ܚܛܝܬܐ ܟܝܢܝܬܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܒܲܛܝܼܢܘܼܬ ܡܲܪܝܲܡ ܒܠܵܥܕ ܚܛܝܼܬܵܐ ܟܝܵܢܵܝܬܵܐ",
+    "ܕܘܟܪܢܐ ܕܚܕ ܦܪܨܘܦܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܚܲܕ ܦܲܪܨܘܿܦܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܐܙܠܬܐ ܕܡܪܬܝ ܡܪܝܡ ܠܘܬ ܐܠܝܫܒܥ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܲܐܙܲܠܬܵܐ ܕܡܵܪܬ݁ܝ ܡܲܪܝܲܡ ܠܘܵܬ ܐܹܠܝܼܫܒܲܥ",
+    "ܕܘܟܪܢܐ ܕܡܠܦܢ̈ܐ ܝܘܢܝ̈ܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܲܠܦܵܢܹ̈ܐ ܝܵܘܢܵܝܹ̈ܐ",
+    "ܕܘܟܪܢܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪܗ̄ܘܡܝ̈ܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܲܠܦܵܢܹ̈ܐ ܣܘܼܪܵܝܹ̈ܐ ܘܪܗ݇ܘܿܡܵܝܹ̈ܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܒܪܗܡ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܒ݂ܪܵܗܵܡ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܕܝ ܫܠܝܚܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܕܲܝ ܫܠܝܼܚܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܘܓܝܢ ܘܚܒ̈ܪܘܗܝ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܲܒܪ̈ܵܘܗܝ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܝܠܝܐ ܬܫܒܝܝܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܹܠܝܼܵܐ ܬܸܫܒܝܼܬ݂ܵܝܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܢܛܘܢܝܘܣ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܢܛܘܿܢܝܘܿܣ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܣܛܦܢܘܣ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܸܣܛܲܦܵܢܘܿܣ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܐܦܪܝܡ ܡܠܦܢܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܦܪܹܝܡ ܡܲܠܦܵܢܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܓܝܘܪܓܝܣ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܓܝܼܘܲܪܓܝܼܣ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܝܘܚܢܢ ܡܥܡܕܢܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܝܘܿܚܲܢܵܢ ܡܲܥ݇ܡܕܵܢܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܝܥܩܘܒ ܕܢܨܝܒܝܢ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܝܲܥܩܘܿܒ ܕܢܲܨܝܼܒܝܼܢ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܝܥܩܘܒ ܡܦܣܩܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܝܲܥܩܘܿܒ ܡܦܲܣܩܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܡܐܪܝ ܫܠܝܚܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܡܵܐܪܝ ܫܠܝܼܚܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܡܝܟܐ ܕܢܘܗܕܪܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܡܝܼܟ݂ܵܐ ܕܢܘܼܗܲܕܪܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܡܝܟܐܝܠ ܚܒܪܐ ܕܡܠܐܟܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܡܝܼܟ݂ܵܐܝܼܠ ܚܲܒܪܵܐ ܕܡܲܠܲܐܟ݂ܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܢܝܩܠܘܣ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܢܝܼܩܵܠܵܘܿܣ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܦܛܪܘܣ ܘܦܘܠܘܣ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܦܲܛܪܘܿܣ ܘܦܵܘܠܘܿܣ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܦܦܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܦܵܦܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܦܬܝܘܢ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܦܸܬ݂ܝܘܿܢ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܩܘܪܝܩܘܣ ܘܕܝܘܠܝܛܐ ܐܡܗ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܩܘܼܪܝܵܩܘܿܣ ܘܕܝܘܼܠܝܼܛܵܐ ܐܸܡܹܗ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܩܪܕܓ ܣܗܕܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܩܲܪܕܲܓ ܣܵܗܕܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܫܡܥܘܢ ܒܪܨܒ̈ܥܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܫܸܡܥܘܿܢ ܒܲܪܨܲܒܥܹ̈ܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܝ ܬܐܘܡܐ ܫܠܝܚܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܬܐܘܿܡܵܐ ܫܠܝܼܚܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܒܪܒܪܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܬ݁ܝ ܒܲܪܒܵܪܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ  ܒܐܝܪ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܬ݁ܝ ܡܲܪܝܲܡ ܒܐܝܼܵܪ",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ ܐܡܐ ܕܥܘܕܪܢܐ ܐܡܝܢܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܬ݁ܝ ܡܲܪܝܲܡ ܐܸܡܵܐ ܕܥܘܼܕܪܵܢܵܐ ܐܲܡܝܼܢܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ ܒܣܬܘܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܬ݁ܝ ܡܲܪܝܲܡ ܒܣܲܬܘܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ ܒܩܝܛܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܬ݁ܝ ܡܲܪܝܲܡ ܒܩܲܝܛܵܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ ܡܛܠ ܢܛܝܪܘܬ ܙܪ̈ܥܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܬ݁ܝ ܡܲܪܝܲܡ ܡܸܛܠ ܢܛܝܼܪܘܼܬ ܙܲܪ̈ܥܹܐ",
+    "ܕܘܟܪܢܐ ܕܡܪܬܝ ܡܪܝܡ ܡܠܟܬܐ ܕܫܡܝܐ ܘܐܪܥܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܬ݁ܝ ܡܲܪܝܲܡ ܡܲܠܟܬܵܐ ܕܫܡܲܝܵܐ ܘܐܲܪܥܵܐ",
+    "ܕܘܟܪܢܐ ܕܩܛܠܐ ܕܝܠܘܕ̈ܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܩܸܛܠܵܐ ܕܝܲܠܘܿܕܹ̈ܐ",
+    "ܕܘܟܪܢܐ ܕܪܒܢ ܗܘܪܡܝܙܕ ܥܓܡܝܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܪܲܒܵܢ ܗܘܿܪܡܝܼܙܕ ܥܲܓܡܵܝܵܐ",
+    "ܕܘܟܪܢܐ ܕܫܒܥܝܢ ܘܬܪܝܢ ܬܠܡܝܕ̈ܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܫܲܒܥܝܼܢ ܘܬܪܹܝܢ ܬܲܠܡܝܼܕܹ̈ܐ",
+    "ܕܘܟܪܢܐ ܕܫܡܘܢܝ ܘܕܒܢܝ̈ܗ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܫܡܘܿܢܝ ܘܕܒܲܢܝ̈ܗ̇",
+    "ܕܘܟܪܢܐ ܕܬܪܥܣܪ ܫܠܝܚ̈ܐ": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܬܪܲܥܣܲܪ ܫܠܝܼ̈ܚܹܐ",
+    "ܕܘܟܪܢܐ ܩܕܝܫܐ ܕܠܒܗ ܕܡܪܢ": "ܕܘܼܟ݂ܪܵܢܵܐ ܩܲܕܝܼܫܵܐ ܕܠܸܒܹܗ ܕܡܵܪܲܢ",
+    "ܠܐ ܝܕܝܥܐ": "ܠܵܐ ܝܕܝܼܥܵܐ",
+}
+
+
+def vocalize(text: str) -> str:
+    """Point a bare Syriac title for UI display; leave already-pointed text alone."""
+    if not text:
+        return text
+    if text in VOCALIZED:
+        return VOCALIZED[text]
+    # Week labels: ܫܒܬܐ ܐ …
+    if text.startswith("ܫܒܬܐ "):
+        return "ܫܲܒ݁ܬ݂ܵܐ " + text[len("ܫܒܬܐ ") :]
+    return text
+
 
 def holiday_english(h: str, group: str) -> str:
     if h in HOLIDAY_EN:
@@ -165,10 +284,11 @@ def main() -> None:
 
     seasons: list[dict] = []
     for syr, slug, en, desc, order in SEASON_META:
+        bare = "ܕܢܚܐ" if syr == "ܕܢܚܐ0" else syr
         seasons.append(
             {
                 "id": slug,
-                "syriac": "ܕܢܚܐ" if syr == "ܕܢܚܐ0" else syr,
+                "syriac": vocalize(bare),
                 "english": en,
                 "description": desc,
                 "order": order,
@@ -201,7 +321,7 @@ def main() -> None:
         seasons.append(
             {
                 "id": slug,
-                "syriac": h,
+                "syriac": vocalize(h),
                 "english": en,
                 "description": en if h in HOLIDAY_EN else h,
                 "order": order,
@@ -214,7 +334,7 @@ def main() -> None:
     seasons.append(
         {
             "id": "unassigned",
-            "syriac": "ܠܐ ܝܕܝܥܐ",
+            "syriac": vocalize("ܠܐ ܝܕܝܥܐ"),
             "english": "Unassigned",
             "description": "Prayers without a season tag",
             "order": 999,
@@ -228,20 +348,23 @@ def main() -> None:
     prayers_out = []
     for p in idx["prayers"]:
         holiday = p["holiday"] or "ܠܐ_ܝܕܝܥܐ"
+        day = p["day"] or ""
+        hour = p["prayerTime"] or ""
+        week = p["week"] or ""
         prayers_out.append(
             {
                 "id": p["itemId"],
                 "name": p["itemName"],
-                "holiday": holiday,
+                "holiday": vocalize(holiday) if holiday != "ܠܐ_ܝܕܝܥܐ" else holiday,
                 "holidayEn": holiday_to_en.get(holiday, ""),
                 "seasonId": holiday_to_season.get(holiday, "unassigned"),
-                "week": p["week"] or "",
-                "day": p["day"] or "",
-                "dayEn": DAY_EN.get(p["day"] or "", ""),
-                "hour": p["prayerTime"] or "",
-                "hourEn": HOUR_EN.get(p["prayerTime"] or "", p["prayerTime"] or "Hour"),
-                "hourOrder": HOUR_ORDER.get(p["prayerTime"] or "", 99),
-                "dayOrder": DAY_ORDER.get(p["day"] or "", 99),
+                "week": vocalize(week),
+                "day": vocalize(day),
+                "dayEn": DAY_EN.get(day, ""),
+                "hour": vocalize(hour),
+                "hourEn": HOUR_EN.get(hour, hour or "Hour"),
+                "hourOrder": HOUR_ORDER.get(hour, 99),
+                "dayOrder": DAY_ORDER.get(day, 99),
                 "tradition": p["tradition"],
                 "chars": p["chars"],
             }
@@ -255,6 +378,28 @@ def main() -> None:
     seasons = [s for s in seasons if s["count"] > 0 or s["group"] == "cycle"]
     seasons.sort(key=lambda s: s["order"])
 
+    psalms_out: list[dict] = []
+    if PSALMS_INDEX.exists():
+        psalms_data = json.loads(PSALMS_INDEX.read_text(encoding="utf-8"))
+        for p in psalms_data.get("psalms") or []:
+            psalms_out.append(
+                {
+                    "id": p["itemId"],
+                    "name": p.get("itemName") or "",
+                    "number": int(p.get("number") or 0),
+                    "order": int(p.get("order") or p.get("number") or 0),
+                    "chars": int(p.get("chars") or 0),
+                }
+            )
+        psalms_out.sort(
+            key=lambda p: (
+                (118, p["number"] - 11800)
+                if 11801 <= p["number"] <= 11822
+                else (p["number"], 0),
+                p["name"],
+            )
+        )
+
     catalog = {
         "source": "https://hudra.org",
         "generatedFor": "Hudra liturgical browser",
@@ -263,18 +408,20 @@ def main() -> None:
             "seasons": len(seasons),
             "syriac": sum(1 for p in prayers_out if "syriac" in p["tradition"]),
             "chaldean": sum(1 for p in prayers_out if "chaldean" in p["tradition"]),
+            "psalms": len(psalms_out),
         },
         "hours": [
-            {"syriac": k, "english": HOUR_EN[k], "order": v}
+            {"syriac": vocalize(k), "english": HOUR_EN[k], "order": v}
             for k, v in sorted(HOUR_ORDER.items(), key=lambda x: x[1])
             if k in HOUR_EN
         ],
         "days": [
-            {"syriac": k, "english": DAY_EN[k], "order": v}
+            {"syriac": vocalize(k), "english": DAY_EN[k], "order": v}
             for k, v in sorted(DAY_ORDER.items(), key=lambda x: x[1])
         ],
         "seasons": seasons,
         "prayers": prayers_out,
+        "psalms": psalms_out,
     }
 
     text = json.dumps(catalog, ensure_ascii=False)
@@ -285,7 +432,11 @@ def main() -> None:
         print(f"Wrote {OUT} and {WEB_COPY}")
     else:
         print(f"Wrote {OUT}")
-    print(f"{catalog['counts']['prayers']} prayers · {catalog['counts']['seasons']} seasons")
+    print(
+        f"{catalog['counts']['prayers']} prayers · "
+        f"{catalog['counts']['psalms']} psalms · "
+        f"{catalog['counts']['seasons']} seasons"
+    )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,1022 @@
+  2           0 LOAD_CONST               0 ('\nNormalize mis-encoded Syriac "dots" in the prayer/psalm corpus.\n\nCorrections (East Syriac Madnhaya):\n  1. U+0323 COMBINING DOT BELOW on BGDKPT → U+0742 RUKKAKHA\n     elsewhere → remove\n  2. U+0742 RUKKAKHA on non-BGDKPT → remove\n  3. U+0741 QUSHSHAYA on non-BGDKPT → remove\n  4. U+0331 COMBINING MACRON BELOW → remove\n  5. U+0324 COMBINING DIAERESIS BELOW on ܬ → U+0740 FEMININE DOT\n     elsewhere → remove\n  6. U+0740 FEMININE DOT on non-ܬ → remove\n  7. Soft + hard on same letter → keep soft, drop qushshaya\n  Soft pe: U+0742 on ܦ → U+032E BREVE BELOW (East Syriac convention)\n')
+              2 STORE_NAME               0 (__doc__)
+
+ 18           4 LOAD_CONST               1 (0)
+              6 LOAD_CONST               2 (('annotations',))
+              8 IMPORT_NAME              1 (__future__)
+             10 IMPORT_FROM              2 (annotations)
+             12 STORE_NAME               2 (annotations)
+             14 POP_TOP
+
+ 20          16 LOAD_CONST               1 (0)
+             18 LOAD_CONST               3 (None)
+             20 IMPORT_NAME              3 (argparse)
+             22 STORE_NAME               3 (argparse)
+
+ 21          24 LOAD_CONST               1 (0)
+             26 LOAD_CONST               3 (None)
+             28 IMPORT_NAME              4 (json)
+             30 STORE_NAME               4 (json)
+
+ 22          32 LOAD_CONST               1 (0)
+             34 LOAD_CONST               3 (None)
+             36 IMPORT_NAME              5 (sys)
+             38 STORE_NAME               5 (sys)
+
+ 23          40 LOAD_CONST               1 (0)
+             42 LOAD_CONST               4 (('Path',))
+             44 IMPORT_NAME              6 (pathlib)
+             46 IMPORT_FROM              7 (Path)
+             48 STORE_NAME               7 (Path)
+             50 POP_TOP
+
+ 25          52 LOAD_NAME                7 (Path)
+             54 LOAD_NAME                8 (__file__)
+             56 CALL_FUNCTION            1
+             58 LOAD_METHOD              9 (resolve)
+             60 CALL_METHOD              0
+             62 LOAD_ATTR               10 (parents)
+             64 LOAD_CONST               5 (1)
+             66 BINARY_SUBSCR
+             68 STORE_NAME              11 (ROOT)
+
+ 27          70 LOAD_NAME               12 (set)
+             72 LOAD_CONST               6 ('ܒܓܕܟܦܬ')
+             74 CALL_FUNCTION            1
+             76 STORE_NAME              13 (BGDKPT)
+
+ 28          78 LOAD_CONST               7 ('ܬ')
+             80 STORE_NAME              14 (TAW)
+
+ 29          82 LOAD_CONST               8 ('ܦ')
+             84 STORE_NAME              15 (PE)
+
+ 31          86 LOAD_CONST               9 ('݁')
+             88 STORE_NAME              16 (QUSH)
+
+ 32          90 LOAD_CONST              10 ('݂')
+             92 STORE_NAME              17 (RUKK)
+
+ 33          94 LOAD_CONST              11 ('݀')
+             96 STORE_NAME              18 (FEM)
+
+ 34          98 LOAD_CONST              12 ('̣')
+            100 STORE_NAME              19 (DOT_BELOW)
+
+ 35         102 LOAD_CONST              13 ('̱')
+            104 STORE_NAME              20 (MACRON_BELOW)
+
+ 36         106 LOAD_CONST              14 ('̤')
+            108 STORE_NAME              21 (DIAERESIS_BELOW)
+
+ 37         110 LOAD_CONST              15 ('̮')
+            112 STORE_NAME              22 (BREVE_BELOW)
+
+ 40         114 LOAD_CONST              47 (('ch', 'str', 'return', 'bool'))
+            116 LOAD_CONST              20 (<code object is_combining at 0x74a13f27dd10, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 40>)
+            118 LOAD_CONST              21 ('is_combining')
+            120 MAKE_FUNCTION            4 (annotations)
+            122 STORE_NAME              23 (is_combining)
+
+ 45         124 LOAD_CONST              48 (('base', 'str', 'marks', 'list[str]', 'return', 'str'))
+            126 LOAD_CONST              25 (<code object fix_cluster at 0x74a13f299630, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 45>)
+            128 LOAD_CONST              26 ('fix_cluster')
+            130 MAKE_FUNCTION            4 (annotations)
+            132 STORE_NAME              24 (fix_cluster)
+
+ 87         134 LOAD_CONST              49 (('text', 'str', 'return', 'str'))
+            136 LOAD_CONST              28 (<code object fix_text at 0x74a13f299790, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 87>)
+            138 LOAD_CONST              29 ('fix_text')
+            140 MAKE_FUNCTION            4 (annotations)
+            142 STORE_NAME              25 (fix_text)
+
+126         144 LOAD_CONST              50 (('rec', 'dict', 'return', 'bool'))
+            146 LOAD_CONST              32 (<code object fix_record at 0x74a13f299d10, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 126>)
+            148 LOAD_CONST              33 ('fix_record')
+            150 MAKE_FUNCTION            4 (annotations)
+            152 STORE_NAME              26 (fix_record)
+
+138         154 LOAD_CONST              51 (('path', 'Path', 'force_write', 'bool', 'return', 'tuple[int, int]'))
+            156 LOAD_CONST              38 (<code object process_dir at 0x74a13f29b5d0, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 138>)
+            158 LOAD_CONST              39 ('process_dir')
+            160 MAKE_FUNCTION            4 (annotations)
+            162 STORE_NAME              27 (process_dir)
+
+155         164 LOAD_CONST              52 (('path', 'Path', 'return', 'int'))
+            166 LOAD_CONST              41 (<code object fix_index at 0x74a13f2b4660, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 155>)
+            168 LOAD_CONST              42 ('fix_index')
+            170 MAKE_FUNCTION            4 (annotations)
+            172 STORE_NAME              28 (fix_index)
+
+179         174 LOAD_CONST              53 (('return', 'None'))
+            176 LOAD_CONST              44 (<code object main at 0x74a13f2b5160, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 179>)
+            178 LOAD_CONST              45 ('main')
+            180 MAKE_FUNCTION            4 (annotations)
+            182 STORE_NAME              29 (main)
+
+212         184 LOAD_NAME               30 (__name__)
+            186 LOAD_CONST              46 ('__main__')
+            188 COMPARE_OP               2 (==)
+            190 POP_JUMP_IF_FALSE      101 (to 202)
+
+213         192 LOAD_NAME               29 (main)
+            194 CALL_FUNCTION            0
+            196 POP_TOP
+            198 LOAD_CONST               3 (None)
+            200 RETURN_VALUE
+
+212     >>  202 LOAD_CONST               3 (None)
+            204 RETURN_VALUE
+
+Disassembly of <code object is_combining at 0x74a13f27dd10, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 40>:
+ 41           0 LOAD_GLOBAL              0 (ord)
+              2 LOAD_FAST                0 (ch)
+              4 CALL_FUNCTION            1
+              6 STORE_FAST               1 (o)
+
+ 42           8 LOAD_CONST               1 (768)
+             10 LOAD_FAST                1 (o)
+             12 DUP_TOP
+             14 ROT_THREE
+             16 COMPARE_OP               1 (<=)
+             18 JUMP_IF_FALSE_OR_POP    13 (to 26)
+             20 LOAD_CONST               2 (879)
+             22 COMPARE_OP               1 (<=)
+             24 JUMP_FORWARD             2 (to 30)
+        >>   26 ROT_TWO
+             28 POP_TOP
+        >>   30 JUMP_IF_TRUE_OR_POP     27 (to 54)
+             32 LOAD_CONST               3 (1840)
+             34 LOAD_FAST                1 (o)
+             36 DUP_TOP
+             38 ROT_THREE
+             40 COMPARE_OP               1 (<=)
+             42 JUMP_IF_FALSE_OR_POP    25 (to 50)
+             44 LOAD_CONST               4 (1866)
+             46 COMPARE_OP               1 (<=)
+             48 RETURN_VALUE
+        >>   50 ROT_TWO
+             52 POP_TOP
+        >>   54 RETURN_VALUE
+
+Disassembly of <code object fix_cluster at 0x74a13f299630, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 45>:
+ 46           0 LOAD_GLOBAL              0 (list)
+              2 LOAD_FAST                1 (marks)
+              4 CALL_FUNCTION            1
+              6 STORE_FAST               1 (marks)
+
+ 49           8 LOAD_CONST               1 (<code object <listcomp> at 0x74a13f27ec30, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 49>)
+             10 LOAD_CONST               2 ('fix_cluster.<locals>.<listcomp>')
+             12 MAKE_FUNCTION            0
+             14 LOAD_FAST                1 (marks)
+             16 GET_ITER
+             18 CALL_FUNCTION            1
+             20 STORE_FAST               1 (marks)
+
+ 51          22 LOAD_FAST                0 (base)
+             24 LOAD_GLOBAL              1 (BGDKPT)
+             26 CONTAINS_OP              0
+             28 POP_JUMP_IF_FALSE      116 (to 232)
+
+ 53          30 LOAD_CONST               3 (<code object <listcomp> at 0x74a13f299160, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 53>)
+             32 LOAD_CONST               2 ('fix_cluster.<locals>.<listcomp>')
+             34 MAKE_FUNCTION            0
+             36 LOAD_FAST                1 (marks)
+             38 GET_ITER
+             40 CALL_FUNCTION            1
+             42 STORE_FAST               1 (marks)
+
+ 55          44 LOAD_FAST                0 (base)
+             46 LOAD_GLOBAL              2 (PE)
+             48 COMPARE_OP               2 (==)
+             50 POP_JUMP_IF_FALSE       37 (to 74)
+
+ 56          52 LOAD_GLOBAL              3 (RUKK)
+             54 LOAD_FAST                1 (marks)
+             56 CONTAINS_OP              0
+             58 POP_JUMP_IF_FALSE       37 (to 74)
+
+ 57          60 LOAD_CONST               4 (<code object <listcomp> at 0x74a13f299210, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 57>)
+             62 LOAD_CONST               2 ('fix_cluster.<locals>.<listcomp>')
+             64 MAKE_FUNCTION            0
+             66 LOAD_FAST                1 (marks)
+             68 GET_ITER
+             70 CALL_FUNCTION            1
+             72 STORE_FAST               1 (marks)
+
+ 59     >>   74 LOAD_FAST                0 (base)
+             76 LOAD_GLOBAL              4 (TAW)
+             78 COMPARE_OP               2 (==)
+             80 POP_JUMP_IF_FALSE       49 (to 98)
+
+ 60          82 LOAD_CONST               5 (<code object <listcomp> at 0x74a13f2992c0, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 60>)
+             84 LOAD_CONST               2 ('fix_cluster.<locals>.<listcomp>')
+             86 MAKE_FUNCTION            0
+             88 LOAD_FAST                1 (marks)
+             90 GET_ITER
+             92 CALL_FUNCTION            1
+             94 STORE_FAST               1 (marks)
+             96 JUMP_FORWARD             7 (to 112)
+
+ 62     >>   98 LOAD_CONST               6 (<code object <listcomp> at 0x74a13f299370, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 62>)
+            100 LOAD_CONST               2 ('fix_cluster.<locals>.<listcomp>')
+            102 MAKE_FUNCTION            0
+            104 LOAD_FAST                1 (marks)
+            106 GET_ITER
+            108 CALL_FUNCTION            1
+            110 STORE_FAST               1 (marks)
+
+ 64     >>  112 LOAD_FAST                0 (base)
+            114 LOAD_GLOBAL              4 (TAW)
+            116 COMPARE_OP               3 (!=)
+            118 POP_JUMP_IF_FALSE       67 (to 134)
+
+ 65         120 LOAD_CONST               7 (<code object <listcomp> at 0x74a13f299420, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 65>)
+            122 LOAD_CONST               2 ('fix_cluster.<locals>.<listcomp>')
+            124 MAKE_FUNCTION            0
+            126 LOAD_FAST                1 (marks)
+            128 GET_ITER
+            130 CALL_FUNCTION            1
+            132 STORE_FAST               1 (marks)
+
+ 67     >>  134 LOAD_GLOBAL              5 (set)
+            136 CALL_FUNCTION            0
+            138 STORE_FAST               2 (seen)
+
+ 68         140 BUILD_LIST               0
+            142 STORE_FAST               3 (deduped)
+
+ 69         144 LOAD_FAST                1 (marks)
+            146 GET_ITER
+        >>  148 FOR_ITER                17 (to 184)
+            150 STORE_FAST               4 (m)
+
+ 70         152 LOAD_FAST                4 (m)
+            154 LOAD_FAST                2 (seen)
+            156 CONTAINS_OP              0
+            158 POP_JUMP_IF_FALSE       81 (to 162)
+
+ 71         160 JUMP_ABSOLUTE           74 (to 148)
+
+ 72     >>  162 LOAD_FAST                2 (seen)
+            164 LOAD_METHOD              6 (add)
+            166 LOAD_FAST                4 (m)
+            168 CALL_METHOD              1
+            170 POP_TOP
+
+ 73         172 LOAD_FAST                3 (deduped)
+            174 LOAD_METHOD              7 (append)
+            176 LOAD_FAST                4 (m)
+            178 CALL_METHOD              1
+            180 POP_TOP
+            182 JUMP_ABSOLUTE           74 (to 148)
+
+ 74     >>  184 LOAD_FAST                3 (deduped)
+            186 STORE_FAST               1 (marks)
+
+ 76         188 LOAD_GLOBAL              3 (RUKK)
+            190 LOAD_FAST                1 (marks)
+            192 CONTAINS_OP              0
+            194 JUMP_IF_TRUE_OR_POP    101 (to 202)
+            196 LOAD_GLOBAL              8 (BREVE_BELOW)
+            198 LOAD_FAST                1 (marks)
+            200 CONTAINS_OP              0
+        >>  202 STORE_FAST               5 (soft)
+
+ 77         204 LOAD_FAST                5 (soft)
+            206 POP_JUMP_IF_FALSE      115 (to 230)
+            208 LOAD_GLOBAL              9 (QUSH)
+            210 LOAD_FAST                1 (marks)
+            212 CONTAINS_OP              0
+            214 POP_JUMP_IF_FALSE      115 (to 230)
+
+ 78         216 LOAD_CONST               8 (<code object <listcomp> at 0x74a13f2994d0, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 78>)
+            218 LOAD_CONST               2 ('fix_cluster.<locals>.<listcomp>')
+            220 MAKE_FUNCTION            0
+            222 LOAD_FAST                1 (marks)
+            224 GET_ITER
+            226 CALL_FUNCTION            1
+            228 STORE_FAST               1 (marks)
+        >>  230 JUMP_FORWARD            17 (to 266)
+
+ 81     >>  232 LOAD_GLOBAL             10 (DOT_BELOW)
+            234 LOAD_GLOBAL              3 (RUKK)
+            236 LOAD_GLOBAL              9 (QUSH)
+            238 LOAD_GLOBAL             11 (DIAERESIS_BELOW)
+            240 LOAD_GLOBAL             12 (FEM)
+            242 LOAD_GLOBAL              8 (BREVE_BELOW)
+            244 BUILD_SET                6
+            246 STORE_DEREF              0 (drop)
+
+ 82         248 LOAD_CLOSURE             0 (drop)
+            250 BUILD_TUPLE              1
+            252 LOAD_CONST               9 (<code object <listcomp> at 0x74a13f299580, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 82>)
+            254 LOAD_CONST               2 ('fix_cluster.<locals>.<listcomp>')
+            256 MAKE_FUNCTION            8 (closure)
+            258 LOAD_FAST                1 (marks)
+            260 GET_ITER
+            262 CALL_FUNCTION            1
+            264 STORE_FAST               1 (marks)
+
+ 84     >>  266 LOAD_FAST                0 (base)
+            268 LOAD_CONST              10 ('')
+            270 LOAD_METHOD             13 (join)
+            272 LOAD_FAST                1 (marks)
+            274 CALL_METHOD              1
+            276 BINARY_ADD
+            278 RETURN_VALUE
+
+Disassembly of <code object <listcomp> at 0x74a13f27ec30, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 49>:
+ 49           0 BUILD_LIST               0
+              2 LOAD_FAST                0 (.0)
+        >>    4 FOR_ITER                 8 (to 22)
+              6 STORE_FAST               1 (m)
+              8 LOAD_FAST                1 (m)
+             10 LOAD_GLOBAL              0 (MACRON_BELOW)
+             12 COMPARE_OP               3 (!=)
+             14 POP_JUMP_IF_FALSE        2 (to 4)
+             16 LOAD_FAST                1 (m)
+             18 LIST_APPEND              2
+             20 JUMP_ABSOLUTE            2 (to 4)
+        >>   22 RETURN_VALUE
+
+Disassembly of <code object <listcomp> at 0x74a13f299160, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 53>:
+ 53           0 BUILD_LIST               0
+              2 LOAD_FAST                0 (.0)
+        >>    4 FOR_ITER                10 (to 26)
+              6 STORE_FAST               1 (m)
+              8 LOAD_FAST                1 (m)
+             10 LOAD_GLOBAL              0 (DOT_BELOW)
+             12 COMPARE_OP               2 (==)
+             14 POP_JUMP_IF_FALSE       10 (to 20)
+             16 LOAD_GLOBAL              1 (RUKK)
+             18 JUMP_FORWARD             1 (to 22)
+        >>   20 LOAD_FAST                1 (m)
+        >>   22 LIST_APPEND              2
+             24 JUMP_ABSOLUTE            2 (to 4)
+        >>   26 RETURN_VALUE
+
+Disassembly of <code object <listcomp> at 0x74a13f299210, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 57>:
+ 57           0 BUILD_LIST               0
+              2 LOAD_FAST                0 (.0)
+        >>    4 FOR_ITER                10 (to 26)
+              6 STORE_FAST               1 (m)
+              8 LOAD_FAST                1 (m)
+             10 LOAD_GLOBAL              0 (RUKK)
+             12 COMPARE_OP               2 (==)
+             14 POP_JUMP_IF_FALSE       10 (to 20)
+             16 LOAD_GLOBAL              1 (BREVE_BELOW)
+             18 JUMP_FORWARD             1 (to 22)
+        >>   20 LOAD_FAST                1 (m)
+        >>   22 LIST_APPEND              2
+             24 JUMP_ABSOLUTE            2 (to 4)
+        >>   26 RETURN_VALUE
+
+Disassembly of <code object <listcomp> at 0x74a13f2992c0, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 60>:
+ 60           0 BUILD_LIST               0
+              2 LOAD_FAST                0 (.0)
+        >>    4 FOR_ITER                10 (to 26)
+              6 STORE_FAST               1 (m)
+              8 LOAD_FAST                1 (m)
+             10 LOAD_GLOBAL              0 (DIAERESIS_BELOW)
+             12 COMPARE_OP               2 (==)
+             14 POP_JUMP_IF_FALSE       10 (to 20)
+             16 LOAD_GLOBAL              1 (FEM)
+             18 JUMP_FORWARD             1 (to 22)
+        >>   20 LOAD_FAST                1 (m)
+        >>   22 LIST_APPEND              2
+             24 JUMP_ABSOLUTE            2 (to 4)
+        >>   26 RETURN_VALUE
+
+Disassembly of <code object <listcomp> at 0x74a13f299370, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 62>:
+ 62           0 BUILD_LIST               0
+              2 LOAD_FAST                0 (.0)
+        >>    4 FOR_ITER                 8 (to 22)
+              6 STORE_FAST               1 (m)
+              8 LOAD_FAST                1 (m)
+             10 LOAD_GLOBAL              0 (DIAERESIS_BELOW)
+             12 COMPARE_OP               3 (!=)
+             14 POP_JUMP_IF_FALSE        2 (to 4)
+             16 LOAD_FAST                1 (m)
+             18 LIST_APPEND              2
+             20 JUMP_ABSOLUTE            2 (to 4)
+        >>   22 RETURN_VALUE
+
+Disassembly of <code object <listcomp> at 0x74a13f299420, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 65>:
+ 65           0 BUILD_LIST               0
+              2 LOAD_FAST                0 (.0)
+        >>    4 FOR_ITER                 8 (to 22)
+              6 STORE_FAST               1 (m)
+              8 LOAD_FAST                1 (m)
+             10 LOAD_GLOBAL              0 (FEM)
+             12 COMPARE_OP               3 (!=)
+             14 POP_JUMP_IF_FALSE        2 (to 4)
+             16 LOAD_FAST                1 (m)
+             18 LIST_APPEND              2
+             20 JUMP_ABSOLUTE            2 (to 4)
+        >>   22 RETURN_VALUE
+
+Disassembly of <code object <listcomp> at 0x74a13f2994d0, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 78>:
+ 78           0 BUILD_LIST               0
+              2 LOAD_FAST                0 (.0)
+        >>    4 FOR_ITER                 8 (to 22)
+              6 STORE_FAST               1 (m)
+              8 LOAD_FAST                1 (m)
+             10 LOAD_GLOBAL              0 (QUSH)
+             12 COMPARE_OP               3 (!=)
+             14 POP_JUMP_IF_FALSE        2 (to 4)
+             16 LOAD_FAST                1 (m)
+             18 LIST_APPEND              2
+             20 JUMP_ABSOLUTE            2 (to 4)
+        >>   22 RETURN_VALUE
+
+Disassembly of <code object <listcomp> at 0x74a13f299580, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 82>:
+ 82           0 BUILD_LIST               0
+              2 LOAD_FAST                0 (.0)
+        >>    4 FOR_ITER                 8 (to 22)
+              6 STORE_FAST               1 (m)
+              8 LOAD_FAST                1 (m)
+             10 LOAD_DEREF               0 (drop)
+             12 CONTAINS_OP              1
+             14 POP_JUMP_IF_FALSE        2 (to 4)
+             16 LOAD_FAST                1 (m)
+             18 LIST_APPEND              2
+             20 JUMP_ABSOLUTE            2 (to 4)
+        >>   22 RETURN_VALUE
+
+Disassembly of <code object fix_text at 0x74a13f299790, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 87>:
+ 88           0 LOAD_FAST                0 (text)
+              2 POP_JUMP_IF_TRUE         4 (to 8)
+
+ 89           4 LOAD_FAST                0 (text)
+              6 RETURN_VALUE
+
+ 90     >>    8 BUILD_LIST               0
+             10 STORE_FAST               1 (out)
+
+ 91          12 LOAD_CONST               1 (0)
+             14 STORE_FAST               2 (i)
+
+ 92          16 LOAD_GLOBAL              0 (len)
+             18 LOAD_FAST                0 (text)
+             20 CALL_FUNCTION            1
+             22 STORE_FAST               3 (n)
+
+ 93     >>   24 LOAD_FAST                2 (i)
+             26 LOAD_FAST                3 (n)
+             28 COMPARE_OP               0 (<)
+             30 POP_JUMP_IF_FALSE      129 (to 258)
+
+ 94     >>   32 LOAD_FAST                0 (text)
+             34 LOAD_FAST                2 (i)
+             36 BINARY_SUBSCR
+             38 STORE_FAST               4 (ch)
+
+ 96          40 LOAD_FAST                2 (i)
+             42 LOAD_CONST               2 (1)
+             44 BINARY_ADD
+             46 LOAD_FAST                3 (n)
+             48 COMPARE_OP               0 (<)
+             50 POP_JUMP_IF_FALSE       86 (to 172)
+             52 LOAD_GLOBAL              1 (is_combining)
+             54 LOAD_FAST                0 (text)
+             56 LOAD_FAST                2 (i)
+             58 LOAD_CONST               2 (1)
+             60 BINARY_ADD
+             62 BINARY_SUBSCR
+             64 CALL_FUNCTION            1
+             66 POP_JUMP_IF_FALSE       86 (to 172)
+             68 LOAD_GLOBAL              1 (is_combining)
+             70 LOAD_FAST                4 (ch)
+             72 CALL_FUNCTION            1
+             74 POP_JUMP_IF_TRUE        86 (to 172)
+
+ 97          76 LOAD_FAST                4 (ch)
+             78 STORE_FAST               5 (base)
+
+ 98          80 LOAD_FAST                2 (i)
+             82 LOAD_CONST               2 (1)
+             84 INPLACE_ADD
+             86 STORE_FAST               2 (i)
+
+ 99          88 BUILD_LIST               0
+             90 STORE_FAST               6 (marks)
+
+100          92 LOAD_FAST                2 (i)
+             94 LOAD_FAST                3 (n)
+             96 COMPARE_OP               0 (<)
+             98 POP_JUMP_IF_FALSE       77 (to 154)
+            100 LOAD_GLOBAL              1 (is_combining)
+            102 LOAD_FAST                0 (text)
+            104 LOAD_FAST                2 (i)
+            106 BINARY_SUBSCR
+            108 CALL_FUNCTION            1
+            110 POP_JUMP_IF_FALSE       77 (to 154)
+
+101     >>  112 LOAD_FAST                6 (marks)
+            114 LOAD_METHOD              2 (append)
+            116 LOAD_FAST                0 (text)
+            118 LOAD_FAST                2 (i)
+            120 BINARY_SUBSCR
+            122 CALL_METHOD              1
+            124 POP_TOP
+
+102         126 LOAD_FAST                2 (i)
+            128 LOAD_CONST               2 (1)
+            130 INPLACE_ADD
+            132 STORE_FAST               2 (i)
+
+100         134 LOAD_FAST                2 (i)
+            136 LOAD_FAST                3 (n)
+            138 COMPARE_OP               0 (<)
+            140 POP_JUMP_IF_FALSE       77 (to 154)
+            142 LOAD_GLOBAL              1 (is_combining)
+            144 LOAD_FAST                0 (text)
+            146 LOAD_FAST                2 (i)
+            148 BINARY_SUBSCR
+            150 CALL_FUNCTION            1
+            152 POP_JUMP_IF_TRUE        56 (to 112)
+
+103     >>  154 LOAD_FAST                1 (out)
+            156 LOAD_METHOD              2 (append)
+            158 LOAD_GLOBAL              3 (fix_cluster)
+            160 LOAD_FAST                5 (base)
+            162 LOAD_FAST                6 (marks)
+            164 CALL_FUNCTION            2
+            166 CALL_METHOD              1
+            168 POP_TOP
+
+104         170 JUMP_ABSOLUTE           12 (to 24)
+
+106     >>  172 LOAD_GLOBAL              1 (is_combining)
+            174 LOAD_FAST                4 (ch)
+            176 CALL_FUNCTION            1
+            178 POP_JUMP_IF_FALSE      116 (to 232)
+
+107         180 LOAD_FAST                4 (ch)
+
+108         182 LOAD_GLOBAL              4 (DOT_BELOW)
+
+109         184 LOAD_GLOBAL              5 (MACRON_BELOW)
+
+110         186 LOAD_GLOBAL              6 (DIAERESIS_BELOW)
+
+111         188 LOAD_GLOBAL              7 (RUKK)
+
+112         190 LOAD_GLOBAL              8 (QUSH)
+
+113         192 LOAD_GLOBAL              9 (FEM)
+
+114         194 LOAD_GLOBAL             10 (BREVE_BELOW)
+
+107         196 BUILD_SET                7
+            198 CONTAINS_OP              0
+            200 POP_JUMP_IF_FALSE      106 (to 212)
+
+116         202 LOAD_FAST                2 (i)
+            204 LOAD_CONST               2 (1)
+            206 INPLACE_ADD
+            208 STORE_FAST               2 (i)
+
+117         210 JUMP_ABSOLUTE           12 (to 24)
+
+118     >>  212 LOAD_FAST                1 (out)
+            214 LOAD_METHOD              2 (append)
+            216 LOAD_FAST                4 (ch)
+            218 CALL_METHOD              1
+            220 POP_TOP
+
+119         222 LOAD_FAST                2 (i)
+            224 LOAD_CONST               2 (1)
+            226 INPLACE_ADD
+            228 STORE_FAST               2 (i)
+
+120         230 JUMP_ABSOLUTE           12 (to 24)
+
+121     >>  232 LOAD_FAST                1 (out)
+            234 LOAD_METHOD              2 (append)
+            236 LOAD_FAST                4 (ch)
+            238 CALL_METHOD              1
+            240 POP_TOP
+
+122         242 LOAD_FAST                2 (i)
+            244 LOAD_CONST               2 (1)
+            246 INPLACE_ADD
+            248 STORE_FAST               2 (i)
+
+ 93         250 LOAD_FAST                2 (i)
+            252 LOAD_FAST                3 (n)
+            254 COMPARE_OP               0 (<)
+            256 POP_JUMP_IF_TRUE        16 (to 32)
+
+123     >>  258 LOAD_CONST               3 ('')
+            260 LOAD_METHOD             11 (join)
+            262 LOAD_FAST                1 (out)
+            264 CALL_METHOD              1
+            266 RETURN_VALUE
+
+Disassembly of <code object fix_record at 0x74a13f299d10, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 126>:
+127           0 LOAD_CONST               1 (False)
+              2 STORE_FAST               1 (changed)
+
+128           4 LOAD_CONST               2 (('text', 'html', 'itemName', 'itemRelatedHoliday', 'week', 'day', 'prayerTime'))
+              6 GET_ITER
+        >>    8 FOR_ITER                32 (to 74)
+             10 STORE_FAST               2 (key)
+
+129          12 LOAD_FAST                2 (key)
+             14 LOAD_FAST                0 (rec)
+             16 CONTAINS_OP              1
+             18 POP_JUMP_IF_TRUE        17 (to 34)
+             20 LOAD_GLOBAL              0 (isinstance)
+             22 LOAD_FAST                0 (rec)
+             24 LOAD_FAST                2 (key)
+             26 BINARY_SUBSCR
+             28 LOAD_GLOBAL              1 (str)
+             30 CALL_FUNCTION            2
+             32 POP_JUMP_IF_TRUE        18 (to 36)
+
+130     >>   34 JUMP_ABSOLUTE            4 (to 8)
+
+131     >>   36 LOAD_GLOBAL              2 (fix_text)
+             38 LOAD_FAST                0 (rec)
+             40 LOAD_FAST                2 (key)
+             42 BINARY_SUBSCR
+             44 CALL_FUNCTION            1
+             46 STORE_FAST               3 (fixed)
+
+132          48 LOAD_FAST                3 (fixed)
+             50 LOAD_FAST                0 (rec)
+             52 LOAD_FAST                2 (key)
+             54 BINARY_SUBSCR
+             56 COMPARE_OP               3 (!=)
+             58 POP_JUMP_IF_FALSE       36 (to 72)
+
+133          60 LOAD_FAST                3 (fixed)
+             62 LOAD_FAST                0 (rec)
+             64 LOAD_FAST                2 (key)
+             66 STORE_SUBSCR
+
+134          68 LOAD_CONST               3 (True)
+             70 STORE_FAST               1 (changed)
+        >>   72 JUMP_ABSOLUTE            4 (to 8)
+
+135     >>   74 LOAD_FAST                1 (changed)
+             76 RETURN_VALUE
+
+Disassembly of <code object process_dir at 0x74a13f29b5d0, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 138>:
+139           0 LOAD_GLOBAL              0 (sorted)
+              2 LOAD_FAST                0 (path)
+              4 LOAD_METHOD              1 (glob)
+              6 LOAD_CONST               1 ('*.json')
+              8 CALL_METHOD              1
+             10 CALL_FUNCTION            1
+             12 STORE_FAST               2 (files)
+
+140          14 LOAD_CONST               2 (0)
+             16 STORE_FAST               3 (touched)
+
+141          18 LOAD_GLOBAL              2 (enumerate)
+             20 LOAD_FAST                2 (files)
+             22 LOAD_CONST               3 (1)
+             24 CALL_FUNCTION            2
+             26 GET_ITER
+        >>   28 FOR_ITER                59 (to 148)
+             30 UNPACK_SEQUENCE          2
+             32 STORE_FAST               4 (i)
+             34 STORE_FAST               5 (fp)
+
+142          36 LOAD_GLOBAL              3 (json)
+             38 LOAD_METHOD              4 (loads)
+             40 LOAD_FAST                5 (fp)
+             42 LOAD_ATTR                5 (read_text)
+             44 LOAD_CONST               4 ('utf-8')
+             46 LOAD_CONST               5 (('encoding',))
+             48 CALL_FUNCTION_KW         1
+             50 CALL_METHOD              1
+             52 STORE_FAST               6 (rec)
+
+143          54 LOAD_GLOBAL              6 (fix_record)
+             56 LOAD_FAST                6 (rec)
+             58 CALL_FUNCTION            1
+             60 POP_JUMP_IF_FALSE       52 (to 104)
+
+144          62 LOAD_FAST                3 (touched)
+             64 LOAD_CONST               3 (1)
+             66 INPLACE_ADD
+             68 STORE_FAST               3 (touched)
+
+145          70 LOAD_FAST                1 (force_write)
+             72 POP_JUMP_IF_FALSE       52 (to 104)
+
+146          74 LOAD_FAST                5 (fp)
+             76 LOAD_ATTR                7 (write_text)
+
+147          78 LOAD_GLOBAL              3 (json)
+             80 LOAD_ATTR                8 (dumps)
+             82 LOAD_FAST                6 (rec)
+             84 LOAD_CONST               6 (False)
+             86 LOAD_CONST               7 (2)
+             88 LOAD_CONST               8 (('ensure_ascii', 'indent'))
+             90 CALL_FUNCTION_KW         3
+             92 LOAD_CONST               9 ('\n')
+             94 BINARY_ADD
+
+148          96 LOAD_CONST               4 ('utf-8')
+
+146          98 LOAD_CONST               5 (('encoding',))
+            100 CALL_FUNCTION_KW         2
+            102 POP_TOP
+
+150     >>  104 LOAD_FAST                4 (i)
+            106 LOAD_CONST              10 (500)
+            108 BINARY_MODULO
+            110 LOAD_CONST               2 (0)
+            112 COMPARE_OP               2 (==)
+            114 POP_JUMP_IF_FALSE       73 (to 146)
+
+151         116 LOAD_GLOBAL              9 (print)
+            118 LOAD_CONST              11 ('  ')
+            120 LOAD_FAST                4 (i)
+            122 FORMAT_VALUE             0
+            124 LOAD_CONST              12 ('/')
+            126 LOAD_GLOBAL             10 (len)
+            128 LOAD_FAST                2 (files)
+            130 CALL_FUNCTION            1
+            132 FORMAT_VALUE             0
+            134 LOAD_CONST              13 ('…')
+            136 BUILD_STRING             5
+            138 LOAD_CONST              14 (True)
+            140 LOAD_CONST              15 (('flush',))
+            142 CALL_FUNCTION_KW         2
+            144 POP_TOP
+        >>  146 JUMP_ABSOLUTE           14 (to 28)
+
+152     >>  148 LOAD_GLOBAL             10 (len)
+            150 LOAD_FAST                2 (files)
+            152 CALL_FUNCTION            1
+            154 LOAD_FAST                3 (touched)
+            156 BUILD_TUPLE              2
+            158 RETURN_VALUE
+
+Disassembly of <code object fix_index at 0x74a13f2b4660, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 155>:
+156           0 LOAD_FAST                0 (path)
+              2 LOAD_METHOD              0 (exists)
+              4 CALL_METHOD              0
+              6 POP_JUMP_IF_TRUE         6 (to 12)
+
+157           8 LOAD_CONST               1 (0)
+             10 RETURN_VALUE
+
+158     >>   12 LOAD_GLOBAL              1 (json)
+             14 LOAD_METHOD              2 (loads)
+             16 LOAD_FAST                0 (path)
+             18 LOAD_ATTR                3 (read_text)
+             20 LOAD_CONST               2 ('utf-8')
+             22 LOAD_CONST               3 (('encoding',))
+             24 CALL_FUNCTION_KW         1
+             26 CALL_METHOD              1
+             28 STORE_FAST               1 (data)
+
+159          30 LOAD_CONST               1 (0)
+             32 STORE_FAST               2 (n)
+
+160          34 LOAD_FAST                1 (data)
+             36 LOAD_METHOD              4 (get)
+             38 LOAD_CONST               4 ('prayers')
+             40 CALL_METHOD              1
+             42 JUMP_IF_TRUE_OR_POP     28 (to 56)
+             44 LOAD_FAST                1 (data)
+             46 LOAD_METHOD              4 (get)
+             48 LOAD_CONST               5 ('psalms')
+             50 CALL_METHOD              1
+             52 JUMP_IF_TRUE_OR_POP     28 (to 56)
+             54 BUILD_LIST               0
+        >>   56 STORE_FAST               3 (rows)
+
+161          58 LOAD_FAST                3 (rows)
+             60 GET_ITER
+        >>   62 FOR_ITER                38 (to 140)
+             64 STORE_FAST               4 (row)
+
+162          66 LOAD_CONST               6 (('itemName', 'holiday', 'week', 'day', 'prayerTime', 'path'))
+             68 GET_ITER
+        >>   70 FOR_ITER                33 (to 138)
+             72 STORE_FAST               5 (key)
+
+170          74 LOAD_FAST                5 (key)
+             76 LOAD_FAST                4 (row)
+             78 CONTAINS_OP              0
+             80 POP_JUMP_IF_FALSE       68 (to 136)
+             82 LOAD_GLOBAL              5 (isinstance)
+             84 LOAD_FAST                4 (row)
+             86 LOAD_FAST                5 (key)
+             88 BINARY_SUBSCR
+             90 LOAD_GLOBAL              6 (str)
+             92 CALL_FUNCTION            2
+             94 POP_JUMP_IF_FALSE       68 (to 136)
+
+171          96 LOAD_GLOBAL              7 (fix_text)
+             98 LOAD_FAST                4 (row)
+            100 LOAD_FAST                5 (key)
+            102 BINARY_SUBSCR
+            104 CALL_FUNCTION            1
+            106 STORE_FAST               6 (fixed)
+
+172         108 LOAD_FAST                6 (fixed)
+            110 LOAD_FAST                4 (row)
+            112 LOAD_FAST                5 (key)
+            114 BINARY_SUBSCR
+            116 COMPARE_OP               3 (!=)
+            118 POP_JUMP_IF_FALSE       68 (to 136)
+
+173         120 LOAD_FAST                6 (fixed)
+            122 LOAD_FAST                4 (row)
+            124 LOAD_FAST                5 (key)
+            126 STORE_SUBSCR
+
+174         128 LOAD_FAST                2 (n)
+            130 LOAD_CONST               7 (1)
+            132 INPLACE_ADD
+            134 STORE_FAST               2 (n)
+        >>  136 JUMP_ABSOLUTE           35 (to 70)
+
+162     >>  138 JUMP_ABSOLUTE           31 (to 62)
+
+175     >>  140 LOAD_FAST                0 (path)
+            142 LOAD_ATTR                8 (write_text)
+            144 LOAD_GLOBAL              1 (json)
+            146 LOAD_ATTR                9 (dumps)
+            148 LOAD_FAST                1 (data)
+            150 LOAD_CONST               8 (False)
+            152 LOAD_CONST               9 (2)
+            154 LOAD_CONST              10 (('ensure_ascii', 'indent'))
+            156 CALL_FUNCTION_KW         3
+            158 LOAD_CONST              11 ('\n')
+            160 BINARY_ADD
+            162 LOAD_CONST               2 ('utf-8')
+            164 LOAD_CONST               3 (('encoding',))
+            166 CALL_FUNCTION_KW         2
+            168 POP_TOP
+
+176         170 LOAD_FAST                2 (n)
+            172 RETURN_VALUE
+
+Disassembly of <code object main at 0x74a13f2b5160, file "/home/b/work/cursor/hudra.org/scripts/fix_syriac_dots.py", line 179>:
+180           0 LOAD_GLOBAL              0 (argparse)
+              2 LOAD_ATTR                1 (ArgumentParser)
+              4 LOAD_GLOBAL              2 (__doc__)
+              6 LOAD_CONST               1 (('description',))
+              8 CALL_FUNCTION_KW         1
+             10 STORE_FAST               0 (parser)
+
+181          12 LOAD_FAST                0 (parser)
+             14 LOAD_ATTR                3 (add_argument)
+
+182          16 LOAD_CONST               2 ('--dry-run')
+
+183          18 LOAD_CONST               3 ('store_true')
+
+184          20 LOAD_CONST               4 ('Count changes without writing')
+
+181          22 LOAD_CONST               5 (('action', 'help'))
+             24 CALL_FUNCTION_KW         3
+             26 POP_TOP
+
+186          28 LOAD_FAST                0 (parser)
+             30 LOAD_METHOD              4 (parse_args)
+             32 CALL_METHOD              0
+             34 STORE_FAST               1 (args)
+
+187          36 LOAD_FAST                1 (args)
+             38 LOAD_ATTR                5 (dry_run)
+             40 UNARY_NOT
+             42 STORE_FAST               2 (write)
+
+189          44 LOAD_GLOBAL              6 (print)
+             46 LOAD_CONST               6 ('Fixing prayers…')
+             48 CALL_FUNCTION            1
+             50 POP_TOP
+
+190          52 LOAD_GLOBAL              7 (process_dir)
+             54 LOAD_GLOBAL              8 (ROOT)
+             56 LOAD_CONST               7 ('data')
+             58 BINARY_TRUE_DIVIDE
+             60 LOAD_CONST               8 ('prayers')
+             62 BINARY_TRUE_DIVIDE
+             64 LOAD_FAST                2 (write)
+             66 CALL_FUNCTION            2
+             68 UNPACK_SEQUENCE          2
+             70 STORE_FAST               3 (total)
+             72 STORE_FAST               4 (touched)
+
+191          74 LOAD_GLOBAL              6 (print)
+             76 LOAD_CONST               9 ('  ')
+             78 LOAD_FAST                4 (touched)
+             80 FORMAT_VALUE             0
+             82 LOAD_CONST              10 ('/')
+             84 LOAD_FAST                3 (total)
+             86 FORMAT_VALUE             0
+             88 LOAD_CONST              11 (' prayer files changed')
+             90 BUILD_STRING             5
+             92 CALL_FUNCTION            1
+             94 POP_TOP
+
+193          96 LOAD_GLOBAL              6 (print)
+             98 LOAD_CONST              12 ('Fixing psalms…')
+            100 CALL_FUNCTION            1
+            102 POP_TOP
+
+194         104 LOAD_GLOBAL              7 (process_dir)
+            106 LOAD_GLOBAL              8 (ROOT)
+            108 LOAD_CONST               7 ('data')
+            110 BINARY_TRUE_DIVIDE
+            112 LOAD_CONST              13 ('psalms')
+            114 BINARY_TRUE_DIVIDE
+            116 LOAD_FAST                2 (write)
+            118 CALL_FUNCTION            2
+            120 UNPACK_SEQUENCE          2
+            122 STORE_FAST               3 (total)
+            124 STORE_FAST               4 (touched)
+
+195         126 LOAD_GLOBAL              6 (print)
+            128 LOAD_CONST               9 ('  ')
+            130 LOAD_FAST                4 (touched)
+            132 FORMAT_VALUE             0
+            134 LOAD_CONST              10 ('/')
+            136 LOAD_FAST                3 (total)
+            138 FORMAT_VALUE             0
+            140 LOAD_CONST              14 (' psalm files changed')
+            142 BUILD_STRING             5
+            144 CALL_FUNCTION            1
+            146 POP_TOP
+
+197         148 LOAD_FAST                2 (write)
+            150 POP_JUMP_IF_FALSE      128 (to 256)
+
+198         152 LOAD_GLOBAL              6 (print)
+            154 LOAD_CONST              15 ('Fixing indexes…')
+            156 CALL_FUNCTION            1
+            158 POP_TOP
+
+199         160 LOAD_GLOBAL              6 (print)
+            162 LOAD_CONST              16 ('  index.json field edits: ')
+            164 LOAD_GLOBAL              9 (fix_index)
+            166 LOAD_GLOBAL              8 (ROOT)
+            168 LOAD_CONST               7 ('data')
+            170 BINARY_TRUE_DIVIDE
+            172 LOAD_CONST              17 ('index.json')
+            174 BINARY_TRUE_DIVIDE
+            176 CALL_FUNCTION            1
+            178 FORMAT_VALUE             0
+            180 BUILD_STRING             2
+            182 CALL_FUNCTION            1
+            184 POP_TOP
+
+200         186 LOAD_GLOBAL              6 (print)
+
+201         188 LOAD_CONST              18 ('  psalms_index.json field edits: ')
+            190 LOAD_GLOBAL              9 (fix_index)
+            192 LOAD_GLOBAL              8 (ROOT)
+            194 LOAD_CONST               7 ('data')
+            196 BINARY_TRUE_DIVIDE
+            198 LOAD_CONST              19 ('psalms_index.json')
+            200 BINARY_TRUE_DIVIDE
+            202 CALL_FUNCTION            1
+            204 FORMAT_VALUE             0
+            206 BUILD_STRING             2
+
+200         208 CALL_FUNCTION            1
+            210 POP_TOP
+
+204         212 LOAD_GLOBAL              6 (print)
+            214 LOAD_CONST              20 ('Rebuilding catalog…')
+            216 CALL_FUNCTION            1
+            218 POP_TOP
+
+205         220 LOAD_CONST              21 (0)
+            222 LOAD_CONST               0 (None)
+            224 IMPORT_NAME             10 (subprocess)
+            226 STORE_FAST               5 (subprocess)
+
+207         228 LOAD_FAST                5 (subprocess)
+            230 LOAD_METHOD             11 (check_call)
+            232 LOAD_GLOBAL             12 (sys)
+            234 LOAD_ATTR               13 (executable)
+            236 LOAD_GLOBAL             14 (str)
+            238 LOAD_GLOBAL              8 (ROOT)
+            240 LOAD_CONST              22 ('scripts')
+            242 BINARY_TRUE_DIVIDE
+            244 LOAD_CONST              23 ('build_catalog.py')
+            246 BINARY_TRUE_DIVIDE
+            248 CALL_FUNCTION            1
+            250 BUILD_LIST               2
+            252 CALL_METHOD              1
+            254 POP_TOP
+
+209     >>  256 LOAD_GLOBAL              6 (print)
+            258 LOAD_CONST              24 ('Done.')
+            260 CALL_FUNCTION            1
+            262 POP_TOP
+            264 LOAD_CONST               0 (None)
+            266 RETURN_VALUE

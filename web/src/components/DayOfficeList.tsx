@@ -1,8 +1,13 @@
 import Link from "next/link";
-import { TraditionPills } from "@/components/SeasonCard";
 import {
+  TraditionEditionLinks,
+  TraditionPills,
+} from "@/components/SeasonCard";
+import {
+  groupOfficeEditions,
   groupPrayersByHour,
   type HourGroup,
+  type OfficeGroup,
 } from "@/lib/prayer-day";
 import type { PrayerSummary } from "@/lib/types";
 
@@ -25,7 +30,10 @@ export function DayOfficeList({
     return (
       <p className="text-sm leading-relaxed text-ink-soft">
         {emptyHint ?? "No hour prayers indexed for this day."}{" "}
-        <Link href={`/season/${seasonId}`} className="text-teal hover:underline">
+        <Link
+          href={`/season/${seasonId}`}
+          className="text-teal hover:underline"
+        >
           Browse the season
         </Link>
         .
@@ -71,6 +79,8 @@ function CompactHour({ group }: { group: HourGroup }) {
 }
 
 function HourBody({ group: g }: { group: HourGroup }) {
+  const offices = groupOfficeEditions(g.prayers);
+
   return (
     <div className="min-w-0">
       <p className="flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5">
@@ -85,20 +95,38 @@ function HourBody({ group: g }: { group: HourGroup }) {
         ) : null}
       </p>
       <ul className="mt-2 space-y-1.5">
-        {g.prayers.map((p) => (
-          <li key={p.id}>
-            <Link
-              href={`/prayer/${p.id}`}
-              className="group flex flex-col gap-1.5 border border-transparent px-2 py-2 transition hover:border-line hover:bg-paper/70 sm:flex-row sm:items-center sm:justify-between"
-            >
-              <p className="syr syr-meta truncate text-2xl text-ink transition group-hover:text-teal-deep">
-                {p.name}
-              </p>
-              <TraditionPills tradition={p.tradition} />
-            </Link>
-          </li>
+        {offices.map((office) => (
+          <OfficeRow key={office.key} office={office} />
         ))}
       </ul>
     </div>
+  );
+}
+
+function OfficeRow({ office }: { office: OfficeGroup }) {
+  const single = office.editions.length === 1;
+
+  if (single) {
+    const ed = office.editions[0];
+    return (
+      <li>
+        <Link
+          href={`/prayer/${ed.id}`}
+          className="group flex flex-col gap-1.5 border border-transparent px-2 py-2 transition hover:border-line hover:bg-paper/70 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <p className="syr syr-meta truncate text-2xl text-ink transition group-hover:text-teal-deep">
+            {office.name}
+          </p>
+          <TraditionPills tradition={ed.tradition} />
+        </Link>
+      </li>
+    );
+  }
+
+  return (
+    <li className="flex flex-col gap-1.5 border border-transparent px-2 py-2 sm:flex-row sm:items-center sm:justify-between">
+      <p className="syr syr-meta truncate text-2xl text-ink">{office.name}</p>
+      <TraditionEditionLinks editions={office.editions} />
+    </li>
   );
 }

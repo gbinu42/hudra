@@ -42,11 +42,13 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: clip;
   color: var(--ink);
   background:
     radial-gradient(ellipse 90% 55% at 10% -10%, var(--glow), transparent 55%),
@@ -90,6 +92,9 @@ footer {
 .syr {
   font-family: var(--font-syriac);
   font-feature-settings: "liga" 1, "calt" 1;
+  font-kerning: normal;
+  letter-spacing: normal;
+  word-spacing: normal;
   line-height: 1.9;
 }
 
@@ -192,12 +197,27 @@ footer {
   font-size: var(--syr-body-size);
   direction: rtl;
   unicode-bidi: isolate;
+  font-kerning: normal;
+  letter-spacing: 0;
+  /* Justify by widening spaces between words only — never between letters
+     (inter-character spacing disconnects Syriac joins). */
+  text-align: justify;
+  text-justify: inter-word;
+  text-align-last: right;
+  /*
+    Chromium paint workaround: complex Syriac glyphs (esp. Meltho + marks)
+    can vanish under selection without an alternate paint path.
+  */
+  text-shadow: 0 0 0 transparent;
+  -webkit-font-smoothing: antialiased;
 }
 
 .prayer-body p {
   margin: 0 0 1.15rem;
   text-align: justify;
+  text-justify: inter-word;
   text-align-last: right;
+  letter-spacing: 0;
   line-height: 2;
 }
 
@@ -218,6 +238,7 @@ footer {
 
 .prayer-body p.align-justify {
   text-align: justify;
+  text-justify: inter-word;
   text-align-last: right;
 }
 
@@ -227,4 +248,19 @@ footer {
 
 ::selection {
   background: rgba(26, 95, 106, 0.22);
+}
+
+/*
+  Selection on Syriac: Chromium often fails to repaint base letters + marks
+  (and colored rubric spans) when ::selection uses transparency or inherits
+  span colors. Force opaque bg + solid fill on every descendant.
+*/
+.prayer-body ::selection,
+.prayer-body *::selection,
+.syr ::selection,
+.syr *::selection {
+  background-color: #9ebec3 !important;
+  color: #14261c !important;
+  -webkit-text-fill-color: #14261c !important;
+  text-shadow: none !important;
 }

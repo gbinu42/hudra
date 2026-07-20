@@ -1,13 +1,15 @@
 import Link from "next/link";
+import { CalendarClient } from "@/components/CalendarClient";
 import { TodaysPrayers } from "@/components/TodaysPrayers";
-import { getCatalog, getSeasons } from "@/lib/data";
+import { getCatalog } from "@/lib/data";
+import { isPlaceholderSyriac } from "@/lib/syriac-text";
+import { HudraMark } from "@/components/HudraMark";
 
 export default function HomePage() {
   const catalog = getCatalog();
-  const cycle = getSeasons("cycle").slice(0, 6);
   const seasonLabels: Record<string, string> = {};
   for (const s of catalog.seasons) {
-    if (s.syriac && s.syriac !== "ܠܐ ܝܕܝܥܐ") {
+    if (!isPlaceholderSyriac(s.syriac)) {
       seasonLabels[s.id] = s.syriac;
     }
   }
@@ -16,26 +18,23 @@ export default function HomePage() {
     <main>
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_70%_20%,rgba(26,95,106,0.16),transparent_55%)]" />
-        <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
-          <div className="fade-up">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-5 py-16 sm:px-8 sm:py-24 lg:grid-cols-[1fr_auto] lg:gap-16">
+          <div className="fade-up order-2 lg:order-1">
             <p
               className="text-xs tracking-[0.28em] text-gold uppercase"
               style={{ fontFamily: "var(--font-display), Georgia, serif" }}
             >
               East Syriac Breviary
             </p>
-            <h1 className="syr syr-block drift mt-5 text-6xl leading-none text-teal-deep sm:text-7xl md:text-8xl">
-              ܚܘܼܕܪܵܐ
-            </h1>
             <p
-              className="mt-4 text-2xl text-ink sm:text-3xl"
+              className="mt-5 text-2xl text-ink sm:text-3xl"
               style={{ fontFamily: "var(--font-display), Georgia, serif" }}
             >
               The prayers of the Hudra
             </p>
             <p className="fade-up-delay mt-5 max-w-xl text-base leading-relaxed text-ink-soft">
-              A complete liturgical cycle in Syriac — seasons, weeks, days, and
-              hours of the Church of the East, gathered for quiet reading.
+              A complete liturgical cycle in East Syriac — Hudra, Kashkol and
+              Gazza of the Assyrian and Chaldean churches.
             </p>
             <div className="fade-up-delay-2 mt-8 flex flex-wrap gap-3">
               <Link
@@ -46,7 +45,7 @@ export default function HomePage() {
                   color: "#fff",
                 }}
               >
-                Enter the seasons
+                Seasons
               </Link>
               <Link
                 href="/calendar"
@@ -54,6 +53,13 @@ export default function HomePage() {
                 style={{ fontFamily: "var(--font-display), Georgia, serif" }}
               >
                 Liturgical calendar
+              </Link>
+              <Link
+                href="/psalms"
+                className="rounded-sm border border-line bg-paper/70 px-5 py-2.5 text-sm tracking-wide text-ink transition hover:border-teal/40"
+                style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+              >
+                Psalms
               </Link>
               <Link
                 href="/search"
@@ -65,90 +71,27 @@ export default function HomePage() {
             </div>
           </div>
 
-          <aside className="fade-up-delay border border-line bg-paper/55 p-6 backdrop-blur-sm sm:p-8">
-            <p
-              className="text-xs tracking-[0.2em] text-gold uppercase"
-              style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+          <div className="fade-up-delay order-1 flex flex-col items-center text-teal-deep lg:order-2 lg:justify-self-center">
+            <HudraMark className="h-36 w-auto sm:h-48 lg:h-56" />
+            <h1
+              className="syr drift mt-4 text-center text-5xl !leading-none sm:mt-5 sm:text-6xl"
+              dir="rtl"
             >
-              Corpus
-            </p>
-            <dl className="mt-5 grid grid-cols-2 gap-5">
-              {[
-                ["Prayers", catalog.counts.prayers.toLocaleString()],
-                ["Seasons", String(catalog.counts.seasons)],
-                ["Assyrian edition", catalog.counts.syriac.toLocaleString()],
-                ["Chaldean edition", catalog.counts.chaldean.toLocaleString()],
-              ].map(([label, value]) => (
-                <div key={label}>
-                  <dt className="text-xs text-ink-soft">{label}</dt>
-                  <dd
-                    className="mt-1 text-2xl text-ink"
-                    style={{
-                      fontFamily: "var(--font-display), Georgia, serif",
-                    }}
-                  >
-                    {value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          </aside>
+              ܚܘܼܕܪܵܐ
+            </h1>
+          </div>
         </div>
       </section>
 
-      <TodaysPrayers
-        prayers={catalog.prayers}
-        seasonLabels={seasonLabels}
-      />
+      <TodaysPrayers prayers={catalog.prayers} seasonLabels={seasonLabels} />
 
       <section className="border-t border-line/80 bg-paper/40">
         <div className="mx-auto max-w-6xl px-5 py-14 sm:px-8">
-          <div className="flex items-end justify-between gap-4">
-            <div>
-              <h2
-                className="text-2xl text-ink sm:text-3xl"
-                style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-              >
-                Begin the cycle
-              </h2>
-              <p className="mt-2 text-sm text-ink-soft">
-                From Annunciation through the Dedication of the Church.
-              </p>
-            </div>
-            <Link
-              href="/browse"
-              className="hidden text-sm text-teal underline-offset-4 hover:underline sm:inline"
-            >
-              View all seasons
-            </Link>
-          </div>
-          <ol className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {cycle.map((s, i) => (
-              <li key={s.id}>
-                <Link
-                  href={`/season/${s.id}`}
-                  className="flex items-center gap-4 border border-line bg-paper/70 px-4 py-4 transition hover:border-teal/35 hover:bg-paper"
-                >
-                  <span
-                    className="w-8 text-sm tabular-nums text-gold"
-                    style={{
-                      fontFamily: "var(--font-display), Georgia, serif",
-                    }}
-                  >
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span>
-                    <span className="block text-xs tracking-wide text-ink-soft">
-                      {s.english}
-                    </span>
-                    <span className="syr syr-meta mt-1 block text-2xl text-ink">
-                      {s.syriac}
-                    </span>
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ol>
+          <CalendarClient
+            prayers={catalog.prayers}
+            seasonLabels={seasonLabels}
+            embedded
+          />
         </div>
       </section>
     </main>

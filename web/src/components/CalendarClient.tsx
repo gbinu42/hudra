@@ -59,10 +59,13 @@ function formatCivilDate(iso: string): string {
 export function CalendarClient({
   prayers,
   seasonLabels,
+  embedded = false,
 }: {
   prayers: PrayerSummary[];
   /** Syriac season titles from the prayer corpus, keyed by season id. */
   seasonLabels: Record<string, string>;
+  /** Use when nested on another page (avoids a second page-level h1). */
+  embedded?: boolean;
 }) {
   const today = useMemo(() => new Date(), []);
   const litTodayDate = useMemo(() => toLiturgicalDate(today), [today]);
@@ -91,11 +94,13 @@ export function CalendarClient({
     [selectedOffice.prayers],
   );
 
-  const selectedSeasonSyr = seasonLabels[selectedDay.seasonId] || "";
-  const todaySeasonSyr = seasonLabels[todayInfo.seasonId] || "";
+  const selectedSeasonSyr =
+    selectedDay.seasonSyr || seasonLabels[selectedDay.seasonId] || "";
+  const todaySeasonSyr =
+    todayInfo.seasonSyr || seasonLabels[todayInfo.seasonId] || "";
 
   const firstWeekday = new Date(year, month, 1).getDay(); // Sun=0
-  const lead = (firstWeekday + 6) % 7;
+  const lead = firstWeekday;
 
   const monthFeasts = lit.feasts.filter((f) => {
     const [, m] = f.date.split("-").map(Number);
@@ -113,11 +118,13 @@ export function CalendarClient({
     const [y, m] = iso.split("-").map(Number);
     setYear(y);
     setMonth(m - 1);
-    requestAnimationFrame(() => {
-      document
-        .getElementById("day-offices")
-        ?.scrollIntoView({ behavior: "smooth", block: "start" });
-    });
+    if (!embedded) {
+      requestAnimationFrame(() => {
+        document
+          .getElementById("day-offices")
+          ?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    }
   }
 
   return (
@@ -132,32 +139,52 @@ export function CalendarClient({
               >
                 Liturgical calendar
               </p>
-              <h1
-                className="mt-2 text-3xl text-teal-deep sm:text-4xl"
-                style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-              >
-                {MONTHS[month]} {year}
-              </h1>
+              {embedded ? (
+                <h2
+                  className="mt-2 text-3xl text-teal-deep sm:text-4xl"
+                  style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+                >
+                  {MONTHS[month]} {year}
+                </h2>
+              ) : (
+                <h1
+                  className="mt-2 text-3xl text-teal-deep sm:text-4xl"
+                  style={{ fontFamily: "var(--font-display), Georgia, serif" }}
+                >
+                  {MONTHS[month]} {year}
+                </h1>
+              )}
             </div>
             <div className="flex items-center gap-2">
+              {(year !== litTodayDate.getFullYear() ||
+                month !== litTodayDate.getMonth()) && (
+                <button
+                  type="button"
+                  onClick={() => selectDay(litTodayIso)}
+                  className="rounded-sm border border-line bg-paper/80 px-3 py-1.5 text-sm text-ink-soft hover:bg-paper-deep/70"
+                >
+                  Today
+                </button>
+              )}
               <button
                 type="button"
                 onClick={() => shiftMonth(-1)}
                 className="rounded-sm border border-line bg-paper/80 px-3 py-1.5 text-sm text-ink-soft hover:bg-paper-deep/70"
+                aria-label="Previous month"
               >
                 ←
               </button>
-              <button
-                type="button"
-                onClick={() => selectDay(litTodayIso)}
-                className="rounded-sm border border-line bg-paper/80 px-3 py-1.5 text-sm text-ink-soft hover:bg-paper-deep/70"
+              <span
+                className="min-w-[7.5rem] px-1 text-center text-sm text-ink"
+                aria-live="polite"
               >
-                Today
-              </button>
+                {MONTHS[month]} {year}
+              </span>
               <button
                 type="button"
                 onClick={() => shiftMonth(1)}
                 className="rounded-sm border border-line bg-paper/80 px-3 py-1.5 text-sm text-ink-soft hover:bg-paper-deep/70"
+                aria-label="Next month"
               >
                 →
               </button>
@@ -166,7 +193,7 @@ export function CalendarClient({
 
           <div className="mt-6 overflow-hidden rounded-sm border border-line bg-paper/60">
             <div className="grid grid-cols-7 border-b border-line text-center text-[11px] tracking-wide text-ink-soft uppercase">
-              {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map((d) => (
+              {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
                 <div key={d} className="px-1 py-2">
                   {d}
                 </div>
@@ -244,13 +271,22 @@ export function CalendarClient({
                 {todayInfo.weekdaySyr}
               </span>
             </p>
-            <button
-              type="button"
-              onClick={() => selectDay(litTodayIso)}
-              className="mt-4 text-sm text-teal hover:underline"
-            >
-              Show today&apos;s offices →
-            </button>
+            {!embedded ? (
+              <button
+                type="button"
+                onClick={() => selectDay(litTodayIso)}
+                className="mt-4 text-sm text-teal hover:underline"
+              >
+                Show today&apos;s offices →
+              </button>
+            ) : (
+              <Link
+                href="/calendar"
+                className="mt-4 inline-block text-sm text-teal hover:underline"
+              >
+                Open full calendar →
+              </Link>
+            )}
           </section>
 
           <section className="rounded-sm border border-line bg-paper/70 p-5">
@@ -282,13 +318,15 @@ export function CalendarClient({
           </section>
 
           <p className="text-xs leading-relaxed text-ink-soft/80">
-            Click a day to open its offices. The liturgical day begins at
-            evening (6&nbsp;PM local time). Calendar logic adapted from hudra.org
-            (Isaac, Ph., 2007, <em>The Perpetual Calendar</em>).
+            {embedded
+              ? "The liturgical day begins at evening (6 PM local time). Calendar after Isaac, Ph., 2007, "
+              : "Click a day to open its offices. The liturgical day begins at evening (6 PM local time). Calendar after Isaac, Ph., 2007, "}
+            <em>The Perpetual Calendar</em>.
           </p>
         </aside>
       </div>
 
+      {!embedded ? (
       <section
         id="day-offices"
         className="scroll-mt-8 border-t border-line/80 pt-10"
@@ -368,6 +406,7 @@ export function CalendarClient({
           </div>
         </div>
       </section>
+      ) : null}
     </div>
   );
 }

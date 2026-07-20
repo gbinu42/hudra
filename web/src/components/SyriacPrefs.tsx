@@ -22,6 +22,7 @@ import {
   type SyriacFontId,
   type SyriacSizeId,
 } from "@/lib/syriac-prefs";
+import { adiabenePluralRish } from "@/lib/syriac-text";
 
 type Prefs = {
   fontId: SyriacFontId;
@@ -104,17 +105,27 @@ export function useSyriacPrefs() {
   return ctx;
 }
 
+/** Shape Syriac for the active font (Adiabene plural-rish workaround). */
+export function useDisplaySyriac() {
+  const { fontId } = useSyriacPrefs();
+  return useCallback(
+    (text: string) =>
+      fontId === "adiabene" ? adiabenePluralRish(text) : text,
+    [fontId],
+  );
+}
+
 export function SyriacPrefsControls() {
   const { fontId, sizeId, setFontId, setSizeId } = useSyriacPrefs();
 
   return (
-    <div className="flex flex-wrap items-center justify-end gap-2 sm:gap-3">
-      <label className="flex items-center gap-1.5 text-xs text-ink-soft">
+    <div className="flex min-w-0 flex-wrap items-center justify-end gap-1.5 sm:gap-3">
+      <label className="flex min-w-0 items-center gap-1.5 text-xs text-ink-soft">
         <span className="sr-only">Syriac font</span>
         <select
           value={fontId}
           onChange={(e) => setFontId(e.target.value as SyriacFontId)}
-          className="max-w-[10rem] cursor-pointer rounded-sm border border-line bg-paper/80 px-1.5 py-1 text-xs text-ink sm:max-w-[13.5rem]"
+          className="max-w-[9rem] cursor-pointer rounded-sm border border-line bg-paper/80 px-1.5 py-1 text-xs text-ink sm:max-w-[13.5rem]"
           aria-label="Syriac font"
           style={{ fontFamily: "var(--font-display), Georgia, serif" }}
         >
@@ -127,7 +138,7 @@ export function SyriacPrefsControls() {
       </label>
 
       <div
-        className="flex items-center gap-0.5 rounded-sm border border-line bg-paper/80 p-0.5"
+        className="flex shrink-0 items-center gap-0.5 rounded-sm border border-line bg-paper/80 p-0.5"
         role="group"
         aria-label="Syriac text size"
       >
@@ -136,7 +147,7 @@ export function SyriacPrefsControls() {
             key={s.id}
             type="button"
             onClick={() => setSizeId(s.id)}
-            className={`min-w-[1.75rem] rounded-sm px-1.5 py-1 text-[11px] tracking-wide transition ${
+            className={`min-w-[1.5rem] rounded-sm px-1 py-1 text-[11px] tracking-wide transition sm:min-w-[1.75rem] sm:px-1.5 ${
               sizeId === s.id
                 ? "bg-teal-deep text-paper"
                 : "text-ink-soft hover:bg-paper-deep/70 hover:text-ink"

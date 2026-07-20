@@ -1,9 +1,10 @@
 import Link from "next/link";
 import type { Season } from "@/lib/types";
+import { isPlaceholderSyriac } from "@/lib/syriac-text";
 
 /** Drop placeholder / invented labels; keep corpus Syriac only. */
 function corpusSyriac(s: string): string | null {
-  if (!s || s === "ܠܐ ܝܕܝܥܐ" || s === "—") return null;
+  if (isPlaceholderSyriac(s)) return null;
   return s;
 }
 
@@ -18,9 +19,9 @@ export function SeasonCard({ season }: { season: Season }) {
     >
       <div className="absolute inset-y-0 left-0 w-0.5 bg-teal/0 transition group-hover:bg-teal" />
       <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           {syr ? (
-            <h3 className="syr syr-meta text-3xl text-ink transition group-hover:text-teal-deep">
+            <h3 className="syr syr-meta text-2xl leading-snug text-ink transition group-hover:text-teal-deep sm:text-3xl">
               {syr}
             </h3>
           ) : null}
@@ -41,11 +42,7 @@ export function SeasonCard({ season }: { season: Season }) {
   );
 }
 
-export function TraditionPills({
-  tradition,
-}: {
-  tradition: string[];
-}) {
+export function TraditionPills({ tradition }: { tradition: string[] }) {
   const labels: Record<string, string> = {
     syriac: "Assyrian",
     chaldean: "Chaldean",
@@ -61,6 +58,39 @@ export function TraditionPills({
         >
           {labels[t] ?? t}
         </span>
+      ))}
+    </div>
+  );
+}
+
+const TRADITION_LABELS: Record<string, string> = {
+  syriac: "Assyrian",
+  chaldean: "Chaldean",
+  unspecified: "Open",
+};
+
+function editionLabel(tradition: string[]): string {
+  if (tradition.includes("syriac")) return TRADITION_LABELS.syriac;
+  if (tradition.includes("chaldean")) return TRADITION_LABELS.chaldean;
+  return TRADITION_LABELS.unspecified;
+}
+
+/** Clickable tradition chips — one link per Assyrian / Chaldean edition. */
+export function TraditionEditionLinks({
+  editions,
+}: {
+  editions: { id: string; tradition: string[] }[];
+}) {
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {editions.map((ed) => (
+        <Link
+          key={ed.id}
+          href={`/prayer/${ed.id}`}
+          className="rounded-sm border border-line bg-paper-deep/60 px-2 py-0.5 text-[11px] tracking-wide text-ink-soft uppercase transition hover:border-teal/40 hover:text-teal-deep"
+        >
+          {editionLabel(ed.tradition)}
+        </Link>
       ))}
     </div>
   );

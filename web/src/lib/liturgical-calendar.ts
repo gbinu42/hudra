@@ -58,39 +58,39 @@ const WEEKDAYS_EN = [
   "Sunday",
 ];
 const WEEKDAYS_SYR = [
-  "ܬܪܝܢܒܫܒܐ",
-  "ܬܠܬܒܫܒܐ",
-  "ܐܪܒܥܒܫܒܐ",
-  "ܚܡܫܒܫܒܐ",
-  "ܥܪܘܒܬܐ",
-  "ܫܒܬܐ",
-  "ܚܕܒܫܒܐ",
+  "ܬܪܹܝܢܒ݁ܫܲܒܵܐ",
+  "ܬ݂ܠܵܬ݂ܒ݁ܫܲܒܵܐ",
+  "ܐܲܪܒܲܥܒ݁ܫܲܒܵܐ",
+  "ܚܲܡܫܵܒ݁ܫܲܒܵܐ",
+  "ܥܪܘܼܒ݂ܬܵܐ",
+  "ܫܲܒ݁ܬ݂ܵܐ",
+  "ܚܲܕ݂ܒ݁ܫܲܒܵܐ",
 ];
 
 const SEASON_META: Record<
   LitSeasonId,
   { en: string; syr: string; order: number }
 > = {
-  subara: { en: "Annunciation", syr: "ܣܘܒܪܐ", order: 1 },
+  subara: { en: "Annunciation", syr: "ܣܘܼܒܵܪܵܐ", order: 1 },
   "after-nativity": {
     en: "Sundays after Nativity",
-    syr: "ܚܕܒܫܒ̈ܐ ܕܒܬܪ ܝܠܕܐ",
+    syr: "ܚܲܕ݂ܒ݁ܫܲܒܹ̈ܐ ܕܒ݂ܵܬܲܪ ܝܲܠܕܵܐ",
     order: 2,
   },
-  denha: { en: "Epiphany", syr: "ܕܢܚܐ", order: 3 },
-  "great-fast": { en: "Great Fast", syr: "ܨܘܡܐ ܪܒܐ", order: 4 },
-  easter: { en: "Resurrection", syr: "ܩܝܡܬܐ", order: 5 },
-  apostles: { en: "Apostles", syr: "ܫܠܝ̈ܚܐ", order: 6 },
-  summer: { en: "Summer", syr: "ܩܝܛܐ", order: 7 },
+  denha: { en: "Epiphany", syr: "ܕܸܢܚܵܐ", order: 3 },
+  "great-fast": { en: "Great Fast", syr: "ܨܵܘܡܵܐ ܪܲܒܵܐ", order: 4 },
+  easter: { en: "Resurrection", syr: "ܩܝܵܡܬܵܐ", order: 5 },
+  apostles: { en: "Apostles", syr: "ܫܠܝܼ̈ܚܹܐ", order: 6 },
+  summer: { en: "Summer", syr: "ܩܲܝܛܵܐ", order: 7 },
   "elijah-cross": {
     en: "Elijah — Holy Cross",
-    syr: "ܐܠܝܐ - ܨܠܝܒܐ",
+    syr: "ܐܹܠܝܼܵܐ — ܨܠܝܼܒ݂ܵܐ",
     order: 8,
   },
-  moses: { en: "Moses", syr: "ܡܘܫܐ", order: 9 },
+  moses: { en: "Moses", syr: "ܡܘܼܫܹܐ", order: 9 },
   dedication: {
     en: "Sanctification of the Church",
-    syr: "ܩܘܕܫ ܥܕܬܐ",
+    syr: "ܩܘܼܕܵܫ ܥܹܕܬܵܐ",
     order: 10,
   },
 };
