@@ -212,6 +212,22 @@ footer {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Tradition accent on the reading start edge (inline-start = right in RTL). */
+.prayer-body.tradition-assyrian {
+  border-inline-start: 3px solid var(--teal);
+  padding-inline-start: 1.15rem;
+}
+
+.prayer-body.tradition-chaldean {
+  border-inline-start: 3px solid var(--gold);
+  padding-inline-start: 1.15rem;
+}
+
+.prayer-body.tradition-both {
+  border-inline-start: 3px solid color-mix(in srgb, var(--teal) 55%, var(--gold));
+  padding-inline-start: 1.15rem;
+}
+
 .prayer-body p {
   margin: 0 0 1.15rem;
   text-align: justify;

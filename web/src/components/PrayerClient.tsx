@@ -12,6 +12,16 @@ function assetUrl(path: string): string {
   return `${base}${path}`;
 }
 
+/** Accent class for the prayer body — teal Assyrian / gold Chaldean. */
+function traditionAccentClass(tradition: string[]): string {
+  const hasS = tradition.includes("syriac");
+  const hasC = tradition.includes("chaldean");
+  if (hasS && !hasC) return "tradition-assyrian";
+  if (hasC && !hasS) return "tradition-chaldean";
+  if (hasS && hasC) return "tradition-both";
+  return "";
+}
+
 function MetaRow({
   label,
   syriac,
@@ -148,11 +158,21 @@ export function PrayerClient({
         <p className="mt-10 text-sm text-ink-soft">Loading prayer…</p>
       ) : hasHtml ? (
         <article
-          className="prayer-body mt-10"
+          className={`prayer-body mt-10 ${traditionAccentClass(
+            prayer.tradition?.length
+              ? prayer.tradition
+              : summary.tradition,
+          )}`}
           dangerouslySetInnerHTML={{ __html: prayer.html! }}
         />
       ) : (
-        <article className="prayer-body mt-10">
+        <article
+          className={`prayer-body mt-10 ${traditionAccentClass(
+            prayer.tradition?.length
+              ? prayer.tradition
+              : summary.tradition,
+          )}`}
+        >
           {paragraphs.map((p, i) => (
             <p key={i}>{p}</p>
           ))}

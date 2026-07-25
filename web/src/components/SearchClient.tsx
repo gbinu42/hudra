@@ -133,7 +133,7 @@ function OptionGroup<T extends string>({
   label: string;
   value: T;
   onChange: (v: T) => void;
-  options: { id: T; label: string }[];
+  options: { id: T; label: string; activeClass?: string }[];
   disabled?: boolean;
 }) {
   return (
@@ -153,7 +153,8 @@ function OptionGroup<T extends string>({
               onClick={() => onChange(opt.id)}
               className={`rounded-sm border px-2.5 py-1.5 text-sm transition disabled:opacity-50 ${
                 active
-                  ? "border-teal/50 bg-teal-deep text-white"
+                  ? (opt.activeClass ??
+                    "border-teal/50 bg-teal-deep text-white")
                   : "border-line bg-paper/80 text-ink-soft hover:border-teal/40 hover:text-ink"
               }`}
               style={{ fontFamily: "var(--font-display), Georgia, serif" }}
@@ -297,8 +298,17 @@ export function SearchClient() {
           disabled={controlsDisabled || kind === "psalm"}
           options={[
             { id: "all", label: "All" },
-            { id: "syriac", label: "Assyrian" },
-            { id: "chaldean", label: "Chaldean" },
+            {
+              id: "syriac",
+              label: "Assyrian",
+              activeClass: "border-teal/50 bg-teal-deep text-white",
+            },
+            {
+              id: "chaldean",
+              label: "Chaldean",
+              activeClass:
+                "border-gold/55 bg-[color:var(--gold)] text-white",
+            },
           ]}
         />
       </div>

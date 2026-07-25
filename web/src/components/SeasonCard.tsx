@@ -42,37 +42,49 @@ export function SeasonCard({ season }: { season: Season }) {
   );
 }
 
-export function TraditionPills({ tradition }: { tradition: string[] }) {
-  const labels: Record<string, string> = {
-    syriac: "Assyrian",
-    chaldean: "Chaldean",
-    unspecified: "Unspecified",
-  };
+const TRADITION_LABELS: Record<string, string> = {
+  syriac: "Assyrian",
+  chaldean: "Chaldean",
+  unspecified: "Unspecified",
+};
 
+/** Pill / link styles — teal = Assyrian, gold = Chaldean. */
+const TRADITION_PILL: Record<string, string> = {
+  syriac:
+    "border-teal/40 bg-teal/12 text-teal-deep",
+  chaldean:
+    "border-gold/50 bg-gold/18 text-[color:var(--gold)]",
+  unspecified:
+    "border-line bg-paper-deep/60 text-ink-soft",
+};
+
+function primaryTraditionKey(tradition: string[]): string {
+  if (tradition.includes("syriac")) return "syriac";
+  if (tradition.includes("chaldean")) return "chaldean";
+  return "unspecified";
+}
+
+export function TraditionPills({ tradition }: { tradition: string[] }) {
   return (
     <div className="flex flex-wrap gap-1.5">
       {tradition.map((t) => (
         <span
           key={t}
-          className="rounded-sm border border-line bg-paper-deep/60 px-2 py-0.5 text-[11px] tracking-wide text-ink-soft uppercase"
+          className={`rounded-sm border px-2 py-0.5 text-[11px] tracking-wide uppercase ${
+            TRADITION_PILL[t] ?? TRADITION_PILL.unspecified
+          }`}
         >
-          {labels[t] ?? t}
+          {TRADITION_LABELS[t] ?? t}
         </span>
       ))}
     </div>
   );
 }
 
-const TRADITION_LABELS: Record<string, string> = {
-  syriac: "Assyrian",
-  chaldean: "Chaldean",
-  unspecified: "Open",
-};
-
 function editionLabel(tradition: string[]): string {
   if (tradition.includes("syriac")) return TRADITION_LABELS.syriac;
   if (tradition.includes("chaldean")) return TRADITION_LABELS.chaldean;
-  return TRADITION_LABELS.unspecified;
+  return "Open";
 }
 
 /** Clickable tradition chips — one link per Assyrian / Chaldean edition. */
@@ -83,15 +95,20 @@ export function TraditionEditionLinks({
 }) {
   return (
     <div className="flex flex-wrap gap-1.5">
-      {editions.map((ed) => (
-        <Link
-          key={ed.id}
-          href={`/prayer/${ed.id}`}
-          className="rounded-sm border border-line bg-paper-deep/60 px-2 py-0.5 text-[11px] tracking-wide text-ink-soft uppercase transition hover:border-teal/40 hover:text-teal-deep"
-        >
-          {editionLabel(ed.tradition)}
-        </Link>
-      ))}
+      {editions.map((ed) => {
+        const key = primaryTraditionKey(ed.tradition);
+        return (
+          <Link
+            key={ed.id}
+            href={`/prayer/${ed.id}`}
+            className={`rounded-sm border px-2 py-0.5 text-[11px] tracking-wide uppercase transition hover:opacity-90 ${
+              TRADITION_PILL[key]
+            }`}
+          >
+            {editionLabel(ed.tradition)}
+          </Link>
+        );
+      })}
     </div>
   );
 }

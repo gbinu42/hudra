@@ -9,17 +9,47 @@ import re
 from typing import Any
 
 
-RUBRIC_COLORS = {
+# Canonical liturgical red for all rubrics in HTML output.
+RUBRIC_COLOR = "#ee0000"
+
+# Red family (already rubrics in source).
+RED_RUBRIC_COLORS = {
     "#ee0000",
     "#ff0000",
     "#c00000",
     "#dc143c",
+    "#e60000",
     "red",
 }
 
+# Non-red Word/Quill theme colors used as rubrics (esp. Assyrian texts).
+ALT_RUBRIC_COLORS = {
+    "#2e74b5",
+    "#2e75b6",
+    "#0f4761",
+    "#104862",
+    "#5b9bd5",
+    "#4f81bd",
+    "#365f91",
+    "#376092",
+    "#215e99",
+    "#0070c0",
+    "#00b0f0",
+    "#004e9a",
+    "#004f88",
+    "#0066cc",
+    "#0563c1",
+    "#467886",
+    "#31849b",
+    "blue",
+}
+
+RUBRIC_COLORS = RED_RUBRIC_COLORS | ALT_RUBRIC_COLORS
+
 # Named CSS colors Quill sometimes emits — keep them valid for inline style.
 COLOR_ALIASES = {
-    "red": "#ee0000",
+    "red": RUBRIC_COLOR,
+    "blue": RUBRIC_COLOR,
     "black": "#14261c",
 }
 
@@ -50,7 +80,8 @@ def _normalize_color(color: str | None) -> str | None:
     if low in COLOR_ALIASES:
         return COLOR_ALIASES[low]
     if re.fullmatch(r"#[0-9a-fA-F]{3,8}", c):
-        return c.lower() if len(c) != 7 else c  # keep #ee0000 style
+        # Prefer lowercase hex; keep 7-char form as-is casing from source then lower.
+        return low if len(c) == 7 else c.lower()
     if re.fullmatch(r"#[0-9a-fA-F]{3,8}", low):
         return low
     # Allow simple named colors through unchanged
@@ -59,11 +90,28 @@ def _normalize_color(color: str | None) -> str | None:
     return None
 
 
+def _is_rubric_color(color: str | None) -> bool:
+    if not color:
+        return False
+    c = color.lower().strip()
+    return c in RUBRIC_COLORS
+
+
+def _display_color(color: str | None) -> str | None:
+    """Map rubric colors (red or alt) to canonical red; leave body ink alone."""
+    normalized = _normalize_color(color)
+    if not normalized:
+        return None
+    if _is_rubric_color(normalized) or _is_rubric_color(str(color).lower().strip()):
+        return RUBRIC_COLOR
+    return normalized
+
+
 def _is_rubric(attrs: dict | None) -> bool:
     if not attrs:
         return False
     color = str(attrs.get("color", "")).lower().strip()
-    if color in RUBRIC_COLORS:
+    if _is_rubric_color(color):
         return True
     if attrs.get("bold") and color.startswith("#e"):
         return True
@@ -125,7 +173,7 @@ def quill_to_html(raw: Any) -> str:
         pieces: list[str] = []
         for text, attrs in runs:
             escaped = html.escape(text)
-            color = _normalize_color(attrs.get("color") if isinstance(attrs, dict) else None)
+            color = _display_color(attrs.get("color") if isinstance(attrs, dict) else None)
             styles: list[str] = []
             if color:
                 styles.append(f"color:{color}")
