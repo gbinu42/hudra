@@ -1,7 +1,7 @@
 /* Served from public/ so urls stay relative to the site root (incl. basePath). */
 @font-face {
   font-family: "East Syriac Adiabene";
-  src: url("./fonts/SyrCOMAdiabene.ttf") format("truetype");
+  src: url("./fonts/SyrCOMAdiabene.ttf?v=12") format("truetype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
