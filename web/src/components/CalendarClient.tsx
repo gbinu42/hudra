@@ -245,11 +245,15 @@ export function CalendarClient({
                     >
                       {dom}
                     </span>
-                    {hasFeast && (
-                      <span className="mt-1 block truncate text-[10px] leading-tight text-teal-deep">
-                        {day.feasts[0].en}
-                      </span>
-                    )}
+                    {hasFeast &&
+                      day.feasts.map((f) => (
+                        <span
+                          key={f.en}
+                          className="mt-1 block truncate text-[10px] leading-tight text-teal-deep"
+                        >
+                          {f.en}
+                        </span>
+                      ))}
                   </button>
                 );
               })}

@@ -22,7 +22,6 @@ import {
   type SyriacFontId,
   type SyriacSizeId,
 } from "@/lib/syriac-prefs";
-import { adiabenePluralRish } from "@/lib/syriac-text";
 
 type Prefs = {
   fontId: SyriacFontId;
@@ -103,16 +102,6 @@ export function useSyriacPrefs() {
     throw new Error("useSyriacPrefs must be used within SyriacPrefsProvider");
   }
   return ctx;
-}
-
-/** Shape Syriac for the active font (Adiabene plural-rish workaround). */
-export function useDisplaySyriac() {
-  const { fontId } = useSyriacPrefs();
-  return useCallback(
-    (text: string) =>
-      fontId === "adiabene" ? adiabenePluralRish(text) : text,
-    [fontId],
-  );
 }
 
 export function SyriacPrefsControls() {

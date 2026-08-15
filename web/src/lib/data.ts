@@ -43,6 +43,53 @@ export function getSeasons(group?: Season["group"]): Season[] {
   return seasons.filter((s) => s.group === group);
 }
 
+/** Cycle seasons that are a single feast day, not a multi-week season. */
+const CYCLE_FEAST_IDS = new Set([
+  "yalda",
+  "circumcision",
+  "denha-feast",
+  "lazarus",
+  "hosannas",
+  "passover",
+  "passion",
+  "great-saturday",
+  "easter",
+  "ascension",
+  "pentecost",
+]);
+
+export function isCycleFeastSeason(id: string): boolean {
+  return CYCLE_FEAST_IDS.has(id);
+}
+
+export function getCycleFeastSeasons(): Season[] {
+  return getCatalog().seasons.filter((s) => CYCLE_FEAST_IDS.has(s.id));
+}
+
+/**
+ * Seasons whose offices are only Assyrian or only Chaldean.
+ * Shared (both) seasons are omitted.
+ */
+export function getExclusiveSeasonTraditions(): Map<
+  string,
+  "syriac" | "chaldean"
+> {
+  const syriac = new Set<string>();
+  const chaldean = new Set<string>();
+  for (const p of getCatalog().prayers) {
+    if (p.tradition.includes("syriac")) syriac.add(p.seasonId);
+    if (p.tradition.includes("chaldean")) chaldean.add(p.seasonId);
+  }
+  const out = new Map<string, "syriac" | "chaldean">();
+  for (const id of new Set([...syriac, ...chaldean])) {
+    const hasS = syriac.has(id);
+    const hasC = chaldean.has(id);
+    if (hasS && !hasC) out.set(id, "syriac");
+    else if (hasC && !hasS) out.set(id, "chaldean");
+  }
+  return out;
+}
+
 export function getSeason(id: string): Season | undefined {
   return getCatalog().seasons.find((s) => s.id === id);
 }

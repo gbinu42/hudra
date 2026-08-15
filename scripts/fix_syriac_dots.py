@@ -10,22 +10,73 @@ East Syriac Madnhaya — common corpus confusions:
 
 Generic combining dots → Syriac marks when the base letter fits:
   3. U+0323 COMBINING DOT BELOW on BGDKPT → U+0742 RUKKAKHA
-  4. U+0307 COMBINING DOT ABOVE on BGDKPT → U+0741 QUSHSHAYA
+  4. U+0307 COMBINING DOT ABOVE on BGDKPT → U+0741 QUSHSHAYA.
+     Overreach on the active participle is undone by 4b below.
+  4b. Active-participle reading point: in the CaCeC participle the dot over
+     the middle radical is a grammatical point, not qushshaya, and the radical
+     is post-vocalic (soft). It is detected as a BGDKPT letter that carries a
+     vowel of its own and follows a letter pointed with zqapha, and is written
+     as U+0307. Gemination and hard positions have no preceding zqapha, so
+     they keep qushshaya. The shape also fits a post-vocalic BGDKPT in a
+     non-participle (ܥܒ݂ܵܕܹܿܝܗ̇), where the dot is more likely a mis-encoded
+     syame; U+0307 is still the safe outcome there, since the letter is soft
+     either way.
   5. U+0324 COMBINING DIAERESIS BELOW on ܬ → U+0740 FEMININE DOT
+  5b. U+0331 COMBINING MACRON BELOW is removed.
+     In this corpus the underline is noise (not a silent-letter mṭalqānā).
+     U+0304 / U+0654 still become U+0747 via the bilingual-peshitta wrapper;
+     U+0748 SYRIAC OBLIQUE LINE BELOW (mhaggyānā) is never produced here.
 
-Soft pe (East Syriac convention):
-  6. U+0742 on ܦ → U+032E COMBINING BREVE BELOW
+Soft pe (East Syriac convention) — narrowed to specific lexemes:
+  6. (off) Blanket U+0742 on ܦ → U+032E COMBINING BREVE BELOW.
+     Which of the two a soft pe takes depends on where it sits. Counting every
+     marked pe in the hudra prayers: a pe that closes a syllable — no vowel of
+     its own, a consonant behind it — is written with the breve 72,438 times
+     and with rukkakha never; a pe carrying its own vowel (ܢܵܦ݂ܸܠ) or standing
+     word-final (ܢܩܸܦ݂) keeps rukkakha. A blanket rule ignores that split, so
+     it stays off.
+  6b. The lexemes in BREVE_PE_LEXEMES take the breve: ܢܦ݂ܫ → ܢܦ̮ܫ, in every
+     inflection and with any proclitic (ܢܲܦ̮ܫܹܗ, ܒܢܲܦ̮ܫܗܘܿܢ, ܠܢܲܦ̮ܫܟ݂ܘܿܢ),
+     except where the pe is word-final. Within a listed lexeme the breve is
+     kept even on a vocalised pe, since the corpus writes ܬܲܟܼܫ̈ܦ̮ܵܬܲܢ that way
+     1,066 times. Only an existing rukkakha is rewritten; an unmarked pe is
+     never given a mark the source did not write.
 
-Dotless dalath-rish misused as resh:
-  7. U+0716 ܖ → U+072A ܪ. Plural resh is ܪ with syame.
-     Mark order: consonant mods, then syame, then vowels
-     (letter-syame-vowel, e.g. ܪ̈ܲ). Merge ܖܪ / ܪܖ clusters
-     so only one base remains.
+Mark order is normalized to letter–syame–vowel (e.g. ܪ̈ܲ).
 
-Chaldean "min" (from) particle (applied only to Chaldean texts):
-  8. Bare particle ܡܢ / wrong ܡ݂ܢ → ܡ̣ܢ (U+0323 COMBINING DOT BELOW)
+Dotless rish (U+0716 ܖ) is a keyboard stand-in for resh with syame.
+  It becomes U+072A ܪ, keeping syame. A dummy ܖ immediately before a
+  real ܪ (ܦܲܓ݂ܖܪ̈) is dropped so the existing ܦܲܓ݂ܪܪ̈ collapse can fire.
+
+Stacked vowels — a letter cannot carry two of them:
+  7. A below vowel under a real /a/ or /ā/ (U+0732, U+0735) is a
+     mis-encoded lower reading mark. Which mark depends on the vowel:
+       U+073C HBASA → U+0323 COMBINING DOT BELOW (ܗ̄ܘܼܵܘ → ܗ̄ܘ̣ܵܘ)
+       U+0738 / U+0739 ZLAMA → U+0324 COMBINING DIAERESIS BELOW
+         (ܗܘܸܵܬ݂ → ܗܘ̤ܵܬ݂). NFC stores the marks as ܘ̣ܵ / ܘ̤ܵ.
+     Yodh is exempt: ܝܼܵ is a genuine mater plus the following vowel
+     (ܢܒ݂ܝܼܵܐ, ܐܹܠܝܼܵܐ), not a stacked pair.
+
+Serto vowel signs left in a Madnhaya text:
+  7b. U+0736 RBASA ABOVE → U+0738 DOTTED ZLAMA HORIZONTAL and
+     U+073A HBASA ABOVE → U+0739 DOTTED ZLAMA ANGULAR, in place.
+     U+073D ESASA ABOVE marks /u/ on the consonant before the waw; it moves
+     onto the waw as U+073C (ܨܽܘܪ → ܨܘܼܪ). A waw that already carries
+     a vowel keeps it and the Serto mark is absorbed, not duplicated.
+
+"From" particle ܡ̣ܢ (applied when the text tradition uses this pointing):
+  8. Bare particle ܡܢ / wrong ܡ݂ܢ, ܡܼܢ, ܡܢ݂ → ܡ̣ܢ (U+0323 DOT BELOW).
+     Any one-dot-below shape counts, on either letter: the point belongs
+     between them, so it lands on the mim or the nun depending on the source.
+     Zlama form ܡܸܢ → ܡ̣ܢ, standalone particle only.
+     Mirror case for "who": ܡ݁ܢ / ܡܢ݁ → ܡ̇ܢ (U+0307 DOT ABOVE), where
+     qushshaya was typed for the supralinear point.
      Proclitics ܘ / ܕ kept: ܘܡ̣ܢ, ܕܡ̣ܢ.
-     Do NOT touch already-pointed ܡܲܢ / ܡ̇ܢ / ܡܵܢ / ܡܸܢ / ܡܼܢ.
+     Only the standalone particle is pointed: ܡܢ inside a word
+     (ܡܢܵܐ, ܡܢܵܬ݂ܵܐ, ܥܲܡܢ) is left alone, so the word boundary has to
+     treat vowel points and other combining marks as word-internal.
+     Do NOT touch already-pointed ܡܲܢ / ܡ̇ܢ / ܡܵܢ / ܡܼܢ,
+     ܡܸܢ inside other roots (ܗܲܝܡܸܢ), or suffixed ܡܸܢܝ / ܡܸܢܹܗ / ܡܸܢܗܘܿܢ.
      Interrogative/relative "who" with ܠ or ܒ: ܠܡܢ → ܠܡܲܢ, ܒܡܢ → ܒܡܲܢ.
 
 Never delete diacritics: if no remapping rule applies, the mark is kept.
@@ -34,6 +85,7 @@ When soft + hard end up on the same letter, keep soft and drop qushshaya.
 
 from __future__ import annotations
 
+import argparse
 import json
 import re
 import unicodedata
@@ -41,9 +93,11 @@ from pathlib import Path
 
 BGDKPT = set("ܒܓܕܟܦܬ")
 TAW = "ܬ"
+YUDH = "ܝ"
+WAW = "ܘ"
 PE = "ܦ"
-DOTLESS_RISH = "\u0716"  # ܖ — should be ܪ in this corpus
-RISH = "\u072a"  # ܪ
+RESH = "\u072a"
+DOTLESS_RISH = "\u0716"  # ܖ — keyboard stand-in for resh / resh-syame
 
 HBASA = "\u073c"  # vowel /i/ — misused as rukkakha on BGDKPT
 RWAHA = "\u073f"  # vowel /o/ — misused as qushshaya on BGDKPT
@@ -56,19 +110,48 @@ DIAERESIS_BELOW = "\u0324"
 BREVE_BELOW = "\u032e"
 SYAME = "\u0308"
 PTAHA = "\u0732"  # /a/ — used on ܡܲܢ "who"
+ZQAPHA = "\u0735"  # /ā/ — first vowel of the CaCeC active participle
+ZLAMA_HORIZONTAL = "\u0738"  # ܸ — Assyrian pointing on ܡܸܢ "from"
+ZLAMA_ANGULAR = "\u0739"  # ܹ
 
-# Syriac letter; used as a lookaround boundary for the mn particle.
-_SYR_LETTER = r"\u0710-\u072F"
-# Wrong soft marks sometimes placed on mim for "min".
-_MN_SOFT = f"[{RUKKAKHA}{BREVE_BELOW}]"
+MACRON_BELOW = "\u0331"  # generic underline — dropped, not promoted to ݇
+
+# Serto vowel signs, sometimes left in an otherwise Madnhaya text.
+RBASA_ABOVE = "\u0736"
+HBASA_ABOVE = "\u073a"
+ESASA_ABOVE = "\u073d"
+
+# A real /a/ or /ā/; a below vowel stacked under one of these is a reading mark.
+MAIN_ABOVE_VOWELS = {PTAHA, ZQAPHA}
+# How that mark is written depends on which below vowel was misused for it.
+STACKED_BELOW_TO_MARK = {
+    HBASA: DOT_BELOW,  # ܗ̄ܘܼܵܘ → ܗ̄ܘ̣ܵܘ
+    ZLAMA_HORIZONTAL: DIAERESIS_BELOW,  # ܗܘܸܵܬ݂ → ܗܘ̤ܵܬ݂
+    ZLAMA_ANGULAR: DIAERESIS_BELOW,
+}
+BELOW_VOWELS = set(STACKED_BELOW_TO_MARK)
+
+# Combining marks (generic + Syriac), used to skip pointing inside a word.
+_MARKS = r"\u0300-\u036F\u0730-\u074A"
+# Word-internal characters; used as a lookaround boundary for the mn particle.
+# Combining marks belong here too: with letters alone, a neighbouring vowel
+# point hides the rest of the word and ܡܢ matches inside it (ܡܢܵܐ, ܥܲܡܢ).
+_MN_WORD_CHAR = r"\u0300-\u036F\u0710-\u072F\u0730-\u074A\u074D-\u074F"
+# One-dot-below shapes wrongly used for the sublinear point of ܡ̣ܢ "from";
+# the reference lists both ܡ݂ܢ (rukkakha) and ܡܼܢ (hbasa) as errors.
+_MN_SOFT = f"[{RUKKAKHA}{BREVE_BELOW}{HBASA}]"
+# The one-dot-above shape wrongly used for the supralinear point of ܡ̇ܢ "who".
+_MN_HARD = f"[{QUSHSHAYA}]"
+# Either kind of stray mark, for the proclitic "who" forms.
+_MN_WRONG = f"[{RUKKAKHA}{BREVE_BELOW}{HBASA}{QUSHSHAYA}]"
 
 # Consonant modifiers (excluding syame) that should precede vowel points.
 CONSONANT_MODS = {RUKKAKHA, QUSHSHAYA, FEMININE, BREVE_BELOW}
 VOWELS = {chr(c) for c in range(0x0730, 0x0740)}
 
 
-def _remap_mark(base: str, mark: str) -> str:
-    """Map a single combining mark; never drop — return mark unchanged if no rule."""
+def _remap_mark(base: str, mark: str) -> str | None:
+    """Map a single combining mark. Return None to drop it."""
     if mark == HBASA and base in BGDKPT:
         return RUKKAKHA
     if mark == RWAHA and base in BGDKPT:
@@ -79,6 +162,8 @@ def _remap_mark(base: str, mark: str) -> str:
         return QUSHSHAYA
     if mark == DIAERESIS_BELOW and base == TAW:
         return FEMININE
+    if mark == MACRON_BELOW:
+        return None
     return mark
 
 
@@ -99,8 +184,11 @@ def fix_dots(text: str) -> str:
     if not text:
         return text
 
+    # Ahead of the per-letter pass, so converted vowels are ordered with the
+    # rest and can be seen by the stacked-vowel rule.
+    text = fix_serto_vowels(text)
+
     result: list[str] = []
-    pending_marks: list[str] = []  # from a dropped ܖ merging into the next ܪ
     i = 0
     n = len(text)
     while i < n:
@@ -114,40 +202,12 @@ def fix_dots(text: str) -> str:
                 marks.append(text[i])
                 i += 1
 
-            # ܖ → ܪ; merge into a neighbouring ܪ when present (avoid ܪܪ̈)
             if base == DOTLESS_RISH:
-                if i < n and text[i] in (RISH, DOTLESS_RISH):
-                    pending_marks.extend(marks)
+                # ܖ̈ → ܪ̈. A bare ܖ sitting in front of ܪ̈ is a dummy
+                # base (ܦܲܓ݂ܖܪ̈) and is dropped.
+                if SYAME not in marks and i < n and text[i] == RESH:
                     continue
-                # Previous emitted base is already rish — fold marks in
-                j = len(result) - 1
-                while j >= 0 and unicodedata.category(result[j]).startswith("M"):
-                    j -= 1
-                if j >= 0 and result[j] == RISH:
-                    existing = result[j + 1 :]
-                    del result[j + 1 :]
-                    combined = list(existing) + _order_marks(
-                        _finalize_marks(RISH, marks)
-                    )
-                    seen: set[str] = set()
-                    deduped: list[str] = []
-                    for m in combined:
-                        if m not in seen:
-                            deduped.append(m)
-                            seen.add(m)
-                    result.extend(_order_marks(deduped))
-                    continue
-                base = RISH
-
-            if base == RISH and pending_marks:
-                marks = pending_marks + marks
-                pending_marks = []
-            elif pending_marks:
-                result.append(RISH)
-                result.extend(
-                    _order_marks(_finalize_marks(RISH, pending_marks))
-                )
-                pending_marks = []
+                base = RESH
 
             result.append(base)
             result.extend(_order_marks(_finalize_marks(base, marks)))
@@ -156,23 +216,140 @@ def fix_dots(text: str) -> str:
             result.append(char)
             i += 1
 
-    if pending_marks:
-        result.append(RISH)
-        result.extend(_order_marks(_finalize_marks(RISH, pending_marks)))
-
     out = "".join(result)
     # Plural "our bodies": ܦܲܓ݂ܪ̈ܲܝܢ (syame then vowel).
     out = out.replace("ܦܲܓ݂ܪܪ̈", "ܦܲܓ݂ܪ̈")
     out = out.replace("ܦܲܓ݂ܪܲ̈", "ܦܲܓ݂ܪ̈ܲ")
     out = out.replace("ܦܲܓ݂ܪܲܝܢ", "ܦܲܓ݂ܪ̈ܲܝܢ")
+    out = fix_soft_pe_roots(out)
+    out = fix_participle_points(out)
     return out
 
 
-def _finalize_marks(base: str, marks: list[str]) -> list[str]:
-    new_marks = [_remap_mark(base, m) for m in marks]
+# Serto esasa marks the /u/ on the consonant before the waw; Madnhaya
+# puts it on the waw itself (ܨܽܘܪ → ܨܘܼܪ). A waw that is already vocalised
+# carries the Madnhaya reading, so the Serto mark is absorbed, not duplicated.
+_ESASA_RE = re.compile(rf"{ESASA_ABOVE}([{_MARKS}]*){WAW}([{_MARKS}]*)")
 
-    if base == PE:
-        new_marks = [BREVE_BELOW if m == RUKKAKHA else m for m in new_marks]
+# Serto vowels with a one-to-one Madnhaya counterpart on the same letter.
+_SERTO_VOWELS = {RBASA_ABOVE: ZLAMA_HORIZONTAL, HBASA_ABOVE: ZLAMA_ANGULAR}
+
+
+def fix_serto_vowels(text: str) -> str:
+    """West Syriac vowel signs → their East Syriac counterparts."""
+    if not text:
+        return text
+    for serto, madnhaya in _SERTO_VOWELS.items():
+        text = text.replace(serto, madnhaya)
+    if ESASA_ABOVE not in text:
+        return text
+
+    def sub(m: re.Match[str]) -> str:
+        between, waw_marks = m.group(1), m.group(2)
+        if any(c in VOWELS for c in waw_marks):
+            return between + WAW + waw_marks
+        return between + WAW + HBASA + waw_marks
+
+    text = _ESASA_RE.sub(sub, text)
+    # Anything left is already sitting on its own letter.
+    return text.replace(ESASA_ABOVE, HBASA)
+
+
+# Middle radical of a CaCeC active participle: BGDKPT carrying its own vowel,
+# preceded by a letter pointed with zqapha (ܥܵܒܹ̇ܕ݂, ܣܵܦܹ̇ܩ, ܢܵܦܹ̇ܠ). The upper
+# dot there is a reading point, so an inherited qushshaya is written back as a
+# plain dot above. Hard/geminated forms (ܡܩܲܒܸ݁ܠ, ܣܲܓ݁ܝܼܐܵܐ) lack the zqapha.
+_PARTICIPLE_POINT_RE = re.compile(
+    rf"[\u0710-\u072F][{_MARKS}]*{ZQAPHA}[{_MARKS}]*"
+    rf"[{''.join(sorted(BGDKPT))}][{_MARKS}]*"
+)
+
+
+def fix_participle_points(text: str) -> str:
+    """CaCeC participle: dot over the middle radical is not qushshaya."""
+    if not text or QUSHSHAYA not in text:
+        return text
+
+    def sub(m: re.Match[str]) -> str:
+        cluster = m.group(0)
+        # Marks of the BGDKPT letter only — everything after the last letter.
+        split = max(
+            i for i, ch in enumerate(cluster) if "\u0710" <= ch <= "\u072f"
+        )
+        head, marks = cluster[: split + 1], cluster[split + 1 :]
+        if QUSHSHAYA not in marks or not any(m in VOWELS for m in marks):
+            return cluster
+        return head + marks.replace(QUSHSHAYA, DOT_ABOVE)
+
+    return _PARTICIPLE_POINT_RE.sub(sub, text)
+
+
+# Lexemes that spell soft pe with the breve rather than rukkakha, each given as
+# the consonant skeleton around its pe. Matching on consonants alone covers every
+# inflection and proclitic (ܢܲܦ̮ܫܹܗ, ܒܢܲܦ̮ܫܗܘܿܢ, ܠܢܲܦ̮ܫܟ݂ܘܿܢ), since only the marks
+# between the letters vary. Attested with the breve in the hudra prayers, the
+# Peshitta Gospels, or both.
+BREVE_PE_LEXEMES = (
+    "ܢܦܫ",  # soul, self
+    "ܟܫܦ",  # ܬܟܫܦܬܐ, supplication
+    "ܛܘܦܣ",  # ܛܘܦܣܐ type/figure, and its derivatives
+    "ܦܬܚ",  # to open
+    "ܦܓܥ",  # to meet
+    "ܣܦܣܪ",  # sword
+    "ܫܛܝܦܬ",  # torrential
+    "ܢܦܛܪ",
+    "ܢܦܬܠܝ",  # Naphtali
+    "ܣܚܦ",  # to overthrow
+    "ܪܦܫ",
+    "ܙܦܬ",  # pitch
+    "ܦܟܗ",  # to lose savour
+    "ܬܦܪܝ",  # ܢܬܦܪܝܐ
+)
+
+_LETTERS = "\u0710-\u072f"
+# The corpus spells resh both ways; a skeleton must match either.
+_LETTER_CLASS = {RESH: f"[{RESH}{DOTLESS_RISH}]"}
+
+
+def _breve_pe_re(skeleton: str) -> re.Pattern[str]:
+    """Match the pe of one lexeme, capturing the marks it carries."""
+    sep = f"[{_MARKS}]*"
+    cut = skeleton.index(PE) + 1
+    letters = [_LETTER_CLASS.get(c, c) for c in skeleton]
+    head = sep.join(letters[:cut])
+    tail = sep.join(letters[cut:])
+    # Word-final pe keeps rukkakha (ܢܩܸܦ݂, ܡܓܲܕܦ݂), so something must follow.
+    # Where the skeleton names the following letter, require it.
+    follows = f"(?={tail})" if tail else f"(?=[{_LETTERS}])"
+    return re.compile(f"({head})([{_MARKS}]*){follows}")
+
+
+_BREVE_PE_RES = tuple(_breve_pe_re(s) for s in BREVE_PE_LEXEMES)
+
+
+def fix_soft_pe_roots(text: str) -> str:
+    """Soft pe takes the breve in these lexemes unless word-final: ܢܦ݂ܫ → ܢܦ̮ܫ."""
+    if not text or PE not in text:
+        return text
+    for pattern in _BREVE_PE_RES:
+        text = pattern.sub(
+            lambda m: m.group(1) + m.group(2).replace(RUKKAKHA, BREVE_BELOW),
+            text,
+        )
+    return text
+
+
+def _finalize_marks(base: str, marks: list[str]) -> list[str]:
+    new_marks = [m for m in (_remap_mark(base, m) for m in marks) if m]
+
+    # A letter cannot carry two vowels: a below vowel stacked under a real
+    # /a/ or /ā/ is a mis-encoded lower reading mark (ܗ̄ܘܼܵܘ → ̣,
+    # ܗܘܸܵܬ݂ → ̤, ܩܼܵܡ → ̣). Yodh is exempt — there ܝܼܵ is a genuine
+    # mater plus the following vowel (ܢܒ݂ܝܼܵܐ, ܐܹܠܝܼܵܐ).
+    if base != YUDH and any(m in MAIN_ABOVE_VOWELS for m in new_marks):
+        new_marks = [STACKED_BELOW_TO_MARK.get(m, m) for m in new_marks]
+
+    # Soft pe → breve below is disabled; leave rukkakha on ܦ as ܦ݂.
 
     has_soft = RUKKAKHA in new_marks or BREVE_BELOW in new_marks
     if has_soft:
@@ -187,28 +364,46 @@ def _finalize_marks(base: str, marks: list[str]) -> list[str]:
     return unique
 
 
-# ܠܡܢ / ܒܡܢ (± prior ܘ/ܕ) → who with ptāḥā; bare/ܘ/ܕ ܡܢ → Chaldean ܡ̣ܢ.
+# ܠܡܢ / ܒܡܢ (± prior ܘ/ܕ) → who with ptāḥā; bare/ܘ/ܕ ܡܢ → ܡ̣ܢ. A stray mark
+# may sit on either letter (ܡ݂ܢ or ܡܢ݂), since it stands for a point that the
+# script writes between them.
 _WHO_MN_RE = re.compile(
-    rf"(?<![{_SYR_LETTER}])([ܘܕ]?[ܠܒ])ܡ{_MN_SOFT}?ܢ(?![{_SYR_LETTER}])"
+    rf"(?<![{_MN_WORD_CHAR}])([ܘܕ]?[ܠܒ])ܡ{_MN_WRONG}?ܢ{_MN_WRONG}?"
+    rf"(?![{_MN_WORD_CHAR}])"
+)
+# Standalone ܡ݁ܢ / ܡܢ݁ → ܡ̇ܢ: qushshaya standing in for the supralinear point.
+_WHO_MN_DOT_RE = re.compile(
+    rf"(?<![{_MN_WORD_CHAR}])([ܘܕ]?)ܡ(?:{_MN_HARD}ܢ|ܢ{_MN_HARD})"
+    rf"(?![{_MN_WORD_CHAR}])"
 )
 _FROM_MN_RE = re.compile(
-    rf"(?<![{_SYR_LETTER}])([ܘܕ]?)ܡ(?:{_MN_SOFT})?ܢ(?![{_SYR_LETTER}])"
+    rf"(?<![{_MN_WORD_CHAR}])([ܘܕ]?)ܡ{_MN_SOFT}?ܢ{_MN_SOFT}?(?![{_MN_WORD_CHAR}])"
+)
+# Assyrian ܡܸܢ → ܡ̣ܢ. Standalone particle only: the lookbehind keeps ܗܲܝܡܸܢ
+# out, and the lookahead keeps suffixed forms (ܡܸܢܝ, ܡܸܢܹܗ, ܡܸܢܗܘܿܢ) as they are.
+_FROM_MN_ZLAMA_RE = re.compile(
+    rf"(?<![{_MN_WORD_CHAR}])([ܘܕ]?)ܡ{ZLAMA_HORIZONTAL}ܢ(?![{_MN_WORD_CHAR}])"
 )
 
 
 def fix_chaldean_min(text: str) -> str:
-    """Point the Chaldean 'min' (from) particle; keep 'man' (who) distinct."""
+    """Point the 'min' (from) particle; keep 'man' (who) distinct."""
     if not text or "ܡ" not in text:
         return text
 
     def who_sub(m: re.Match[str]) -> str:
         return m.group(1) + "ܡ" + PTAHA + "ܢ"
 
+    def who_dot_sub(m: re.Match[str]) -> str:
+        return m.group(1) + "ܡ" + DOT_ABOVE + "ܢ"
+
     def from_sub(m: re.Match[str]) -> str:
         return m.group(1) + "ܡ" + DOT_BELOW + "ܢ"
 
     # Who first so ܠܡܢ / ܒܡܢ are not turned into underdot "from".
     text = _WHO_MN_RE.sub(who_sub, text)
+    text = _WHO_MN_DOT_RE.sub(who_dot_sub, text)
+    text = _FROM_MN_ZLAMA_RE.sub(from_sub, text)
     text = _FROM_MN_RE.sub(from_sub, text)
     return text
 
@@ -299,30 +494,106 @@ def process_index(path: Path, *, chaldean_min: bool = False) -> bool:
     return changed
 
 
-if __name__ == "__main__":
-    ROOT = Path(__file__).resolve().parents[1]
-
-    # Self-check examples from the corpus report
+def _self_check() -> None:
+    """Rule regressions taken from the corpus report."""
     assert fix_dots("ܘܣܲܒܼܪܵܐ") == "ܘܣܲܒ݂ܪܵܐ"
     assert fix_dots("ܬܿ") == "ܬ݁"
     assert fix_dots("ܟܼ") == "ܟ݂"
+    assert fix_dots("ܦ݂") == "ܦ݂"  # soft pe keeps rukkakha (breve rule off)
+    assert fix_dots("ܦܼ") == "ܦ݂"  # hbasa on pe → rukkakha, not breve
+    assert fix_dots("ܘܢܵܦܼܸܠ") == "ܘܢܵܦ݂ܸܠ"
+    # CaCeC participle: middle radical keeps a plain dot above, from either a
+    # combining dot above or a rwaha in the source. Gemination and hard
+    # positions have no preceding zqapha and keep qushshaya.
+    assert fix_dots("\u0725\u0735\u0712\u0739\u073f\u0715\u0742") == (
+        "\u0725\u0735\u0712\u0307\u0739\u0715\u0742"
+    )
+    assert fix_dots("\u0723\u0735\u0726\u0739\u073f\u0729") == (
+        "\u0723\u0735\u0726\u0307\u0739\u0729"
+    )
+    assert fix_dots("\u0722\u0735\u0726\u0739\u073f\u0720") == (
+        "\u0722\u0735\u0726\u0307\u0739\u0720"
+    )
+    assert fix_dots("\u0723\u0732\u0713\u073f\u071d\u073c\u0710\u0735\u0710") == (
+        "\u0723\u0732\u0713\u0741\u071d\u073c\u0710\u0735\u0710"
+    )
+    assert fix_dots("\u0721\u0729\u0732\u0712\u0738\u073f\u0720") == (
+        "\u0721\u0729\u0732\u0712\u0741\u0738\u0720"
+    )
+    assert fix_dots("ܥܵܒܹ̇ܕ݂") == "ܥܵܒܹ̇ܕ݂"
+    assert fix_dots("ܨܵܒܹ̇ܝܢ") == "ܨܵܒܹ̇ܝܢ"
+    # ܢܦܫ is the exception: breve below, every inflection and proclitic.
+    assert fix_dots("ܢܲܦ݂ܫܵܐ") == "ܢܲܦ̮ܫܵܐ"
+    assert fix_dots("ܠܢܲܦ݂ܫܟ݂ܘܿܢ") == "ܠܢܲܦ̮ܫܟ݂ܘܿܢ"
+    assert fix_dots("ܒܢܲܦܼܫܗܘܿܢ") == "ܒܢܲܦ̮ܫܗܘܿܢ"
+    assert fix_dots("ܢܲܦ̮ܫܹܗ") == "ܢܲܦ̮ܫܹܗ"  # already breve
+    assert fix_dots("ܢܲܦ̈ܫܵܬ݂ܵܐ") == "ܢܲܦ̈ܫܵܬ݂ܵܐ"  # syame untouched
     assert fix_dots("ܚܘܼܕܪܵܐ") == "ܚܘܼܕܪܵܐ"  # hbasa on waw stays
     assert fix_dots("ܡܲܙܡܘܿܪܵܐ") == "ܡܲܙܡܘܿܪܵܐ"  # rwaha on waw stays
     assert fix_dots("ܕܦܲܓ݂ܪ̈ܲܝܢ") == "ܕܦܲܓ݂ܪ̈ܲܝܢ"
-    assert fix_dots("ܦܲܓ݂ܖܪ̈ܲܝܗܘܿܢ") == "ܦܲܓ݂ܪ̈ܲܝܗܘܿܢ"
-    assert fix_dots("ܐܘܖܼܪܚܵܐ") == "ܐܘܪܼܚܵܐ"
-    assert fix_dots("ܖ̈ܲ") == "ܪ̈ܲ"
+    assert fix_dots("ܦܲܓ݂ܪܪ̈ܲܝܗܘܿܢ") == "ܦܲܓ݂ܪ̈ܲܝܗܘܿܢ"
     assert fix_dots("ܪܲ̈") == "ܪ̈ܲ"
+    assert fix_dots("ܖ̈") == "ܪ̈"
+    assert fix_dots("ܦܲܓ݂ܖ̈ܲܝܢ") == "ܦܲܓ݂ܪ̈ܲܝܢ"
+    assert fix_dots("ܦܲܓ݂ܖܪ̈ܲܝܢ") == "ܦܲܓ݂ܪ̈ܲܝܢ"
+    assert fix_dots("ܖ̈ܲܚܡܹܐ") == "ܪ̈ܲܚܡܹܐ"
+    # A below vowel stacked under a real /a/ or /ā/ is a lower reading dot.
+    assert fix_dots("ܗ̄ܘܼܵܘ") == "ܗ̄ܘ̣ܵܘ"
+    assert fix_dots("ܗ݇ܘܼܵܘ") == "ܗ݇ܘ̣ܵܘ"
+    assert fix_dots("ܗ̄ܘܵܘ") == "ܗ̄ܘܵܘ"  # no below vowel
+    assert fix_dots("ܗܘܸܵܬ݂") == "ܗܘ̤ܵܬ݂"  # "she was" — zlama → diaeresis below
+    assert fix_dots("ܗܘܸܵܘ") == "ܗܘ̤ܵܘ"
+    assert fix_dots("ܘܩܼܵܡ") == "ܘܩ̣ܵܡ"  # "and he arose"
+    # Yodh is the mater exception: ܝܼܵ is two syllables, not a stacked pair.
+    assert fix_dots("ܢܒ݂ܝܼܵܐ") == "ܢܒ݂ܝܼܵܐ"
+    assert fix_dots("ܐܹܠܝܼܵܐ") == "ܐܹܠܝܼܵܐ"
+    # Combining macron below is dropped (not rewritten as U+0747).
+    assert fix_dots("ܚ̱ܢܲܢ") == "ܚܢܲܢ"
+    assert fix_dots("ܐܲܢ̱ܬ݁ܬ݂ܵܐ") == "ܐܲܢܬ݁ܬ݂ܵܐ"
+    # U+0748 is the mhaggyana, a different sign; it is never produced here.
+    assert "݈" not in fix_dots("ܚ̱ܢܲܢ")
+    assert "݇" not in fix_dots("ܚ̱ܢܲܢ")
+    # Serto vowels → Madnhaya.
+    assert fix_dots("ܨܽܘܪ") == "ܨܘܼܪ"  # esasa moves onto the waw
+    assert fix_dots("ܒܲܚܪܽܘܿܪܵܐ") == (
+        "ܒܲܚܪܘܿܪܵܐ"  # waw already vocalised
+    )
+    assert fix_dots("ܒܚܶܡܬܵܐ") == "ܒܚܸܡܬܵܐ"
+    assert fix_dots("ܪܺܫܹܗ") == "ܪܹܫܹܗ"
     assert fix_chaldean_min("ܡܢ ܒܝܼܫܵܐ") == "ܡ̣ܢ ܒܝܼܫܵܐ"
     assert fix_chaldean_min("ܘܡܢ ܥܵܠܲܡ") == "ܘܡ̣ܢ ܥܵܠܲܡ"
     assert fix_chaldean_min("ܕܡܢ ܩܕ݂ܝܼܡ") == "ܕܡ̣ܢ ܩܕ݂ܝܼܡ"
     assert fix_chaldean_min("ܡ݂ܢ ܫܡܲܝܵܐ") == "ܡ̣ܢ ܫܡܲܝܵܐ"
+    # Any one-dot-below shape, on either letter (the point belongs between).
+    assert fix_chaldean_min("\u0721\u073c\u0722 \u0712\u071d\u073c\u072b\u0735\u0710") == (
+        "\u0721\u0323\u0722 \u0712\u071d\u073c\u072b\u0735\u0710"
+    )
+    assert fix_chaldean_min("\u0721\u0722\u0742 \u071b\u0712") == "\u0721\u0323\u0722 \u071b\u0712"
+    # Qushshaya typed for the supralinear point of "who".
+    assert fix_chaldean_min("\u0721\u0741\u0722 \u0715") == "\u0721\u0307\u0722 \u0715"
+    assert fix_chaldean_min("\u0721\u0722\u0741 \u0715") == "\u0721\u0307\u0722 \u0715"
     assert fix_chaldean_min("ܠܡܢ ܣܵܓ݂ܕܝܼܬ݁ܘܿܢ") == "ܠܡܲܢ ܣܵܓ݂ܕܝܼܬ݁ܘܿܢ"
     assert fix_chaldean_min("ܒܡܢ ܚܲܟ݁ܝܼܡ") == "ܒܡܲܢ ܚܲܟ݁ܝܼܡ"
     assert fix_chaldean_min("ܡܲܢ ܕܨܵܒܹܐ") == "ܡܲܢ ܕܨܵܒܹܐ"  # already who
     assert fix_chaldean_min("ܡ̇ܢ ܕ") == "ܡ̇ܢ ܕ"
-    assert fix_chaldean_min("ܡܸܢ ܒܝܼܫܵܐ") == "ܡܸܢ ܒܝܼܫܵܐ"  # Assyrian pointing kept
+    assert fix_chaldean_min("ܡܸܢ ܒܝܼܫܵܐ") == "ܡ̣ܢ ܒܝܼܫܵܐ"
+    assert fix_chaldean_min("ܘܡܸܢ ܥܵܠܲܡ") == "ܘܡ̣ܢ ܥܵܠܲܡ"
+    # Suffixed forms keep the Assyrian pointing; only the particle is changed.
+    assert fix_chaldean_min("ܡܸܢܝ") == "ܡܸܢܝ"
+    assert fix_chaldean_min("ܡܸܢܹܗ") == "ܡܸܢܹܗ"
+    assert fix_chaldean_min("ܡܸܢܗܘܿܢ") == "ܡܸܢܗܘܿܢ"
+    assert fix_chaldean_min("ܡܸܢܟ݂ܘܿܢ") == "ܡܸܢܟ݂ܘܿܢ"
+    assert fix_chaldean_min("ܗܲܝܡܸܢ") == "ܗܲܝܡܸܢ"  # believe, not particle
+    assert fix_chaldean_min("ܡܗܲܝܡܸܢ") == "ܡܗܲܝܡܸܢ"
+    # Only the standalone particle: ܡܢ inside a pointed word stays bare.
+    assert fix_chaldean_min("ܡܢܵܐ ܥܵܒܹܕ݂") == "ܡܢܵܐ ܥܵܒܹܕ݂"
+    assert fix_chaldean_min("ܡܢܵܬ݂ܵܐ") == "ܡܢܵܬ݂ܵܐ"
+    assert fix_chaldean_min("ܥܲܡܢ") == "ܥܲܡܢ"
+    assert fix_chaldean_min("ܡܢܗܘܿܢ") == "ܡܢܗܘܿܢ"
+    assert fix_chaldean_min("ܡ̣ܢ ܟܠ") == "ܡ̣ܢ ܟܠ"  # idempotent
 
+
+def _apply_to_corpus(ROOT: Path) -> None:
     # Map short txt-hash → whether Chaldean (from prayer JSON).
     chaldean_ids: set[str] = set()
     prayers_dir = ROOT / "data" / "prayers"
@@ -363,3 +634,30 @@ if __name__ == "__main__":
         f"Fixed diacritics in {changed_json} JSON files "
         f"and {changed_txt} text files."
     )
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description=(
+            "Normalize Syriac diacritics. Runs the rule self-check by default; "
+            "rewriting the corpus requires --apply."
+        )
+    )
+    parser.add_argument(
+        "--apply",
+        action="store_true",
+        help="rewrite the prayer/psalm corpus in place",
+    )
+    parser.add_argument(
+        "--self-check",
+        action="store_true",
+        help="only run the rule regressions (default when --apply is absent)",
+    )
+    args = parser.parse_args()
+
+    _self_check()
+    if not args.apply:
+        print("Self-check passed. Re-run with --apply to rewrite the corpus.")
+        raise SystemExit(0)
+
+    _apply_to_corpus(Path(__file__).resolve().parents[1])

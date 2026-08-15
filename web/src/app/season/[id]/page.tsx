@@ -6,11 +6,17 @@ import {
   type SeasonWeekView,
 } from "@/components/SeasonOutline";
 import {
+  ExclusiveTraditionPill,
+} from "@/components/SeasonCard";
+import {
   getCatalog,
+  getExclusiveSeasonTraditions,
   getPrayersForSeason,
   getSeason,
+  isCycleFeastSeason,
   organizeSeason,
 } from "@/lib/data";
+import { seasonWhen } from "@/lib/feast-when";
 import { isPlaceholderSyriac } from "@/lib/syriac-text";
 
 type Props = { params: Promise<{ id: string }> };
@@ -48,12 +54,23 @@ export default async function SeasonPage({ params }: Props) {
   const prayers = getPrayersForSeason(id);
   const weeks = toWeekViews(organizeSeason(prayers));
   const seasonSyr = !isPlaceholderSyriac(season.syriac) ? season.syriac : "";
+  const when = seasonWhen(season.id);
+  const exclusiveTradition = getExclusiveSeasonTraditions().get(season.id);
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-12 sm:px-8 sm:py-16">
       <nav className="text-sm text-ink-soft">
-        <Link href="/browse" className="hover:text-teal">
-          Seasons
+        <Link
+          href={
+            season.group === "cycle" && !isCycleFeastSeason(season.id)
+              ? "/browse"
+              : "/commemorations"
+          }
+          className="hover:text-teal"
+        >
+          {season.group === "cycle" && !isCycleFeastSeason(season.id)
+            ? "Seasons"
+            : "Feasts"}
         </Link>
         <span className="mx-2 opacity-50">/</span>
         <span>{season.english}</span>
@@ -78,7 +95,19 @@ export default async function SeasonPage({ params }: Props) {
             {season.english}
           </h1>
         )}
-        <p className="mt-4 text-sm text-ink-soft/80">
+        {when || exclusiveTradition ? (
+          <div className="mt-4 flex flex-wrap items-center gap-2">
+            {when ? (
+              <p className="text-sm tracking-wide text-gold">{when}</p>
+            ) : null}
+            {exclusiveTradition ? (
+              <ExclusiveTraditionPill tradition={exclusiveTradition} />
+            ) : null}
+          </div>
+        ) : null}
+        <p
+          className={`text-sm text-ink-soft/80 ${when || exclusiveTradition ? "mt-2" : "mt-4"}`}
+        >
           {season.count.toLocaleString()} prayers · {weeks.length} week
           {weeks.length === 1 ? "" : "s"}
         </p>

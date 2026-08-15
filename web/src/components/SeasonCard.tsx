@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Season } from "@/lib/types";
+import { seasonWhen } from "@/lib/feast-when";
 import { isPlaceholderSyriac } from "@/lib/syriac-text";
 
 /** Drop placeholder / invented labels; keep corpus Syriac only. */
@@ -8,9 +9,16 @@ function corpusSyriac(s: string): string | null {
   return s;
 }
 
-export function SeasonCard({ season }: { season: Season }) {
+export function SeasonCard({
+  season,
+  exclusiveTradition,
+}: {
+  season: Season;
+  exclusiveTradition?: "syriac" | "chaldean";
+}) {
   const syr = corpusSyriac(season.syriac);
   const en = season.english?.trim() || "";
+  const when = seasonWhen(season.id);
 
   return (
     <Link
@@ -32,6 +40,16 @@ export function SeasonCard({ season }: { season: Season }) {
             >
               {en}
             </p>
+          ) : null}
+          {when || exclusiveTradition ? (
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              {when ? (
+                <p className="text-xs tracking-wide text-gold">{when}</p>
+              ) : null}
+              {exclusiveTradition ? (
+                <ExclusiveTraditionPill tradition={exclusiveTradition} />
+              ) : null}
+            </div>
           ) : null}
         </div>
         <span className="shrink-0 rounded-sm bg-paper-deep/80 px-2 py-1 text-xs tabular-nums text-ink-soft">
@@ -62,6 +80,20 @@ function primaryTraditionKey(tradition: string[]): string {
   if (tradition.includes("syriac")) return "syriac";
   if (tradition.includes("chaldean")) return "chaldean";
   return "unspecified";
+}
+
+export function ExclusiveTraditionPill({
+  tradition,
+}: {
+  tradition: "syriac" | "chaldean";
+}) {
+  return (
+    <span
+      className={`rounded-sm border px-2 py-0.5 text-[11px] tracking-wide uppercase ${TRADITION_PILL[tradition]}`}
+    >
+      {tradition === "syriac" ? "Assyrian only" : "Chaldean only"}
+    </span>
+  );
 }
 
 export function TraditionPills({ tradition }: { tradition: string[] }) {

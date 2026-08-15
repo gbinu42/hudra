@@ -284,20 +284,93 @@ function dedicationSunday(year: number): Date {
   return addDays(adventSunday(year), -28);
 }
 
+function firstWeekdayOfMonth(
+  year: number,
+  monthIndex: number,
+  jsWeekday: number,
+): Date {
+  const d = new Date(year, monthIndex, 1);
+  while (d.getDay() !== jsWeekday) d.setDate(d.getDate() + 1);
+  return d;
+}
+
+function lastWeekdayOfMonth(
+  year: number,
+  monthIndex: number,
+  jsWeekday: number,
+): Date {
+  const d = new Date(year, monthIndex + 1, 0);
+  while (d.getDay() !== jsWeekday) d.setDate(d.getDate() - 1);
+  return d;
+}
+
+/** Friday of week `n` in a season that starts on Sunday. */
+function fridayOfWeek(seasonSunday: Date, week: number): Date {
+  return addDays(seasonSunday, (week - 1) * 7 + 5);
+}
+
+function fridaysAfterUntil(after: Date, before: Date): Date[] {
+  const out: Date[] = [];
+  let d = addDays(after, 1);
+  while (d < before) {
+    if (d.getDay() === 5) out.push(new Date(d));
+    d = addDays(d, 1);
+  }
+  return out;
+}
+
+/**
+ * Winter dukhrana of Mart Maryam — last Friday between Nativity and Denha,
+ * or the only Friday in that gap (Hudra Ramsha rubric). Always falls in January.
+ */
+function winterMaryDukhrana(year: number): Date {
+  const nativity = new Date(year - 1, 11, 25);
+  const denha = new Date(year, 0, 6);
+  const fridays = fridaysAfterUntil(nativity, denha);
+  if (fridays.length >= 2) return fridays[fridays.length - 1];
+  if (fridays.length === 1) return fridays[0];
+  return nthWeekdayAfter(nativity, 5, 2);
+}
+
+/** Denha Friday commemorations, first → last-but-one. Last Friday is always the Departed. */
+const DENHA_FRIDAY_FEASTS = [
+  "Commemoration of Mar John the Baptist",
+  "Commemoration of Mar Peter and Paul",
+  "Commemoration of the Four Evangelists",
+  "Commemoration of Mar Stephen",
+  "Commemoration of the Greek Teachers",
+  "Commemoration of the Syriac and Roman Teachers",
+  "Commemoration of the One Person",
+  "Commemoration of the Forty Martyrs",
+];
+
 const FIXED_FEASTS: { m: number; d: number; en: string }[] = [
   { m: 1, d: 1, en: "Circumcision of the Lord" },
   { m: 1, d: 6, en: "Solemnity of Epiphany" },
+  { m: 1, d: 17, en: "Commemoration of Mar Anthony" },
   { m: 2, d: 2, en: "Entrance of Jesus to the Temple" },
   { m: 3, d: 19, en: "Feast of Saint Joseph" },
   { m: 3, d: 25, en: "Annunciation of the Virgin Mary" },
+  { m: 4, d: 24, en: "Commemoration of Mar Gewargis" },
+  { m: 5, d: 15, en: "Dukhrana of Mart Maryam in Iyar" },
+  { m: 5, d: 15, en: "Mart Maryam, Protection of Seeds" },
+  { m: 6, d: 21, en: "Visitation of Mart Maryam" },
+  { m: 6, d: 27, en: "Mother of Perpetual Help" },
   { m: 6, d: 29, en: "Saints Peter and Paul" },
   { m: 7, d: 3, en: "Saint Thomas the Apostle" },
+  { m: 7, d: 15, en: "Commemoration of Mar Cyriacus and Julitta" },
   { m: 8, d: 6, en: "Transfiguration" },
+  // 15 Aug: Assyrian dukhrana (Hudra ܒܩܲܝܛܵܐ) and Chaldean Shunaya / Assumption.
+  { m: 8, d: 15, en: "Dukhrana of Mart Maryam" },
   { m: 8, d: 15, en: "Assumption of the Virgin Mary" },
+  { m: 8, d: 22, en: "Queen of Heaven and Earth" },
   { m: 9, d: 8, en: "Nativity of the Virgin Mary" },
   { m: 9, d: 14, en: "Solemnity of the Holy Cross" },
+  { m: 11, d: 27, en: "Commemoration of Mar Jacob the Intercisus" },
+  { m: 12, d: 4, en: "Commemoration of Mart Barbara" },
   { m: 12, d: 6, en: "Saint Nicolas" },
   { m: 12, d: 8, en: "Immaculate Conception" },
+  { m: 12, d: 8, en: "Conception of Mary without Original Sin" },
   { m: 12, d: 25, en: "Nativity of the Lord" },
   { m: 12, d: 26, en: "Glorification of the Virgin Mary" },
   { m: 12, d: 27, en: "Holy Innocents" },
@@ -370,12 +443,24 @@ function buildSeasonRanges(year: number, easter: Date): LitSeasonRange[] {
     ) as LitSeasonRange[];
 }
 
+function pushFeast(
+  feasts: LitYear["feasts"],
+  date: Date,
+  en: string,
+  movable = true,
+) {
+  feasts.push({ date: toISO(date), en, syr: "", movable });
+}
+
 export function buildLiturgicalYear(year: number): LitYear {
   const easter = isaacEaster(year);
   const lent = lentMonday(easter);
   const pentecost = nthWeekdayAfter(easter, 0, 7);
   const advent = adventSunday(year);
   const seasons = buildSeasonRanges(year, easter);
+  const summer = addDays(pentecost, 49);
+  const cross = holyCrossSunday(year);
+  const eliyah = cross < summer ? summer : cross;
 
   const feasts: LitYear["feasts"] = FIXED_FEASTS.map((f) => ({
     date: toISO(new Date(year, f.m - 1, f.d)),
@@ -383,32 +468,57 @@ export function buildLiturgicalYear(year: number): LitYear {
     syr: "",
   }));
 
-  // Movable feasts from Easter (hudra.org calendar) — English labels only;
+  // Movable feasts from Easter / season Sundays. English labels only;
   // Syriac feast titles come from the prayer corpus when browsing seasons.
   const movable: { offset: number; en: string }[] = [
+    { offset: -69, en: "Baʿutha of the Ninevites (day 1)" },
+    { offset: -68, en: "Baʿutha of the Ninevites (day 2)" },
+    { offset: -67, en: "Baʿutha of the Ninevites (day 3)" },
     { offset: -48, en: "Beginning of the Great Fast" },
-    { offset: -20, en: "Baʿutha of the Ninevites (day 1)" },
-    { offset: -19, en: "Baʿutha of the Ninevites (day 2)" },
-    { offset: -18, en: "Baʿutha of the Ninevites (day 3)" },
+    { offset: -9, en: "Friday of Lazarus" },
     { offset: -7, en: "Hosanna Sunday" },
     { offset: -3, en: "Passover Thursday" },
     { offset: -2, en: "Friday of the Passion" },
     { offset: -1, en: "Great Saturday" },
     { offset: 0, en: "Great Sunday of the Resurrection" },
+    { offset: 5, en: "Friday of the Confessors" },
+    { offset: 15, en: "Commemoration of Mar Pethion" },
+    { offset: 28, en: "Commemoration of Mar Addai the Apostle" },
     { offset: 39, en: "Ascension" },
     { offset: 49, en: "Pentecost" },
-    { offset: 50, en: "Golden Friday" },
   ];
   for (const m of movable) {
-    feasts.push({
-      date: toISO(addDays(easter, m.offset)),
-      en: m.en,
-      syr: "",
-      movable: true,
-    });
+    pushFeast(feasts, addDays(easter, m.offset), m.en);
   }
 
-  feasts.sort((a, b) => a.date.localeCompare(b.date));
+  pushFeast(feasts, winterMaryDukhrana(year), "Dukhrana of Mart Maryam in Winter");
+  pushFeast(feasts, firstWeekdayOfMonth(year, 4, 2), "Commemoration of Shmuni and her Sons");
+  pushFeast(feasts, nthWeekdayAfter(pentecost, 5, 1), "Golden Friday");
+  pushFeast(feasts, addDays(pentecost, 11), "Corpus Christi");
+  pushFeast(feasts, addDays(pentecost, 19), "Sacred Heart of our Lord");
+  pushFeast(feasts, fridayOfWeek(pentecost, 7), "Commemoration of the Seventy-two Disciples");
+  pushFeast(feasts, summer, "Commemoration of the Twelve Apostles");
+  pushFeast(feasts, fridayOfWeek(summer, 6), "Commemoration of Mar Simeon bar Sabbaʿe");
+  pushFeast(feasts, fridayOfWeek(summer, 7), "Commemoration of Mar Qardagh");
+  pushFeast(feasts, fridayOfWeek(eliyah, 1), "Commemoration of Mar Papa");
+  pushFeast(feasts, lastWeekdayOfMonth(year, 9, 0), "Jesus the King");
+
+  const denhaFridays = fridaysAfterUntil(new Date(year, 0, 6), lent);
+  if (denhaFridays.length > 0) {
+    pushFeast(
+      feasts,
+      denhaFridays[denhaFridays.length - 1],
+      "Friday of the Departed",
+    );
+    const slots = denhaFridays.length - 1;
+    const pool = DENHA_FRIDAY_FEASTS.slice(0, Math.max(0, slots));
+    pool.forEach((en, i) => pushFeast(feasts, denhaFridays[i], en));
+    if (!pool.includes("Commemoration of the Forty Martyrs")) {
+      pushFeast(feasts, new Date(year, 2, 9), "Commemoration of the Forty Martyrs");
+    }
+  }
+
+  feasts.sort((a, b) => a.date.localeCompare(b.date) || a.en.localeCompare(b.en));
 
   return {
     year,

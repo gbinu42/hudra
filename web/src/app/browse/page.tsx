@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { SeasonCard } from "@/components/SeasonCard";
-import { getSeasons } from "@/lib/data";
+import { getExclusiveSeasonTraditions, getSeasons } from "@/lib/data";
 
 export const metadata: Metadata = {
   title: "Seasons",
 };
 
 export default function BrowsePage() {
+  const exclusive = getExclusiveSeasonTraditions();
   const cycle = getSeasons("cycle");
   const feasts = getSeasons("feast");
   const baotha = getSeasons("baotha");
@@ -41,7 +42,11 @@ export default function BrowsePage() {
         </h2>
         <div className="mt-5 grid gap-4 sm:grid-cols-2">
           {cycle.map((s) => (
-            <SeasonCard key={s.id} season={s} />
+            <SeasonCard
+              key={s.id}
+              season={s}
+              exclusiveTradition={exclusive.get(s.id)}
+            />
           ))}
         </div>
       </section>
@@ -56,7 +61,11 @@ export default function BrowsePage() {
           </h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             {feasts.map((s) => (
-              <SeasonCard key={s.id} season={s} />
+              <SeasonCard
+                key={s.id}
+                season={s}
+                exclusiveTradition={exclusive.get(s.id)}
+              />
             ))}
           </div>
         </section>
@@ -72,7 +81,11 @@ export default function BrowsePage() {
           </h2>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
             {baotha.map((s) => (
-              <SeasonCard key={s.id} season={s} />
+              <SeasonCard
+                key={s.id}
+                season={s}
+                exclusiveTradition={exclusive.get(s.id)}
+              />
             ))}
           </div>
         </section>
