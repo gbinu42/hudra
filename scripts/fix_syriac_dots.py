@@ -180,9 +180,35 @@ def _order_marks(marks: list[str]) -> list[str]:
     return mods + syame + other + vowels
 
 
+def fix_dotless_rish(text: str) -> str:
+    """ܖ̈ → ܪ̈. A dummy ܖ immediately before ܪ is dropped (ܦܲܓ݂ܖܪ̈)."""
+    if not text or DOTLESS_RISH not in text:
+        return text
+    result: list[str] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        if text[i] != DOTLESS_RISH:
+            result.append(text[i])
+            i += 1
+            continue
+        marks: list[str] = []
+        i += 1
+        while i < n and unicodedata.category(text[i]).startswith("M"):
+            marks.append(text[i])
+            i += 1
+        if SYAME not in marks and i < n and text[i] == RESH:
+            continue
+        result.append(RESH)
+        result.extend(marks)
+    return "".join(result)
+
+
 def fix_dots(text: str) -> str:
     if not text:
         return text
+
+    text = fix_dotless_rish(text)
 
     # Ahead of the per-letter pass, so converted vowels are ordered with the
     # rest and can be seen by the stacked-vowel rule.
@@ -201,13 +227,6 @@ def fix_dots(text: str) -> str:
             while i < n and unicodedata.category(text[i]).startswith("M"):
                 marks.append(text[i])
                 i += 1
-
-            if base == DOTLESS_RISH:
-                # ܖ̈ → ܪ̈. A bare ܖ sitting in front of ܪ̈ is a dummy
-                # base (ܦܲܓ݂ܖܪ̈) and is dropped.
-                if SYAME not in marks and i < n and text[i] == RESH:
-                    continue
-                base = RESH
 
             result.append(base)
             result.extend(_order_marks(_finalize_marks(base, marks)))
@@ -636,6 +655,42 @@ def _apply_to_corpus(ROOT: Path) -> None:
     )
 
 
+def _apply_rish_only(ROOT: Path) -> None:
+    """Rewrite ܖ → ܪ in corpus files without touching other diacritics."""
+    files: list[Path] = []
+    for rel in (
+        "data/prayers",
+        "data/psalms",
+        "web/data",
+        "web/public/data/prayers",
+        "web/public/data/psalms",
+        "web/public/data",
+    ):
+        d = ROOT / rel
+        if d.is_dir():
+            files.extend(d.glob("*.json"))
+        elif d.is_file() and d.suffix == ".json":
+            files.append(d)
+    for name in ("index.json", "psalms_index.json", "catalog.json"):
+        files.append(ROOT / "data" / name)
+
+    seen: set[Path] = set()
+    changed = 0
+    remaining = 0
+    for path in files:
+        path = path.resolve()
+        if path in seen or not path.is_file():
+            continue
+        seen.add(path)
+        raw = path.read_text(encoding="utf-8")
+        new = fix_dotless_rish(raw)
+        if new != raw:
+            path.write_text(new, encoding="utf-8")
+            changed += 1
+        remaining += new.count(DOTLESS_RISH)
+    print(f"Rewrote dotless rish in {changed} files; {remaining} U+0716 left.")
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=(
@@ -649,6 +704,11 @@ if __name__ == "__main__":
         help="rewrite the prayer/psalm corpus in place",
     )
     parser.add_argument(
+        "--rish-only",
+        action="store_true",
+        help="with --apply, rewrite only ܖ → ܪ (leave other marks alone)",
+    )
+    parser.add_argument(
         "--self-check",
         action="store_true",
         help="only run the rule regressions (default when --apply is absent)",
@@ -660,4 +720,8 @@ if __name__ == "__main__":
         print("Self-check passed. Re-run with --apply to rewrite the corpus.")
         raise SystemExit(0)
 
-    _apply_to_corpus(Path(__file__).resolve().parents[1])
+    root = Path(__file__).resolve().parents[1]
+    if args.rish_only:
+        _apply_rish_only(root)
+    else:
+        _apply_to_corpus(root)
