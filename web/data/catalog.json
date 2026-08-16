@@ -374,7 +374,7 @@
       "description": "Commemoration of the Syriac and Roman Teachers",
       "order": 107,
       "group": "commemoration",
-      "sourceHoliday": "ܕܘܟܪܢܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪܗ̄ܘܡܝ̈ܐ",
+      "sourceHoliday": "ܕܘܟܪܢܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪܗ݇ܘܡܝ̈ܐ",
       "count": 12
     },
     {
@@ -47621,7 +47621,7 @@
     },
     {
       "id": "ef71e2de-5475-4e6d-9794-81377ee4e986",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܕ \n ܕܩܘܼܕܫ ܥܹܕ݂ܬ݂ܵܐ\n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܕ \n ܕܩܘܼܕܫ ܥܹܕ݂ܬ݂ܵܐ\n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܩܘܼܕܵܫ ܥܹܕܬܵܐ — ܡܲܥܲܠܬܵܐ",
       "holidayEn": "Dedication of the Church",
       "seasonId": "dedication",
@@ -47801,7 +47801,7 @@
     },
     {
       "id": "7ff6f862-a973-4308-a58d-88842f308493",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ  ܒ \n ܕܩܘܼܕܫ ܥܹܕ݂ܬ݂ܵܐ\n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ  ܒ \n ܕܩܘܼܕܫ ܥܹܕ݂ܬ݂ܵܐ\n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܩܘܼܕܵܫ ܥܹܕܬܵܐ — ܡܲܥܲܠܬܵܐ",
       "holidayEn": "Dedication of the Church",
       "seasonId": "dedication",
@@ -47981,7 +47981,7 @@
     },
     {
       "id": "58baa2fb-0322-494f-87a2-b792bbaf2bb8",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܕ ܕܡܘܼܫܹܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܕ ܕܡܘܼܫܹܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܡܘܼܫܹܐ",
       "holidayEn": "Moses",
       "seasonId": "moses",
@@ -48161,7 +48161,7 @@
     },
     {
       "id": "f3e41208-a174-4151-b347-7f9e96fa8835",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܡܘܼܫܹܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܡܘܼܫܹܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܡܘܼܫܹܐ",
       "holidayEn": "Moses",
       "seasonId": "moses",
@@ -48341,7 +48341,7 @@
     },
     {
       "id": "8e6b8361-4463-4893-bc05-bece210cb921",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ  ܙ ܕܐܲܠܝܼܵܐ ܕ ܕܨܠܝܼܒ݂ܵܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ  ܙ ܕܐܲܠܝܼܵܐ ܕ ܕܨܠܝܼܒ݂ܵܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܐܹܠܝܼܵܐ — ܨܠܝܼܒ݂ܵܐ",
       "holidayEn": "Elijah — Cross",
       "seasonId": "elijah-cross",
@@ -48521,7 +48521,7 @@
     },
     {
       "id": "d915a3ec-63c7-4d61-9cb5-d00700c50109",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܗ݇ ܕܐܲܠܝܼܵܐ ܒ ܕܨܠܝܼܒ݂ܵܐ \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܗ݇ ܕܐܲܠܝܼܵܐ ܒ ܕܨܠܝܼܒ݂ܵܐ \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܐܹܠܝܼܵܐ — ܨܠܝܼܒ݂ܵܐ",
       "holidayEn": "Elijah — Cross",
       "seasonId": "elijah-cross",
@@ -48791,7 +48791,7 @@
     },
     {
       "id": "fb0e3c47-7c33-4879-bcc9-1d14a6017e33",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܐܲܠܝܼܵܐ      \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܐܲܠܝܼܵܐ      \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܐܹܠܝܼܵܐ — ܨܠܝܼܒ݂ܵܐ",
       "holidayEn": "Elijah — Cross",
       "seasonId": "elijah-cross",
@@ -48989,7 +48989,7 @@
     },
     {
       "id": "29c94e3a-3ad6-4517-a4ab-16800d7de77a",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܙ ܕܩܲܝܛܵܐ \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܙ ܕܩܲܝܛܵܐ \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܩܲܝܛܵܐ",
       "holidayEn": "Summer",
       "seasonId": "summer",
@@ -49169,7 +49169,7 @@
     },
     {
       "id": "8636ac9c-5484-4770-95c4-bef5949f720b",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܗ݇ ܕܩܲܝܛܵܐ   \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܗ݇ ܕܩܲܝܛܵܐ   \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܩܲܝܛܵܐ",
       "holidayEn": "Summer",
       "seasonId": "summer",
@@ -49331,7 +49331,7 @@
     },
     {
       "id": "eec6fcce-4241-4ebd-969e-4e42153d0396",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܓ ܕܩܲܝܛܵܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܓ ܕܩܲܝܛܵܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܩܲܝܛܵܐ",
       "holidayEn": "Summer",
       "seasonId": "summer",
@@ -49601,7 +49601,7 @@
     },
     {
       "id": "e50f5df5-583d-47eb-b8fa-685fda7e2903",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܙ ܕܫܠܝ̈ܚܐ   \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܙ ܕܫܠܝ̈ܚܐ   \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܫܠܝܼ̈ܚܹܐ",
       "holidayEn": "Apostles",
       "seasonId": "apostles",
@@ -49781,7 +49781,7 @@
     },
     {
       "id": "e525d36b-6a6f-4305-b89c-883ba00afe22",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܗ݇  ܕܫܠܝ̈ܚܐ   \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܗ݇  ܕܫܠܝ̈ܚܐ   \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܫܠܝܼ̈ܚܹܐ",
       "holidayEn": "Apostles",
       "seasonId": "apostles",
@@ -49961,7 +49961,7 @@
     },
     {
       "id": "e88a0ab9-6d62-4582-9059-81da865db419",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܓ ܕܫܠܝ̈ܚܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܓ ܕܫܠܝ̈ܚܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܫܠܝܼ̈ܚܹܐ",
       "holidayEn": "Apostles",
       "seasonId": "apostles",
@@ -50231,7 +50231,7 @@
     },
     {
       "id": "0dba64fb-b041-452a-adae-8c24ab460301",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܙ ܕܩܝܵܡܬ݂ܵܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܙ ܕܩܝܵܡܬ݂ܵܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܩܝܵܡܬܵܐ",
       "holidayEn": "Resurrection",
       "seasonId": "resurrection",
@@ -50411,7 +50411,7 @@
     },
     {
       "id": "d3c14333-001b-4034-a893-4fd60635dc8f",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܗ݇ ܕܩܝܵܡܬ݂ܵܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܗ݇ ܕܩܝܵܡܬ݂ܵܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܩܝܵܡܬܵܐ",
       "holidayEn": "Resurrection",
       "seasonId": "resurrection",
@@ -50591,7 +50591,7 @@
     },
     {
       "id": "26481e5f-4ea1-484d-923f-6c0359b32758",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܓ ܕܩܝܵܡܬ݂ܵܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܓ ܕܩܝܵܡܬ݂ܵܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܩܝܵܡܬܵܐ",
       "holidayEn": "Resurrection",
       "seasonId": "resurrection",
@@ -50771,7 +50771,7 @@
     },
     {
       "id": "145f38bb-3ef2-4bb0-a66e-758861af4c02",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܘ ܕܨܵܘܡܵܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܘ ܕܨܵܘܡܵܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܨܵܘܡܵܐ ܪܲܒܵܐ",
       "holidayEn": "Great Fast",
       "seasonId": "great-fast",
@@ -50951,7 +50951,7 @@
     },
     {
       "id": "29c521fc-7f2f-45cf-8a18-21ddc6ae071c",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܕ ܕܨܵܘܡܵܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܕ ܕܨܵܘܡܵܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܨܵܘܡܵܐ ܪܲܒܵܐ",
       "holidayEn": "Great Fast",
       "seasonId": "great-fast",
@@ -51131,7 +51131,7 @@
     },
     {
       "id": "2046cabe-db5e-4bed-92a1-76279de1da31",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܨܵܘܡܵܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܨܵܘܡܵܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܨܵܘܡܵܐ ܪܲܒܵܐ",
       "holidayEn": "Great Fast",
       "seasonId": "great-fast",
@@ -51311,7 +51311,7 @@
     },
     {
       "id": "e4ad4684-29d9-459b-91a4-53080e6180a1",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܚ ܕܒ݂ܵܬܲܪ ܕܸܢܚܵܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܚ ܕܒ݂ܵܬܲܪ ܕܸܢܚܵܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܕܸܢܚܵܐ",
       "holidayEn": "Epiphany",
       "seasonId": "denha",
@@ -51491,7 +51491,7 @@
     },
     {
       "id": "51e54798-b754-4927-b3e9-703ccf5df9cf",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܘ ܕܕܸܢܚܵܐ \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܘ ܕܕܸܢܚܵܐ \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܕܸܢܚܵܐ",
       "holidayEn": "Epiphany",
       "seasonId": "denha",
@@ -51671,7 +51671,7 @@
     },
     {
       "id": "408cdc83-fbfe-4215-9deb-ccfa9eb78f42",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܕ ܕܕܸܢܚܵܐ \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܕ ܕܕܸܢܚܵܐ \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܕܸܢܚܵܐ",
       "holidayEn": "Epiphany",
       "seasonId": "denha",
@@ -51851,7 +51851,7 @@
     },
     {
       "id": "bce1414e-4fb2-42bb-871b-047ca4260ccc",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܕܸܢܚܵܐ \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܕܸܢܚܵܐ \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܕܸܢܚܵܐ",
       "holidayEn": "Epiphany",
       "seasonId": "denha",
@@ -52031,7 +52031,7 @@
     },
     {
       "id": "23482140-e30c-40b6-a955-e9376c3a98a6",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܒ݂ܵܬܲܪ ܝܲܠܕܵܐ  \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܒ݂ܵܬܲܪ ܝܲܠܕܵܐ  \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܚܲܕ݂ܒ݁ܫܲܒܹ̈ܐ ܕܒ݂ܵܬܲܪ ܝܲܠܕܵܐ",
       "holidayEn": "Sundays after Nativity",
       "seasonId": "after-nativity",
@@ -52211,7 +52211,7 @@
     },
     {
       "id": "45ba74c4-d407-4cbf-9921-daee82a78903",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܕ ܕܣܘܼܒܵܪܵܐ \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܕ ܕܣܘܼܒܵܪܵܐ \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܣܘܼܒܵܪܵܐ",
       "holidayEn": "Annunciation",
       "seasonId": "subara",
@@ -52391,7 +52391,7 @@
     },
     {
       "id": "8126c3aa-fc71-4f34-a2d8-4bccce04f94b",
-      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܣܘܼܒܵܪܵܐ \n(ܐ̄ܚܪ̈ܝܐ)",
+      "name": "ܚܲܕ݂ܒ݁ܫܲܒܵܐ ܒ ܕܣܘܼܒܵܪܵܐ \n(ܐ݇ܚܪ̈ܝܐ)",
       "holiday": "ܣܘܼܒܵܪܵܐ",
       "holidayEn": "Annunciation",
       "seasonId": "subara",
@@ -58115,7 +58115,7 @@
     },
     {
       "id": "e98c2533-f9b9-4be2-a4d2-02bafd57a9a1",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇̄ܘܡܝܐ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇ܘܡܝܐ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܲܠܦܵܢܹ̈ܐ ܣܘܼܪܵܝܹ̈ܐ ܘܪܗ݇ܘܿܡܵܝܹ̈ܐ",
       "holidayEn": "Commemoration of the Syriac and Roman Teachers",
       "seasonId": "feast-e391d9",
@@ -58133,7 +58133,7 @@
     },
     {
       "id": "f0058138-be95-4543-80fa-426dd8589020",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇̄ܘܡܝܐ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇ܘܡܝܐ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܲܠܦܵܢܹ̈ܐ ܣܘܼܪܵܝܹ̈ܐ ܘܪܗ݇ܘܿܡܵܝܹ̈ܐ",
       "holidayEn": "Commemoration of the Syriac and Roman Teachers",
       "seasonId": "feast-e391d9",
@@ -58151,7 +58151,7 @@
     },
     {
       "id": "7c7b2140-6ab1-4022-ab10-435c4a1f40b0",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇̄ܘܡܝܐ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇ܘܡܝܐ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܲܠܦܵܢܹ̈ܐ ܣܘܼܪܵܝܹ̈ܐ ܘܪܗ݇ܘܿܡܵܝܹ̈ܐ",
       "holidayEn": "Commemoration of the Syriac and Roman Teachers",
       "seasonId": "feast-e391d9",
@@ -58169,7 +58169,7 @@
     },
     {
       "id": "3d3c57c4-74eb-4f5e-a768-e0b2f7f4fb99",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇̄ܘܡܝܐ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇ܘܡܝܐ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܲܠܦܵܢܹ̈ܐ ܣܘܼܪܵܝܹ̈ܐ ܘܪܗ݇ܘܿܡܵܝܹ̈ܐ",
       "holidayEn": "Commemoration of the Syriac and Roman Teachers",
       "seasonId": "feast-e391d9",
@@ -58187,7 +58187,7 @@
     },
     {
       "id": "bfc7f743-d856-44f2-b866-566e74adc8d2",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇̄ܘܡܝܐ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇ܘܡܝܐ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܲܠܦܵܢܹ̈ܐ ܣܘܼܪܵܝܹ̈ܐ ܘܪܗ݇ܘܿܡܵܝܹ̈ܐ",
       "holidayEn": "Commemoration of the Syriac and Roman Teachers",
       "seasonId": "feast-e391d9",
@@ -58205,7 +58205,7 @@
     },
     {
       "id": "b665edc0-1079-4401-8ff9-24f9ece643aa",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇̄ܘܡܝܐ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܠܦܢ̈ܐ ܣܘܪ̈ܝܝܐ ܘܪ̈ܗ݇ܘܡܝܐ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܲܠܦܵܢܹ̈ܐ ܣܘܼܪܵܝܹ̈ܐ ܘܪܗ݇ܘܿܡܵܝܹ̈ܐ",
       "holidayEn": "Commemoration of the Syriac and Roman Teachers",
       "seasonId": "feast-e391d9",
@@ -58583,7 +58583,7 @@
     },
     {
       "id": "82136a3d-a2d6-4d1c-86e7-115c578077f8",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇̄ܝ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇ܝ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܲܒܪ̈ܵܘܗܝ",
       "holidayEn": "Commemoration of Mar Awgin and his Companions",
       "seasonId": "feast-35f3e88",
@@ -58601,7 +58601,7 @@
     },
     {
       "id": "559750b4-6f9e-4045-9a6e-8edc4fa8df64",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇̄ܝ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇ܝ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܲܒܪ̈ܵܘܗܝ",
       "holidayEn": "Commemoration of Mar Awgin and his Companions",
       "seasonId": "feast-35f3e88",
@@ -58619,7 +58619,7 @@
     },
     {
       "id": "899d56d8-1b80-4d4e-83ef-d1beca43dec0",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇̄ܝ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇ܝ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܲܒܪ̈ܵܘܗܝ",
       "holidayEn": "Commemoration of Mar Awgin and his Companions",
       "seasonId": "feast-35f3e88",
@@ -58637,7 +58637,7 @@
     },
     {
       "id": "449b6c35-85ca-4a99-845f-616e24765d5c",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇̄ܝ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇ܝ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܲܒܪ̈ܵܘܗܝ",
       "holidayEn": "Commemoration of Mar Awgin and his Companions",
       "seasonId": "feast-35f3e88",
@@ -58655,7 +58655,7 @@
     },
     {
       "id": "5f77f027-b25a-4ce2-aaaa-07494e68e8d3",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇̄ܝ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇ܝ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܲܒܪ̈ܵܘܗܝ",
       "holidayEn": "Commemoration of Mar Awgin and his Companions",
       "seasonId": "feast-35f3e88",
@@ -58673,7 +58673,7 @@
     },
     {
       "id": "d78f864e-aabd-4bb5-a9b5-dc9c426767ec",
-      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇̄ܝ",
+      "name": "ܕܘܼܟܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܒܪ̈ܘܗ݇ܝ",
       "holiday": "ܕܘܼܟ݂ܪܵܢܵܐ ܕܡܵܪܝ ܐܲܘܓܝܼܢ ܘܚܲܒܪ̈ܵܘܗܝ",
       "holidayEn": "Commemoration of Mar Awgin and his Companions",
       "seasonId": "feast-35f3e88",

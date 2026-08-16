@@ -28,8 +28,15 @@ Generic combining dots → Syriac marks when the base letter fits:
   5. U+0324 COMBINING DIAERESIS BELOW on ܬ → U+0740 FEMININE DOT
   5b. U+0331 COMBINING MACRON BELOW is removed.
      In this corpus the underline is noise (not a silent-letter mṭalqānā).
-     U+0304 / U+0654 still become U+0747 via the bilingual-peshitta wrapper;
-     U+0748 SYRIAC OBLIQUE LINE BELOW (mhaggyānā) is never produced here.
+     A targeted --linea-only pass rewrites U+0304 → U+0747 in place
+     (ܕܐܲܢ̄ܬ݁ܘܼ → ܕܐܲܢ݇ܬ݁ܘܼ) and does not reorder other marks.
+
+Diphthong /ayt/ with a spare /i/ on the yodh:
+  5c. ܲܝܼܬ → ܲܝܬ. The yodh is the glide of /ay/ before taw (1sg/2pl of
+     III-y verbs, ܐܲܝܬܝ "he brought"), not a real /i/. A targeted
+     --ayt-only pass drops that hbasa in place (ܕܲܒ݂ܪܲܝܼܬ݁ → ܕܲܒ݂ܪܲܝܬ݁).
+     Keep ܝܼܬ when the previous letter has no pthaha (ܒܪܝܼܬ݂ܵܐ "creation",
+     ܐܝܼܬ݂ "there is") and keep ܝܼ before any other letter (ܩܲܕܝܼܫܵܐ).
 
 Soft pe (East Syriac convention) — narrowed to specific lexemes:
   6. (off) Blanket U+0742 on ܦ → U+032E COMBINING BREVE BELOW.
@@ -133,6 +140,8 @@ ZLAMA_HORIZONTAL = "\u0738"  # ܸ — Assyrian pointing on ܡܸܢ "from"
 ZLAMA_ANGULAR = "\u0739"  # ܹ
 
 MACRON_BELOW = "\u0331"  # generic underline — dropped, not promoted to ݇
+MACRON_ABOVE = "\u0304"  # keyboard stand-in for linea occultans
+LINEA_OCCULTANS = "\u0747"  # ݇ — silent-letter mark
 
 # Serto vowel signs, sometimes left in an otherwise Madnhaya text.
 RBASA_ABOVE = "\u0736"
@@ -182,6 +191,8 @@ def _remap_mark(base: str, mark: str) -> str | None:
         return FEMININE
     if mark == MACRON_BELOW:
         return None
+    if mark == MACRON_ABOVE:
+        return LINEA_OCCULTANS
     return mark
 
 
@@ -257,6 +268,81 @@ def fix_hbasa_rukkakha(text: str) -> str:
                 seen_rukk = True
             new_marks.append(m)
         result.extend(new_marks)
+    return "".join(result)
+
+
+def fix_macron_linea(text: str) -> str:
+    """̄ → ݇. Combining macron above standing in for linea occultans."""
+    if not text or MACRON_ABOVE not in text:
+        return text
+    result: list[str] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        ch = text[i]
+        result.append(ch)
+        i += 1
+        if not ("\u0710" <= ch <= "\u072f"):
+            continue
+        marks: list[str] = []
+        while i < n and unicodedata.category(text[i]).startswith("M"):
+            marks.append(text[i])
+            i += 1
+        if MACRON_ABOVE not in marks:
+            result.extend(marks)
+            continue
+        new_marks: list[str] = []
+        seen_linea = False
+        for m in marks:
+            if m == MACRON_ABOVE:
+                m = LINEA_OCCULTANS
+            if m == LINEA_OCCULTANS:
+                if seen_linea:
+                    continue
+                seen_linea = True
+            new_marks.append(m)
+        result.extend(new_marks)
+    out = "".join(result)
+    if MACRON_ABOVE in out:
+        out = out.replace(MACRON_ABOVE, LINEA_OCCULTANS)
+    return out
+
+
+def fix_ayt_hbasa(text: str) -> str:
+    """ܲܝܼܬ → ܲܝܬ. Superfluous /i/ on the glide of a diphthong before taw."""
+    if not text or HBASA not in text:
+        return text
+    result: list[str] = []
+    i = 0
+    n = len(text)
+    prev_base: str | None = None
+    prev_marks: list[str] = []
+    while i < n:
+        ch = text[i]
+        i += 1
+        if not ("\u0710" <= ch <= "\u072f"):
+            result.append(ch)
+            if not unicodedata.category(ch).startswith("M"):
+                prev_base = None
+                prev_marks = []
+            continue
+        marks: list[str] = []
+        while i < n and unicodedata.category(text[i]).startswith("M"):
+            marks.append(text[i])
+            i += 1
+        next_ch = text[i] if i < n else None
+        if (
+            ch == YUDH
+            and HBASA in marks
+            and prev_base is not None
+            and PTAHA in prev_marks
+            and next_ch == TAW
+        ):
+            marks = [m for m in marks if m != HBASA]
+        result.append(ch)
+        result.extend(marks)
+        prev_base = ch
+        prev_marks = marks
     return "".join(result)
 
 
@@ -407,6 +493,7 @@ def fix_dots(text: str) -> str:
     out = out.replace("ܦܲܓ݂ܪܲܝܢ", "ܦܲܓ݂ܪ̈ܲܝܢ")
     out = fix_soft_pe_roots(out)
     out = fix_participle_points(out)
+    out = fix_ayt_hbasa(out)
     return out
 
 
@@ -707,6 +794,20 @@ def _self_check() -> None:
     assert fix_hbasa_rukkakha("ܩܕܝܼܫܵܐ") == "ܩܕܝܼܫܵܐ"  # /i/ on yodh stays
     assert fix_hbasa_rukkakha("ܒܼ݁") == "ܒ݂"  # soft wins over real qushshaya
     assert fix_hbasa_rukkakha("ܟܼ̈") == "ܟ݂̈"  # do not reorder
+    assert fix_macron_linea("ܕܐܲܢ̄ܬ݁ܘܼ") == "ܕܐܲܢ݇ܬ݁ܘܼ"
+    assert fix_macron_linea("ܐܸܬ݂ܩ̄ܒܲܪ") == "ܐܸܬ݂ܩ݇ܒܲܪ"
+    assert fix_macron_linea("ܐ̄ܪ̈ܙܐ") == "ܐ݇ܪ̈ܙܐ"
+    assert fix_macron_linea("ܕܐܲܢ݇ܬ݁ܘܼ") == "ܕܐܲܢ݇ܬ݁ܘܼ"  # idempotent
+    assert fix_macron_linea("ܚ̱ܢܲܢ") == "ܚ̱ܢܲܢ"  # macron below is not linea
+    assert "݇" not in fix_macron_linea("ܚ̱ܢܲܢ")
+    assert fix_ayt_hbasa("ܕܲܒ݂ܪܲܝܼܬ݁") == "ܕܲܒ݂ܪܲܝܬ݁"
+    assert fix_ayt_hbasa("ܗܘܲܝܼܬ݁ܘܿܢ") == "ܗܘܲܝܬ݁ܘܿܢ"
+    assert fix_ayt_hbasa("ܐܲܝܼܬ݁ܝܼ") == "ܐܲܝܬ݁ܝܼ"  # second yodh keeps /i/
+    assert fix_ayt_hbasa("ܒܪܝܼܬ݂ܵܐ") == "ܒܪܝܼܬ݂ܵܐ"  # creation, no pthaha on resh
+    assert fix_ayt_hbasa("ܐܝܼܬ݂") == "ܐܝܼܬ݂"
+    assert fix_ayt_hbasa("ܩܲܕܝܼܫܵܐ") == "ܩܲܕܝܼܫܵܐ"
+    assert fix_ayt_hbasa("ܒܹܝܼܬ݂") == "ܒܹܝܼܬ݂"  # zlama, not the diphthong
+    assert fix_dots("ܕܲܒ݂ܪܲܝܼܬ݁") == "ܕܲܒ݂ܪܲܝܬ݁"
     assert fix_rwaha_qushshaya("ܒܬܸܫܒܿܘܿܚܬܵܐ") == "ܒܬܸܫܒ݁ܘܿܚܬܵܐ"
     assert fix_rwaha_qushshaya("ܡܲܙܡܘܿܪܵܐ") == "ܡܲܙܡܘܿܪܵܐ"  # /o/ on waw stays
     assert fix_rwaha_qushshaya("ܬܿ") == "ܬ݁"
@@ -759,9 +860,9 @@ def _self_check() -> None:
     assert fix_dots("ܦܲܓ݂ܖܪ̈ܲܝܢ") == "ܦܲܓ݂ܪ̈ܲܝܢ"
     assert fix_dots("ܖ̈ܲܚܡܹܐ") == "ܪ̈ܲܚܡܹܐ"
     # A below vowel stacked under a real /a/ or /ā/ is a lower reading dot.
-    assert fix_dots("ܗ̄ܘܼܵܘ") == "ܗ̄ܘ̣ܵܘ"
+    assert fix_dots("ܗ̄ܘܼܵܘ") == "ܗ݇ܘ̣ܵܘ"
     assert fix_dots("ܗ݇ܘܼܵܘ") == "ܗ݇ܘ̣ܵܘ"
-    assert fix_dots("ܗ̄ܘܵܘ") == "ܗ̄ܘܵܘ"  # no below vowel
+    assert fix_dots("ܗ̄ܘܵܘ") == "ܗ݇ܘܵܘ"  # macron above → linea occultans
     assert fix_dots("ܗܘܸܵܬ݂") == "ܗܘ̤ܵܬ݂"  # "she was" — zlama → diaeresis below
     assert fix_dots("ܗܘܸܵܘ") == "ܗܘ̤ܵܘ"
     assert fix_dots("ܘܩܼܵܡ") == "ܘܩ̣ܵܡ"  # "and he arose"
@@ -1005,6 +1106,83 @@ def _apply_min_only(ROOT: Path) -> None:
     )
 
 
+def _apply_linea_only(ROOT: Path) -> None:
+    """Rewrite ̄ → ݇ without touching other diacritics."""
+    seen: set[Path] = set()
+    changed = 0
+    remaining = 0
+    for path in _corpus_json_files(ROOT):
+        path = path.resolve()
+        if path in seen or not path.is_file():
+            continue
+        seen.add(path)
+        raw = path.read_text(encoding="utf-8")
+        new = fix_macron_linea(raw)
+        if new != raw:
+            path.write_text(new, encoding="utf-8")
+            changed += 1
+        remaining += new.count(MACRON_ABOVE)
+    print(
+        f"Rewrote macron-as-linea in {changed} files; "
+        f"{remaining} U+0304 left."
+    )
+
+
+def _ayt_hbasa_left(text: str) -> int:
+    """How many ܲܝܼܬ clusters (pthaha + yodh-hbasa + taw) remain."""
+    n = 0
+    i = 0
+    length = len(text)
+    prev_marks: list[str] = []
+    prev_syr = False
+    while i < length:
+        ch = text[i]
+        i += 1
+        if not ("\u0710" <= ch <= "\u072f"):
+            if not unicodedata.category(ch).startswith("M"):
+                prev_syr = False
+                prev_marks = []
+            continue
+        marks: list[str] = []
+        while i < length and unicodedata.category(text[i]).startswith("M"):
+            marks.append(text[i])
+            i += 1
+        next_ch = text[i] if i < length else None
+        if (
+            ch == YUDH
+            and HBASA in marks
+            and prev_syr
+            and PTAHA in prev_marks
+            and next_ch == TAW
+        ):
+            n += 1
+        prev_syr = True
+        prev_marks = marks
+    return n
+
+
+def _apply_ayt_only(ROOT: Path) -> None:
+    """Drop superfluous ܼ on yodh in ܲܝܼܬ without touching other diacritics."""
+    seen: set[Path] = set()
+    changed = 0
+    remaining = 0
+    for path in _corpus_json_files(ROOT):
+        path = path.resolve()
+        if path in seen or not path.is_file():
+            continue
+        seen.add(path)
+        raw = path.read_text(encoding="utf-8")
+        new = fix_ayt_hbasa(raw)
+        if new != raw:
+            path.write_text(new, encoding="utf-8")
+            changed += 1
+        remaining += _ayt_hbasa_left(new)
+    print(
+        f"Rewrote ܲܝܼܬ → ܲܝܬ in {changed} files; "
+        f"{remaining} pthaha+yodh-hbasa+taw clusters left."
+    )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=(
@@ -1041,6 +1219,16 @@ if __name__ == "__main__":
         help="with --apply, rewrite only ܡ݂ܢ / ܡܢ݂ → ܡ̣ܢ (leave bare ܡܢ alone)",
     )
     parser.add_argument(
+        "--linea-only",
+        action="store_true",
+        help="with --apply, rewrite only ̄ → ݇ (leave other marks alone)",
+    )
+    parser.add_argument(
+        "--ayt-only",
+        action="store_true",
+        help="with --apply, drop only ܼ on yodh in ܲܝܼܬ (ܕܲܒ݂ܪܲܝܼܬ݁ → ܕܲܒ݂ܪܲܝܬ݁)",
+    )
+    parser.add_argument(
         "--self-check",
         action="store_true",
         help="only run the rule regressions (default when --apply is absent)",
@@ -1061,5 +1249,9 @@ if __name__ == "__main__":
         _apply_rwaha_only(root)
     elif args.min_only:
         _apply_min_only(root)
+    elif args.linea_only:
+        _apply_linea_only(root)
+    elif args.ayt_only:
+        _apply_ayt_only(root)
     else:
         _apply_to_corpus(root)

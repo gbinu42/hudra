@@ -6,8 +6,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "scripts"))
 from fix_syriac_dots import (
+    fix_ayt_hbasa,
     fix_dots,
     fix_hbasa_rukkakha,
+    fix_macron_linea,
     fix_min_rukkakha,
     fix_rwaha_qushshaya,
     fix_stacked_hbasa_dot_below,
@@ -45,7 +47,8 @@ def test_linea_occultans_below():
 
 def test_stacked_below_vowel():
     # Hbasa under /ā/ → combining dot below; zlama under /ā/ → diaeresis below.
-    assert fix_dots("\u0717\u0304\u0718\u073c\u0735\u0718") == "\u0717\u0304\u0718\u0323\u0735\u0718"
+    # Macron above on heh is linea occultans (U+0747), not kept as U+0304.
+    assert fix_dots("\u0717\u0304\u0718\u073c\u0735\u0718") == "\u0717\u0747\u0718\u0323\u0735\u0718"
     assert fix_dots("\u0717\u0718\u0738\u0735\u072c\u0742") == "\u0717\u0718\u0324\u0735\u072c\u0742"
     assert fix_dots("\u0717\u0718\u0738\u0735\u0718") == "\u0717\u0718\u0324\u0735\u0718"
     assert fix_dots("\u0729\u073c\u0735\u0721") == "\u0729\u0323\u0735\u0721"
@@ -182,6 +185,33 @@ def test_stacked_hbasa_dot_below_only():
     assert fix_stacked_hbasa_dot_below("ܒܼܵ") == "ܒܼܵ"
 
 
+def test_macron_linea_only():
+    # Targeted pass: ̄ → ݇; macron below and other marks stay.
+    assert fix_macron_linea("ܕܐܲܢ̄ܬ݁ܘܼ") == "ܕܐܲܢ݇ܬ݁ܘܼ"
+    assert fix_macron_linea("ܐܸܬ݂ܩ̄ܒܲܪ") == "ܐܸܬ݂ܩ݇ܒܲܪ"
+    assert fix_macron_linea("ܐ̄ܪ̈ܙܐ") == "ܐ݇ܪ̈ܙܐ"
+    assert fix_macron_linea("ܕܐܲܢ݇ܬ݁ܘܼ") == "ܕܐܲܢ݇ܬ݁ܘܼ"
+    assert fix_macron_linea("ܐ̄݇ܪ̈ܙܐ") == "ܐ݇ܪ̈ܙܐ"  # collapse duplicate
+    assert fix_macron_linea("ܚ̱ܢܲܢ") == "ܚ̱ܢܲܢ"
+    assert "݇" not in fix_macron_linea("ܚ̱ܢܲܢ")
+    assert fix_dots("ܕܐܲܢ̄ܬ݁ܘܼ") == "ܕܐܲܢ݇ܬ݁ܘܼ"
+    assert fix_dots("ܗ̄ܘܼܵܘ") == "ܗ݇ܘ̣ܵܘ"
+
+
+def test_ayt_hbasa_only():
+    # Targeted pass: drop ܼ on yodh only in ܲܝܼܬ; real /i/ stays.
+    assert fix_ayt_hbasa("ܕܲܒ݂ܪܲܝܼܬ݁") == "ܕܲܒ݂ܪܲܝܬ݁"
+    assert fix_ayt_hbasa("ܒܪܲܝܼܬ݁") == "ܒܪܲܝܬ݁"
+    assert fix_ayt_hbasa("ܗܘܲܝܼܬ݁ܘܿܢ") == "ܗܘܲܝܬ݁ܘܿܢ"
+    assert fix_ayt_hbasa("ܐܲܝܼܬ݁ܝܼ") == "ܐܲܝܬ݁ܝܼ"
+    assert fix_ayt_hbasa("ܒܪܝܼܬ݂ܵܐ") == "ܒܪܝܼܬ݂ܵܐ"
+    assert fix_ayt_hbasa("ܐܝܼܬ݂") == "ܐܝܼܬ݂"
+    assert fix_ayt_hbasa("ܩܲܕܝܼܫܵܐ") == "ܩܲܕܝܼܫܵܐ"
+    assert fix_ayt_hbasa("ܒܹܝܼܬ݂") == "ܒܹܝܼܬ݂"
+    assert fix_ayt_hbasa("ܕܲܒ݂ܪܲܝܬ݁") == "ܕܲܒ݂ܪܲܝܬ݁"
+    assert fix_dots("ܕܲܒ݂ܪܲܝܼܬ݁") == "ܕܲܒ݂ܪܲܝܬ݁"
+
+
 def test_min_rukkakha_only():
     assert fix_min_rukkakha("ܡ݂ܢ ܫܡܲܝܵܐ") == "ܡ̣ܢ ܫܡܲܝܵܐ"
     assert fix_min_rukkakha("ܘܡ݂ܢ ܥܵܠܲܡ") == "ܘܡ̣ܢ ܥܵܠܲܡ"
@@ -209,5 +239,7 @@ if __name__ == "__main__":
     test_hbasa_rukkakha_only()
     test_rwaha_qushshaya_only()
     test_stacked_hbasa_dot_below_only()
+    test_macron_linea_only()
+    test_ayt_hbasa_only()
     test_min_rukkakha_only()
     print("ok")
