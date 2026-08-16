@@ -7,10 +7,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent / "scripts"))
 from fix_syriac_dots import (
     fix_ayt_hbasa,
+    fix_dot_above_qushshaya,
     fix_dots,
     fix_hbasa_rukkakha,
     fix_macron_linea,
     fix_min_rukkakha,
+    fix_min_zlama,
     fix_rwaha_qushshaya,
     fix_stacked_hbasa_dot_below,
 )
@@ -176,6 +178,17 @@ def test_rwaha_qushshaya_only():
     assert fix_rwaha_qushshaya("ܣܲܓܿܝܼܐܵܐ") == "ܣܲܓ݁ܝܼܐܵܐ"
 
 
+def test_dot_above_qushshaya_only():
+    assert fix_dot_above_qushshaya("ܘܠܲܝܬ̇") == "ܘܠܲܝܬ݁"
+    assert fix_dot_above_qushshaya("ܐܲܢ݇ܬ̇") == "ܐܲܢ݇ܬ݁"
+    assert fix_dot_above_qushshaya("ܫܲܒ̇ܚܘܼܗܝ") == "ܫܲܒ݁ܚܘܼܗܝ"
+    assert fix_dot_above_qushshaya("ܥܵܒܹ̇ܕ݂") == "ܥܵܒܹ̇ܕ݂"
+    assert fix_dot_above_qushshaya("ܝܵܬܹ̇ܒ݂") == "ܝܵܬܹ̇ܒ݂"
+    assert fix_dot_above_qushshaya("ܡ̇ܢ") == "ܡ̇ܢ"
+    assert fix_dot_above_qushshaya("ܘܠܲܝܬ݁") == "ܘܠܲܝܬ݁"
+    assert fix_dots("ܘܠܲܝܬ̇") == "ܘܠܲܝܬ݁"
+
+
 def test_stacked_hbasa_dot_below_only():
     assert fix_stacked_hbasa_dot_below("ܘܩܼܵܡ") == "ܘܩ̣ܵܡ"
     assert fix_stacked_hbasa_dot_below("ܗ̄ܘܼܵܘ") == "ܗ̄ܘ̣ܵܘ"
@@ -183,6 +196,11 @@ def test_stacked_hbasa_dot_below_only():
     assert fix_stacked_hbasa_dot_below("ܚܘܼܕܪܵܐ") == "ܚܘܼܕܪܵܐ"
     assert fix_stacked_hbasa_dot_below("ܢܒ݂ܝܼܵܐ") == "ܢܒ݂ܝܼܵܐ"
     assert fix_stacked_hbasa_dot_below("ܒܼܵ") == "ܒܼܵ"
+    assert fix_stacked_hbasa_dot_below("ܘܲܥܪܲܩܼ") == "ܘܲܥܪܲܩ̣"
+    assert fix_stacked_hbasa_dot_below("ܐܲܩܼܝܼܡ") == "ܐܲܩ̣ܝܼܡ"
+    assert fix_stacked_hbasa_dot_below("ܫܒܲܩܼ݇ܢ") == "ܫܒܲܩ̣݇ܢ"
+    assert fix_stacked_hbasa_dot_below("ܠܒܸܫܼ") == "ܠܒܸܫ̣"
+    assert fix_dots("ܘܲܥܪܲܩܼ") == "ܘܲܥܪܲܩ̣"
 
 
 def test_macron_linea_only():
@@ -224,6 +242,18 @@ def test_min_rukkakha_only():
     assert fix_min_rukkakha("ܡ̣ܢ ܟܠ") == "ܡ̣ܢ ܟܠ"
 
 
+def test_min_zlama_only():
+    assert fix_min_zlama("ܡܸܢ ܒܝܼܫܵܐ") == "ܡ̣ܢ ܒܝܼܫܵܐ"
+    assert fix_min_zlama("ܘܡܸܢ ܥܵܠܲܡ") == "ܘܡ̣ܢ ܥܵܠܲܡ"
+    assert fix_min_zlama("ܕܡܸܢ ܩܕ݂ܝܼܡ") == "ܕܡ̣ܢ ܩܕ݂ܝܼܡ"
+    assert fix_min_zlama("ܡܸܢܝ") == "ܡܸܢܝ"
+    assert fix_min_zlama("ܡܸܢܹܗ") == "ܡܸܢܹܗ"
+    assert fix_min_zlama("ܡܸܢܗܘܿܢ") == "ܡܸܢܗܘܿܢ"
+    assert fix_min_zlama("ܗܲܝܡܸܢ") == "ܗܲܝܡܸܢ"
+    assert fix_min_zlama("ܡܢ ܒܝܼܫܵܐ") == "ܡܢ ܒܝܼܫܵܐ"
+    assert fix_min_zlama("ܡ̣ܢ ܟܠ") == "ܡ̣ܢ ܟܠ"
+
+
 if __name__ == "__main__":
     test_examples()
     test_vowels_preserved()
@@ -238,8 +268,10 @@ if __name__ == "__main__":
     test_chaldean_min()
     test_hbasa_rukkakha_only()
     test_rwaha_qushshaya_only()
+    test_dot_above_qushshaya_only()
     test_stacked_hbasa_dot_below_only()
     test_macron_linea_only()
     test_ayt_hbasa_only()
     test_min_rukkakha_only()
+    test_min_zlama_only()
     print("ok")

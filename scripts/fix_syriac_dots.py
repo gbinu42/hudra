@@ -16,6 +16,8 @@ Generic combining dots → Syriac marks when the base letter fits:
   3. U+0323 COMBINING DOT BELOW on BGDKPT → U+0742 RUKKAKHA
   4. U+0307 COMBINING DOT ABOVE on BGDKPT → U+0741 QUSHSHAYA.
      Overreach on the active participle is undone by 4b below.
+     A targeted --dot-above-only pass rewrites ܬ̇ → ܬ݁ in place
+     (ܘܠܲܝܬ̇ → ܘܠܲܝܬ݁) and does not reorder other marks.
   4b. Active-participle reading point: in the CaCeC participle the dot over
      the middle radical is a grammatical point, not qushshaya, and the radical
      is post-vocalic (soft). It is detected as a BGDKPT letter that carries a
@@ -67,8 +69,11 @@ Rwaha typed as qushshaya (U+073F on BGDKPT) is a keyboard stand-in for
   U+0741. A targeted --rwaha-only pass rewrites ܒܿ → ܒ݁ in place
   (ܒܬܸܫܒܿܘܿܚܬܵܐ → ܒܬܸܫܒ݁ܘܿܚܬܵܐ) and does not reorder other marks.
   Rwaha on waw stays as /o/. The same pass maps a non-waw rwaha that is
-  not qushshaya to U+0307, and a stacked hbasa under /a/ or /ā/ on a
-  non-BGDKPT letter to U+0323 (the lower-dot counterpart; yodh exempt).
+  not qushshaya to U+0307, and hbasa standing in for a square below
+  (U+0323) on a non-BGDKPT letter: stacked under /a/ or /ā/, on qoph
+  in any position (ܘܲܥܪܲܩܼ → ܘܲܥܪܲܩ̣), and word-final on other
+  letters (ܠܒܸܫܼ → ܠܒܸܫ̣). Yodh and waw keep /i/ / /u/. A targeted
+  --hbasa-below-only pass does only that rewrite.
 
 Stacked vowels — a letter cannot carry two of them:
   7. A below vowel under a real /a/ or /ā/ (U+0732, U+0735) is a
@@ -100,9 +105,10 @@ Serto vowel signs left in a Madnhaya text:
      Do NOT touch already-pointed ܡܲܢ / ܡ̇ܢ / ܡܵܢ / ܡܼܢ,
      ܡܸܢ inside other roots (ܗܲܝܡܸܢ), or suffixed ܡܸܢܝ / ܡܸܢܹܗ / ܡܸܢܗܘܿܢ.
      Interrogative/relative "who" with ܠ or ܒ: ܠܡܢ → ܠܡܲܢ, ܒܡܢ → ܒܡܲܢ.
-     A targeted --min-only pass rewrites only an already-marked ܡ݂ܢ / ܡܢ݂
-     (rukkakha, hbasa, or breve standing in for the sublinear point) to ܡ̣ܢ.
-     It does not point a bare ܡܢ.
+     A targeted --min-only pass rewrites an already-marked ܡ݂ܢ / ܡܢ݂
+     (rukkakha, hbasa, or breve standing in for the sublinear point) to ܡ̣ܢ,
+     and standalone zlama ܡܸܢ / ܘܡܸܢ / ܕܡܸܢ → ܡ̣ܢ. It does not point a
+     bare ܡܢ, nor suffixed ܡܸܢܝ / ܡܸܢܹܗ or ܗܲܝܡܸܢ.
 
 Never delete diacritics: if no remapping rule applies, the mark is kept.
 When soft + hard end up on the same letter, keep soft and drop qushshaya.
@@ -121,6 +127,7 @@ TAW = "ܬ"
 YUDH = "ܝ"
 WAW = "ܘ"
 PE = "ܦ"
+QOPH = "ܩ"
 RESH = "\u072a"
 DOTLESS_RISH = "\u0716"  # ܖ — keyboard stand-in for resh / resh-syame
 
@@ -411,11 +418,84 @@ def fix_rwaha_qushshaya(text: str) -> str:
     return "".join(result)
 
 
-def fix_stacked_hbasa_dot_below(text: str) -> str:
-    """Hbasa under /a/ or /ā/ on a non-BGDKPT letter → combining dot below.
+def _rewrite_dot_above_marks(
+    base: str, marks: list[str], prev_marks: list[str]
+) -> list[str]:
+    """̇ on BGDKPT → ݁, except the CaCeC participle reading point."""
+    has_soft = RUKKAKHA in marks or BREVE_BELOW in marks
+    participle = (
+        any(m in VOWELS for m in marks) and ZQAPHA in prev_marks
+    )
+    if participle:
+        return marks
+    new_marks: list[str] = []
+    seen_qush = False
+    for m in marks:
+        if m == DOT_ABOVE:
+            if has_soft:
+                continue
+            m = QUSHSHAYA
+        if m == QUSHSHAYA:
+            if has_soft or seen_qush:
+                continue
+            seen_qush = True
+        new_marks.append(m)
+    return new_marks
 
-    Bare hbasa stays as /i/ or /u/. Yodh is exempt (ܝܼܵ is a mater).
-    BGDKPT is left to the rukkakha pass. Marks are not reordered.
+
+def fix_dot_above_qushshaya(text: str) -> str:
+    """ܬ̇ → ܬ݁ on BGDKPT. CaCeC participle ̇ and ܡ̇ܢ stay."""
+    if not text or DOT_ABOVE not in text:
+        return text
+    result: list[str] = []
+    i = 0
+    n = len(text)
+    prev_marks: list[str] = []
+    while i < n:
+        ch = text[i]
+        result.append(ch)
+        i += 1
+        if not ("\u0710" <= ch <= "\u072f"):
+            if not unicodedata.category(ch).startswith("M"):
+                prev_marks = []
+            continue
+        marks: list[str] = []
+        while i < n and unicodedata.category(text[i]).startswith("M"):
+            marks.append(text[i])
+            i += 1
+        if DOT_ABOVE in marks and ch in BGDKPT:
+            marks = _rewrite_dot_above_marks(ch, marks, prev_marks)
+        result.extend(marks)
+        prev_marks = marks
+    return "".join(result)
+
+
+def _hbasa_as_square_below(
+    ch: str, marks: list[str], next_ch: str | None
+) -> bool:
+    """Hbasa on this cluster is a square-below stand-in, not /i/ or /u/."""
+    if HBASA not in marks:
+        return False
+    if ch in BGDKPT or ch == YUDH:
+        return False
+    if any(m in MAIN_ABOVE_VOWELS for m in marks):
+        return True
+    if ch == WAW:
+        return False
+    if ch == QOPH:
+        return True
+    word_final = next_ch is None or not ("\u0710" <= next_ch <= "\u072f")
+    return word_final
+
+
+def fix_stacked_hbasa_dot_below(text: str) -> str:
+    """Hbasa standing in for a square below → combining dot below.
+
+    On non-BGDKPT letters: stacked under /a/ or /ā/; on qoph in any
+    position (ܘܲܥܪܲܩܼ → ܘܲܥܪܲܩ̣); word-final on other letters
+    (ܠܒܸܫܼ → ܠܒܸܫ̣). Bare medial hbasa stays as /i/ (ܫܲܡܼܠܝܼ).
+    Yodh and waw keep /i/ / /u/. BGDKPT is left to the rukkakha pass.
+    Marks are not reordered.
     """
     if not text or HBASA not in text:
         return text
@@ -432,13 +512,8 @@ def fix_stacked_hbasa_dot_below(text: str) -> str:
         while i < n and unicodedata.category(text[i]).startswith("M"):
             marks.append(text[i])
             i += 1
-        stacked = (
-            HBASA in marks
-            and ch != YUDH
-            and ch not in BGDKPT
-            and any(m in MAIN_ABOVE_VOWELS for m in marks)
-        )
-        if not stacked:
+        next_ch = text[i] if i < n else None
+        if not _hbasa_as_square_below(ch, marks, next_ch):
             result.extend(marks)
             continue
         new_marks: list[str] = []
@@ -494,6 +569,7 @@ def fix_dots(text: str) -> str:
     out = fix_soft_pe_roots(out)
     out = fix_participle_points(out)
     out = fix_ayt_hbasa(out)
+    out = fix_stacked_hbasa_dot_below(out)
     return out
 
 
@@ -698,6 +774,17 @@ def fix_min_rukkakha(text: str) -> str:
     return _FROM_MN_MARKED_RE.sub(from_sub, text)
 
 
+def fix_min_zlama(text: str) -> str:
+    """Standalone ܡܸܢ / ܘܡܸܢ / ܕܡܸܢ → ܡ̣ܢ. Suffixed and ܗܲܝܡܸܢ stay."""
+    if not text or ZLAMA_HORIZONTAL not in text:
+        return text
+
+    def from_sub(m: re.Match[str]) -> str:
+        return m.group(1) + "ܡ" + DOT_BELOW + "ܢ"
+
+    return _FROM_MN_ZLAMA_RE.sub(from_sub, text)
+
+
 def process_file(path: Path, *, chaldean_min: bool = False) -> int:
     content = path.read_text(encoding="utf-8")
     new_content = fix_dots(content)
@@ -816,11 +903,24 @@ def _self_check() -> None:
     assert fix_rwaha_qushshaya("ܒܵܛܹܿܠ") == "ܒܵܛܹ̇ܠ"  # non-BGDKPT square above
     assert fix_rwaha_qushshaya("ܨܠܵܘܵܬ݂̈ܵܗܿ") == "ܨܠܵܘܵܬ݂̈ܵܗ̇"
     assert fix_rwaha_qushshaya("ܒ݂ܿ") == "ܒ݂"  # soft wins
+    assert fix_dot_above_qushshaya("ܘܠܲܝܬ̇") == "ܘܠܲܝܬ݁"
+    assert fix_dot_above_qushshaya("ܐܲܢ݇ܬ̇") == "ܐܲܢ݇ܬ݁"
+    assert fix_dot_above_qushshaya("ܫܲܒ̇ܚܘܼܗܝ") == "ܫܲܒ݁ܚܘܼܗܝ"
+    assert fix_dot_above_qushshaya("ܥܵܒܹ̇ܕ݂") == "ܥܵܒܹ̇ܕ݂"  # participle
+    assert fix_dot_above_qushshaya("ܝܵܬܹ̇ܒ݂") == "ܝܵܬܹ̇ܒ݂"
+    assert fix_dot_above_qushshaya("ܡ̇ܢ") == "ܡ̇ܢ"
+    assert fix_dot_above_qushshaya("ܘܠܲܝܬ݁") == "ܘܠܲܝܬ݁"
+    assert fix_dots("ܘܠܲܝܬ̇") == "ܘܠܲܝܬ݁"
     assert fix_stacked_hbasa_dot_below("ܘܩܼܵܡ") == "ܘܩ̣ܵܡ"
     assert fix_stacked_hbasa_dot_below("ܗ̄ܘܼܵܘ") == "ܗ̄ܘ̣ܵܘ"
     assert fix_stacked_hbasa_dot_below("ܫܲܡܼܠܝܼ") == "ܫܲܡܼܠܝܼ"  # /i/ stays
     assert fix_stacked_hbasa_dot_below("ܚܘܼܕܪܵܐ") == "ܚܘܼܕܪܵܐ"
     assert fix_stacked_hbasa_dot_below("ܢܒ݂ܝܼܵܐ") == "ܢܒ݂ܝܼܵܐ"  # yodh mater
+    assert fix_stacked_hbasa_dot_below("ܘܲܥܪܲܩܼ") == "ܘܲܥܪܲܩ̣"
+    assert fix_stacked_hbasa_dot_below("ܐܲܩܼܝܼܡ") == "ܐܲܩ̣ܝܼܡ"
+    assert fix_stacked_hbasa_dot_below("ܫܒܲܩܼ݇ܢ") == "ܫܒܲܩ̣݇ܢ"
+    assert fix_stacked_hbasa_dot_below("ܠܒܸܫܼ") == "ܠܒܸܫ̣"
+    assert fix_dots("ܘܲܥܪܲܩܼ") == "ܘܲܥܪܲܩ̣"
     assert fix_dots("ܦ݂") == "ܦ݂"  # soft pe keeps rukkakha (breve rule off)
     assert fix_dots("ܦܼ") == "ܦ݂"  # hbasa on pe → rukkakha, not breve
     assert fix_dots("ܘܢܵܦܼܸܠ") == "ܘܢܵܦ݂ܸܠ"
@@ -922,6 +1022,14 @@ def _self_check() -> None:
     assert fix_min_rukkakha("ܠܡ݂ܢ") == "ܠܡ݂ܢ"  # not the "from" particle
     assert fix_min_rukkakha("ܣܵܡ݂ ܥܲܠ") == "ܣܵܡ݂ ܥܲܠ"  # rukkakha on other mem
     assert fix_min_rukkakha("ܡ̣ܢ ܟܠ") == "ܡ̣ܢ ܟܠ"
+    assert fix_min_zlama("ܡܸܢ ܒܝܼܫܵܐ") == "ܡ̣ܢ ܒܝܼܫܵܐ"
+    assert fix_min_zlama("ܘܡܸܢ ܥܵܠܲܡ") == "ܘܡ̣ܢ ܥܵܠܲܡ"
+    assert fix_min_zlama("ܕܡܸܢ ܩܕ݂ܝܼܡ") == "ܕܡ̣ܢ ܩܕ݂ܝܼܡ"
+    assert fix_min_zlama("ܡܸܢܝ") == "ܡܸܢܝ"
+    assert fix_min_zlama("ܡܸܢܹܗ") == "ܡܸܢܹܗ"
+    assert fix_min_zlama("ܗܲܝܡܸܢ") == "ܗܲܝܡܸܢ"
+    assert fix_min_zlama("ܡܢ ܒܝܼܫܵܐ") == "ܡܢ ܒܝܼܫܵܐ"
+    assert fix_min_zlama("ܡ̣ܢ ܟܠ") == "ܡ̣ܢ ܟܠ"
 
 
 def _apply_to_corpus(ROOT: Path) -> None:
@@ -1085,24 +1193,27 @@ def _apply_rwaha_only(ROOT: Path) -> None:
 
 
 def _apply_min_only(ROOT: Path) -> None:
-    """Rewrite ܡ݂ܢ → ܡ̣ܢ without touching bare ܡܢ or other diacritics."""
+    """Rewrite ܡ݂ܢ and standalone ܡܸܢ → ܡ̣ܢ without touching bare ܡܢ."""
     seen: set[Path] = set()
     changed = 0
-    remaining = 0
+    remaining_marked = 0
+    remaining_zlama = 0
     for path in _corpus_json_files(ROOT):
         path = path.resolve()
         if path in seen or not path.is_file():
             continue
         seen.add(path)
         raw = path.read_text(encoding="utf-8")
-        new = fix_min_rukkakha(raw)
+        new = fix_min_zlama(fix_min_rukkakha(raw))
         if new != raw:
             path.write_text(new, encoding="utf-8")
             changed += 1
-        remaining += len(_FROM_MN_MARKED_RE.findall(new))
+        remaining_marked += len(_FROM_MN_MARKED_RE.findall(new))
+        remaining_zlama += len(_FROM_MN_ZLAMA_RE.findall(new))
     print(
-        f"Rewrote ܡ݂ܢ → ܡ̣ܢ in {changed} files; "
-        f"{remaining} marked-from particles still using rukkakha/hbasa."
+        f"Rewrote ܡ݂ܢ / ܡܸܢ → ܡ̣ܢ in {changed} files; "
+        f"{remaining_marked} marked-from and {remaining_zlama} zlama-from "
+        "particles left."
     )
 
 
@@ -1183,6 +1294,99 @@ def _apply_ayt_only(ROOT: Path) -> None:
     )
 
 
+def _hbasa_square_left(text: str) -> int:
+    """How many hbasa-as-square-below clusters remain."""
+    n = 0
+    i = 0
+    length = len(text)
+    while i < length:
+        ch = text[i]
+        i += 1
+        if not ("\u0710" <= ch <= "\u072f"):
+            continue
+        marks: list[str] = []
+        while i < length and unicodedata.category(text[i]).startswith("M"):
+            marks.append(text[i])
+            i += 1
+        next_ch = text[i] if i < length else None
+        if _hbasa_as_square_below(ch, marks, next_ch):
+            n += 1
+    return n
+
+
+def _apply_hbasa_below_only(ROOT: Path) -> None:
+    """Rewrite hbasa-as-square-below without touching other diacritics."""
+    seen: set[Path] = set()
+    changed = 0
+    remaining = 0
+    for path in _corpus_json_files(ROOT):
+        path = path.resolve()
+        if path in seen or not path.is_file():
+            continue
+        seen.add(path)
+        raw = path.read_text(encoding="utf-8")
+        new = fix_stacked_hbasa_dot_below(raw)
+        if new != raw:
+            path.write_text(new, encoding="utf-8")
+            changed += 1
+        remaining += _hbasa_square_left(new)
+    print(
+        f"Rewrote hbasa-as-square-below in {changed} files; "
+        f"{remaining} stand-in clusters left."
+    )
+
+
+def _dot_above_qush_left(text: str) -> int:
+    """How many non-participle U+0307 still sit on a BGDKPT cluster."""
+    n = 0
+    i = 0
+    length = len(text)
+    prev_marks: list[str] = []
+    while i < length:
+        ch = text[i]
+        i += 1
+        if not ("\u0710" <= ch <= "\u072f"):
+            if not unicodedata.category(ch).startswith("M"):
+                prev_marks = []
+            continue
+        marks: list[str] = []
+        while i < length and unicodedata.category(text[i]).startswith("M"):
+            marks.append(text[i])
+            i += 1
+        if (
+            ch in BGDKPT
+            and DOT_ABOVE in marks
+            and not (
+                any(m in VOWELS for m in marks) and ZQAPHA in prev_marks
+            )
+        ):
+            n += 1
+        prev_marks = marks
+    return n
+
+
+def _apply_dot_above_only(ROOT: Path) -> None:
+    """Rewrite ̇ on BGDKPT → ݁, leaving participle reading points."""
+    seen: set[Path] = set()
+    changed = 0
+    remaining = 0
+    for path in _corpus_json_files(ROOT):
+        path = path.resolve()
+        if path in seen or not path.is_file():
+            continue
+        seen.add(path)
+        raw = path.read_text(encoding="utf-8")
+        new = fix_dot_above_qushshaya(raw)
+        if new != raw:
+            path.write_text(new, encoding="utf-8")
+            changed += 1
+        remaining += _dot_above_qush_left(new)
+    print(
+        f"Rewrote ̇-as-qushshaya in {changed} files; "
+        f"{remaining} non-participle U+0307 still on BGDKPT."
+    )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=(
@@ -1216,7 +1420,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--min-only",
         action="store_true",
-        help="with --apply, rewrite only ܡ݂ܢ / ܡܢ݂ → ܡ̣ܢ (leave bare ܡܢ alone)",
+        help="with --apply, rewrite ܡ݂ܢ / ܡܢ݂ and standalone ܡܸܢ → ܡ̣ܢ (leave bare ܡܢ alone)",
     )
     parser.add_argument(
         "--linea-only",
@@ -1227,6 +1431,19 @@ if __name__ == "__main__":
         "--ayt-only",
         action="store_true",
         help="with --apply, drop only ܼ on yodh in ܲܝܼܬ (ܕܲܒ݂ܪܲܝܼܬ݁ → ܕܲܒ݂ܪܲܝܬ݁)",
+    )
+    parser.add_argument(
+        "--hbasa-below-only",
+        action="store_true",
+        help=(
+            "with --apply, rewrite hbasa standing in for a square below: "
+            "ܘܲܥܪܲܩܼ → ܘܲܥܪܲܩ̣, word-final ܠܒܸܫܼ → ܠܒܸܫ̣"
+        ),
+    )
+    parser.add_argument(
+        "--dot-above-only",
+        action="store_true",
+        help="with --apply, rewrite ̇ on BGDKPT → ݁ (ܘܠܲܝܬ̇ → ܘܠܲܝܬ݁); leave participles",
     )
     parser.add_argument(
         "--self-check",
@@ -1253,5 +1470,9 @@ if __name__ == "__main__":
         _apply_linea_only(root)
     elif args.ayt_only:
         _apply_ayt_only(root)
+    elif args.hbasa_below_only:
+        _apply_hbasa_below_only(root)
+    elif args.dot_above_only:
+        _apply_dot_above_only(root)
     else:
         _apply_to_corpus(root)
