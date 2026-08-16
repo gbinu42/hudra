@@ -48,6 +48,10 @@ Dotless rish (U+0716 ܖ) is a keyboard stand-in for resh with syame.
   It becomes U+072A ܪ, keeping syame. A dummy ܖ immediately before a
   real ܪ (ܦܲܓ݂ܖܪ̈) is dropped so the existing ܦܲܓ݂ܪܪ̈ collapse can fire.
 
+Hbasa typed as rukkakha (U+073C on BGDKPT) is a keyboard stand-in for
+  U+0742. A targeted --hbasa-only pass rewrites ܟܼ → ܟ݂ in place and
+  does not reorder other marks. Hbasa on waw/yodh stays as /u/ / /i/.
+
 Stacked vowels — a letter cannot carry two of them:
   7. A below vowel under a real /a/ or /ā/ (U+0732, U+0735) is a
      mis-encoded lower reading mark. Which mark depends on the vowel:
@@ -201,6 +205,44 @@ def fix_dotless_rish(text: str) -> str:
             continue
         result.append(RESH)
         result.extend(marks)
+    return "".join(result)
+
+
+def fix_hbasa_rukkakha(text: str) -> str:
+    """ܟܼ → ܟ݂ on BGDKPT. Hbasa on other letters stays as /i/ or /u/."""
+    if not text or HBASA not in text:
+        return text
+    result: list[str] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        ch = text[i]
+        result.append(ch)
+        i += 1
+        if ch not in BGDKPT:
+            continue
+        marks: list[str] = []
+        while i < n and unicodedata.category(text[i]).startswith("M"):
+            marks.append(text[i])
+            i += 1
+        if HBASA not in marks:
+            result.extend(marks)
+            continue
+        # Replace in place; do not reorder. Soft wins if both marks sit
+        # on the same letter (ܒܼܿ → ܒ݂). Collapse a duplicate rukkakha.
+        new_marks: list[str] = []
+        seen_rukk = False
+        for m in marks:
+            if m == HBASA:
+                m = RUKKAKHA
+            if m == QUSHSHAYA:
+                continue
+            if m == RUKKAKHA:
+                if seen_rukk:
+                    continue
+                seen_rukk = True
+            new_marks.append(m)
+        result.extend(new_marks)
     return "".join(result)
 
 
@@ -518,6 +560,11 @@ def _self_check() -> None:
     assert fix_dots("ܘܣܲܒܼܪܵܐ") == "ܘܣܲܒ݂ܪܵܐ"
     assert fix_dots("ܬܿ") == "ܬ݁"
     assert fix_dots("ܟܼ") == "ܟ݂"
+    assert fix_hbasa_rukkakha("ܠܵܟܼܘܼ") == "ܠܵܟ݂ܘܼ"
+    assert fix_hbasa_rukkakha("ܚܘܼܕܪܵܐ") == "ܚܘܼܕܪܵܐ"  # /u/ on waw stays
+    assert fix_hbasa_rukkakha("ܩܕܝܼܫܵܐ") == "ܩܕܝܼܫܵܐ"  # /i/ on yodh stays
+    assert fix_hbasa_rukkakha("ܒܼ݁") == "ܒ݂"  # soft wins over real qushshaya
+    assert fix_hbasa_rukkakha("ܟܼ̈") == "ܟ݂̈"  # do not reorder
     assert fix_dots("ܦ݂") == "ܦ݂"  # soft pe keeps rukkakha (breve rule off)
     assert fix_dots("ܦܼ") == "ܦ݂"  # hbasa on pe → rukkakha, not breve
     assert fix_dots("ܘܢܵܦܼܸܠ") == "ܘܢܵܦ݂ܸܠ"
@@ -657,6 +704,24 @@ def _apply_to_corpus(ROOT: Path) -> None:
 
 def _apply_rish_only(ROOT: Path) -> None:
     """Rewrite ܖ → ܪ in corpus files without touching other diacritics."""
+    seen: set[Path] = set()
+    changed = 0
+    remaining = 0
+    for path in _corpus_json_files(ROOT):
+        path = path.resolve()
+        if path in seen or not path.is_file():
+            continue
+        seen.add(path)
+        raw = path.read_text(encoding="utf-8")
+        new = fix_dotless_rish(raw)
+        if new != raw:
+            path.write_text(new, encoding="utf-8")
+            changed += 1
+        remaining += new.count(DOTLESS_RISH)
+    print(f"Rewrote dotless rish in {changed} files; {remaining} U+0716 left.")
+
+
+def _corpus_json_files(ROOT: Path) -> list[Path]:
     files: list[Path] = []
     for rel in (
         "data/prayers",
@@ -673,22 +738,46 @@ def _apply_rish_only(ROOT: Path) -> None:
             files.append(d)
     for name in ("index.json", "psalms_index.json", "catalog.json"):
         files.append(ROOT / "data" / name)
+    return files
 
+
+def _hbasa_on_bgdkpt_left(text: str) -> int:
+    """How many U+073C still sit on a BGDKPT cluster."""
+    n = 0
+    i = 0
+    length = len(text)
+    while i < length:
+        ch = text[i]
+        i += 1
+        if ch not in BGDKPT:
+            continue
+        while i < length and unicodedata.category(text[i]).startswith("M"):
+            if text[i] == HBASA:
+                n += 1
+            i += 1
+    return n
+
+
+def _apply_hbasa_only(ROOT: Path) -> None:
+    """Rewrite ܼ on BGDKPT → ݂ without touching other diacritics."""
     seen: set[Path] = set()
     changed = 0
     remaining = 0
-    for path in files:
+    for path in _corpus_json_files(ROOT):
         path = path.resolve()
         if path in seen or not path.is_file():
             continue
         seen.add(path)
         raw = path.read_text(encoding="utf-8")
-        new = fix_dotless_rish(raw)
+        new = fix_hbasa_rukkakha(raw)
         if new != raw:
             path.write_text(new, encoding="utf-8")
             changed += 1
-        remaining += new.count(DOTLESS_RISH)
-    print(f"Rewrote dotless rish in {changed} files; {remaining} U+0716 left.")
+        remaining += _hbasa_on_bgdkpt_left(new)
+    print(
+        f"Rewrote hbasa-as-rukkakha in {changed} files; "
+        f"{remaining} U+073C still on BGDKPT."
+    )
 
 
 if __name__ == "__main__":
@@ -709,6 +798,11 @@ if __name__ == "__main__":
         help="with --apply, rewrite only ܖ → ܪ (leave other marks alone)",
     )
     parser.add_argument(
+        "--hbasa-only",
+        action="store_true",
+        help="with --apply, rewrite only ܼ on BGDKPT → ݂ (leave other marks alone)",
+    )
+    parser.add_argument(
         "--self-check",
         action="store_true",
         help="only run the rule regressions (default when --apply is absent)",
@@ -723,5 +817,7 @@ if __name__ == "__main__":
     root = Path(__file__).resolve().parents[1]
     if args.rish_only:
         _apply_rish_only(root)
+    elif args.hbasa_only:
+        _apply_hbasa_only(root)
     else:
         _apply_to_corpus(root)

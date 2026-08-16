@@ -5,7 +5,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "scripts"))
-from fix_syriac_dots import fix_dots
+from fix_syriac_dots import fix_dots, fix_hbasa_rukkakha
 
 
 def test_examples():
@@ -140,6 +140,19 @@ def test_chaldean_min():
     assert fix_chaldean_min("ܡ̣ܢ ܒܝܼܫܵܐ") == "ܡ̣ܢ ܒܝܼܫܵܐ"
 
 
+def test_hbasa_rukkakha_only():
+    # Targeted pass: ܼ on BGDKPT → ݂; other letters and mark order stay.
+    assert fix_hbasa_rukkakha("ܠܵܟܼܘܼ") == "ܠܵܟ݂ܘܼ"
+    assert fix_hbasa_rukkakha("ܣܲܒܼܪܵܟܼ") == "ܣܲܒ݂ܪܵܟ݂"
+    assert fix_hbasa_rukkakha("ܚܘܼܕܪܵܐ") == "ܚܘܼܕܪܵܐ"
+    assert fix_hbasa_rukkakha("ܩܕܝܼܫܵܐ") == "ܩܕܝܼܫܵܐ"
+    assert fix_hbasa_rukkakha("ܫܲܡܼܠܝܼ") == "ܫܲܡܼܠܝܼ"
+    assert fix_hbasa_rukkakha("ܒܼ݁") == "ܒ݂"
+    assert fix_hbasa_rukkakha("ܒܼܿ") == "ܒ݂ܿ"  # rwaha is a different rule
+    assert fix_hbasa_rukkakha("ܟܼ̈") == "ܟ݂̈"
+    assert fix_hbasa_rukkakha("ܪ̈ܲ") == "ܪ̈ܲ"
+
+
 if __name__ == "__main__":
     test_examples()
     test_vowels_preserved()
@@ -152,4 +165,5 @@ if __name__ == "__main__":
     test_mark_order()
     test_syame_order()
     test_chaldean_min()
+    test_hbasa_rukkakha_only()
     print("ok")
