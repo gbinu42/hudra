@@ -5,7 +5,13 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "scripts"))
-from fix_syriac_dots import fix_dots, fix_hbasa_rukkakha
+from fix_syriac_dots import (
+    fix_dots,
+    fix_hbasa_rukkakha,
+    fix_min_rukkakha,
+    fix_rwaha_qushshaya,
+    fix_stacked_hbasa_dot_below,
+)
 
 
 def test_examples():
@@ -153,6 +159,41 @@ def test_hbasa_rukkakha_only():
     assert fix_hbasa_rukkakha("ܪ̈ܲ") == "ܪ̈ܲ"
 
 
+def test_rwaha_qushshaya_only():
+    # Targeted pass: ܿ on BGDKPT → ݁; /o/ on waw and mark order stay.
+    assert fix_rwaha_qushshaya("ܒܬܸܫܒܿܘܿܚܬܵܐ") == "ܒܬܸܫܒ݁ܘܿܚܬܵܐ"
+    assert fix_rwaha_qushshaya("ܡܫܲܒܿܚܝܼܢ") == "ܡܫܲܒ݁ܚܝܼܢ"
+    assert fix_rwaha_qushshaya("ܡܲܙܡܘܿܪܵܐ") == "ܡܲܙܡܘܿܪܵܐ"
+    assert fix_rwaha_qushshaya("ܬܿ") == "ܬ݁"
+    assert fix_rwaha_qushshaya("ܬܹܿ") == "ܬܹ݁"
+    assert fix_rwaha_qushshaya("ܥܵܒܹܿܕ݂") == "ܥܵܒܹ̇ܕ݂"
+    assert fix_rwaha_qushshaya("ܒܵܛܹܿܠ") == "ܒܵܛܹ̇ܠ"
+    assert fix_rwaha_qushshaya("ܨܠܵܘܵܬ݂̈ܵܗܿ") == "ܨܠܵܘܵܬ݂̈ܵܗ̇"
+    assert fix_rwaha_qushshaya("ܒ݂ܿ") == "ܒ݂"
+    assert fix_rwaha_qushshaya("ܣܲܓܿܝܼܐܵܐ") == "ܣܲܓ݁ܝܼܐܵܐ"
+
+
+def test_stacked_hbasa_dot_below_only():
+    assert fix_stacked_hbasa_dot_below("ܘܩܼܵܡ") == "ܘܩ̣ܵܡ"
+    assert fix_stacked_hbasa_dot_below("ܗ̄ܘܼܵܘ") == "ܗ̄ܘ̣ܵܘ"
+    assert fix_stacked_hbasa_dot_below("ܫܲܡܼܠܝܼ") == "ܫܲܡܼܠܝܼ"
+    assert fix_stacked_hbasa_dot_below("ܚܘܼܕܪܵܐ") == "ܚܘܼܕܪܵܐ"
+    assert fix_stacked_hbasa_dot_below("ܢܒ݂ܝܼܵܐ") == "ܢܒ݂ܝܼܵܐ"
+    assert fix_stacked_hbasa_dot_below("ܒܼܵ") == "ܒܼܵ"
+
+
+def test_min_rukkakha_only():
+    assert fix_min_rukkakha("ܡ݂ܢ ܫܡܲܝܵܐ") == "ܡ̣ܢ ܫܡܲܝܵܐ"
+    assert fix_min_rukkakha("ܘܡ݂ܢ ܥܵܠܲܡ") == "ܘܡ̣ܢ ܥܵܠܲܡ"
+    assert fix_min_rukkakha("ܕܡ݂ܢ ܩܕ݂ܝܼܡ") == "ܕܡ̣ܢ ܩܕ݂ܝܼܡ"
+    assert fix_min_rukkakha("ܘܲܕ݂ܡ݂ܢ ܥܵܠܲܡ") == "ܘܲܕ݂ܡ̣ܢ ܥܵܠܲܡ"
+    assert fix_min_rukkakha("ܡܢ݂ ܫܡܲܝܵܐ") == "ܡ̣ܢ ܫܡܲܝܵܐ"
+    assert fix_min_rukkakha("ܡܢ ܒܝܼܫܵܐ") == "ܡܢ ܒܝܼܫܵܐ"
+    assert fix_min_rukkakha("ܠܡ݂ܢ") == "ܠܡ݂ܢ"
+    assert fix_min_rukkakha("ܣܵܡ݂ ܥܲܠ") == "ܣܵܡ݂ ܥܲܠ"
+    assert fix_min_rukkakha("ܡ̣ܢ ܟܠ") == "ܡ̣ܢ ܟܠ"
+
+
 if __name__ == "__main__":
     test_examples()
     test_vowels_preserved()
@@ -166,4 +207,7 @@ if __name__ == "__main__":
     test_syame_order()
     test_chaldean_min()
     test_hbasa_rukkakha_only()
+    test_rwaha_qushshaya_only()
+    test_stacked_hbasa_dot_below_only()
+    test_min_rukkakha_only()
     print("ok")

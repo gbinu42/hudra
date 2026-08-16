@@ -165,7 +165,7 @@ function sortEditions(a: PrayerSummary, b: PrayerSummary) {
 }
 
 /**
- * hudra.org sometimes lists the same Assyrian (or Chaldean) office twice with
+ * The catalog sometimes lists the same Assyrian (or Chaldean) office twice with
  * nearly identical titles. Keep the longer copy per hour + tradition slot.
  */
 export function dedupeSameSlot(prayers: PrayerSummary[]): PrayerSummary[] {

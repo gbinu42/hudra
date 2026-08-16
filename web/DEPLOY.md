@@ -27,7 +27,7 @@ npm run serve:static   # http://localhost:3010
 For a project-site base path locally:
 
 ```bash
-BASE_PATH=/hudra.org npm run build
+BASE_PATH=/hudra npm run build
 ```
 
 ## Password

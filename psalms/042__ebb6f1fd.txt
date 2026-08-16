@@ -2,7 +2,6 @@
 
 Psalm number: 42
 ID: ebb6f1fd-da87-43d3-bc2d-5cda4e96234a
-Source: https://hudra.org
 
 ────────────────────────────────────────
 ܣܦܪܐ ܕܬܪܝܢ.

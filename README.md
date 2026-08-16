@@ -1,6 +1,6 @@
-# hudra.org
+# Hudra
 
-Extracted Syriac text of the prayers and psalms of the **Hudra** (East Syriac breviary) from [hudra.org](https://hudra.org).
+Syriac text of the prayers and psalms of the **Hudra** (East Syriac breviary).
 
 ## Contents
 
@@ -67,8 +67,3 @@ python3 scripts/extract_psalms.py --force
 # After extract, refresh the web catalog:
 python3 scripts/build_catalog.py
 ```
-
-Source APIs:
-
-- Prayers: `https://hudra.org/CRUD/php_mysql/Prayers.php`
-- Psalms: `https://hudra.org/CRUD/php_mysql/Bible.php`

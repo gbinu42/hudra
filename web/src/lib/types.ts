@@ -52,7 +52,7 @@ export interface PsalmSummary {
 }
 
 export interface Catalog {
-  source: string;
+  source?: string;
   counts: {
     prayers: number;
     seasons: number;
@@ -78,7 +78,7 @@ export interface PrayerRecord {
   text: string;
   /** Colored HTML from Quill (rubrics, alignments). */
   html?: string;
-  source: string;
+  source?: string;
 }
 
 export interface PsalmRecord {
@@ -89,5 +89,5 @@ export interface PsalmRecord {
   order: number;
   text: string;
   html?: string;
-  source: string;
+  source?: string;
 }

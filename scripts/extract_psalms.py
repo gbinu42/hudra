@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Download Hudra psalms (mazmora) from https://hudra.org Bible API.
+Download Hudra psalms (mazmora) from the Bible API.
 
 API:
   GET /CRUD/php_mysql/Bible.php?action=getAllBibles&page=N&itemsPerPage=50&lang=0
@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from quill_to_text import quill_to_html, quill_to_text  # noqa: E402
 
 API = "https://hudra.org/CRUD/php_mysql/Bible.php"
-UA = "hudra-org-extractor/1.0 (+local research; curl-compatible)"
+UA = "hudra-extractor/1.0 (+local research; curl-compatible)"
 PAGE_SIZE = 50
 MAX_RETRIES = 5
 
@@ -147,7 +147,6 @@ def fetch_and_write(
             "order": int(order) if order is not None else number,
             "text": plain,
             "html": html_body,
-            "source": "https://hudra.org",
         }
 
         json_path = data_psalms / f"{item_id}.json"
@@ -165,7 +164,6 @@ def fetch_and_write(
             "",
             f"Psalm number: {number}",
             f"ID: {item_id}",
-            "Source: https://hudra.org",
             "",
             "─" * 40,
             "",
@@ -202,7 +200,6 @@ def fetch_and_write(
 def write_combined(index: list[dict], text_root: Path, out_path: Path) -> None:
     parts = [
         "ܡܙܡܘܪ̈ܐ — Psalms of the Hudra",
-        "Source: https://hudra.org",
         f"Psalms: {len(index)}",
         "",
         "=" * 60,
@@ -243,7 +240,6 @@ def main() -> None:
     index_path.write_text(
         json.dumps(
             {
-                "source": "https://hudra.org",
                 "count": len(index),
                 "psalms": index,
             },

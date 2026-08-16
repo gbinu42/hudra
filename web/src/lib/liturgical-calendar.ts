@@ -1,5 +1,5 @@
 /**
- * East Syriac liturgical calendar, ported from hudra.org's Flutter app
+ * East Syriac liturgical calendar, following Isaac's perpetual calendar
  * (Isaac, Ph., 2007, "The Perpetual Calendar").
  *
  * Easter follows Isaac's 28-year / 19-year tables (matches Gregorian Easter
@@ -172,7 +172,7 @@ function isLeap(y: number) {
   return y % 4 === 0 && (y % 100 !== 0 || y % 400 === 0);
 }
 
-/** Gregorian (Western) Easter — Chaldean / hudra.org civil calendar. */
+/** Gregorian (Western) Easter — Chaldean civil calendar. */
 export function westernEaster(year: number): Date {
   const a = year % 19;
   const b = Math.floor(year / 100);
@@ -192,7 +192,7 @@ export function westernEaster(year: number): Date {
 }
 
 /**
- * Isaac perpetual-calendar Easter (hudra.org). Falls back to Western on the
+ * Isaac perpetual-calendar Easter. Falls back to Western on the
  * two known edge years in 1901–2099.
  */
 export function isaacEaster(year: number): Date {
@@ -269,7 +269,7 @@ export function adventSunday(year: number): Date {
 
 /**
  * Great Fast Monday — 48 days before Easter (7 weeks), matching East Syriac
- * practice used alongside Isaac Easter in hudra.org.
+ * practice used alongside Isaac Easter.
  */
 export function lentMonday(easter: Date): Date {
   return addDays(easter, -48);

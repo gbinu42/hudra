@@ -6,7 +6,6 @@
 ܙܒܢܐ / Hour: ܣܘܒܥܐ
 Tradition: chaldean
 ID: 699e5b3b-0455-42a6-9035-0e99fdd2bdfb
-Source: https://hudra.org
 
 ────────────────────────────────────────
 ܣܘܼܒܵܥܵܐ.

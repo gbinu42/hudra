@@ -401,7 +401,6 @@ def main() -> None:
         )
 
     catalog = {
-        "source": "https://hudra.org",
         "generatedFor": "Hudra liturgical browser",
         "counts": {
             "prayers": len(prayers_out),

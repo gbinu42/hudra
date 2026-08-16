@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Download Hudra prayers from https://hudra.org and save Syriac text as formatted files.
+Download Hudra prayers and save Syriac text as formatted files.
 
 API:
   GET /CRUD/php_mysql/Prayers.php?action=getAllPrayers&page=N&itemsPerPage=50
@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from quill_to_text import quill_to_text  # noqa: E402
 
 API = "https://hudra.org/CRUD/php_mysql/Prayers.php"
-UA = "hudra-org-extractor/1.0 (+local research; curl-compatible)"
+UA = "hudra-extractor/1.0 (+local research; curl-compatible)"
 PAGE_SIZE = 50
 MAX_RETRIES = 5
 
@@ -171,7 +171,6 @@ def write_prayer_files(
             "prayerTime": prayer_time,
             "tradition": tradition,
             "text": plain,
-            "source": "https://hudra.org",
         }
 
         json_path = data_prayers / f"{item_id}.json"
@@ -199,7 +198,6 @@ def write_prayer_files(
             f"ܙܒܢܐ / Hour: {prayer_time}",
             f"Tradition: {trad_tag}",
             f"ID: {item_id}",
-            f"Source: https://hudra.org",
             "",
             "─" * 40,
             "",
@@ -235,7 +233,6 @@ def write_combined_corpus(index: list[dict], text_root: Path, out_path: Path) ->
     """One big UTF-8 file with all prayers in liturgical order."""
     parts: list[str] = [
         "ܗܘܕܪܐ — Prayers of the Hudra",
-        "Source: https://hudra.org",
         f"Prayers: {len(index)}",
         "",
         "=" * 60,
@@ -298,7 +295,6 @@ def main() -> None:
     index_path.write_text(
         json.dumps(
             {
-                "source": "https://hudra.org",
                 "count": len(index),
                 "syriacChurchCount": sum(1 for r in index if "syriac" in r["tradition"]),
                 "chaldeanChurchCount": sum(

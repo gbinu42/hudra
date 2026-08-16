@@ -6,7 +6,11 @@ East Syriac Madnhaya — common corpus confusions:
   1. U+073C HBASA-ESASA DOTTED on BGDKPT → U+0742 RUKKAKHA
      (on other letters U+073C is the legitimate /i/ vowel — keep)
   2. U+073F RWAHA on BGDKPT → U+0741 QUSHSHAYA
-     (on other letters U+073F is the legitimate /o/ vowel — keep)
+     (on waw U+073F is the legitimate /o/ vowel — keep).
+     On other non-waw letters the same vowel dot stands in for a square
+     / dot above, written as U+0307 (not qushshaya). A BGDKPT that already
+     carries a vowel and follows zqapha is the CaCeC participle reading
+     point, so that rwaha also becomes U+0307 rather than qushshaya.
 
 Generic combining dots → Syriac marks when the base letter fits:
   3. U+0323 COMBINING DOT BELOW on BGDKPT → U+0742 RUKKAKHA
@@ -52,6 +56,13 @@ Hbasa typed as rukkakha (U+073C on BGDKPT) is a keyboard stand-in for
   U+0742. A targeted --hbasa-only pass rewrites ܟܼ → ܟ݂ in place and
   does not reorder other marks. Hbasa on waw/yodh stays as /u/ / /i/.
 
+Rwaha typed as qushshaya (U+073F on BGDKPT) is a keyboard stand-in for
+  U+0741. A targeted --rwaha-only pass rewrites ܒܿ → ܒ݁ in place
+  (ܒܬܸܫܒܿܘܿܚܬܵܐ → ܒܬܸܫܒ݁ܘܿܚܬܵܐ) and does not reorder other marks.
+  Rwaha on waw stays as /o/. The same pass maps a non-waw rwaha that is
+  not qushshaya to U+0307, and a stacked hbasa under /a/ or /ā/ on a
+  non-BGDKPT letter to U+0323 (the lower-dot counterpart; yodh exempt).
+
 Stacked vowels — a letter cannot carry two of them:
   7. A below vowel under a real /a/ or /ā/ (U+0732, U+0735) is a
      mis-encoded lower reading mark. Which mark depends on the vowel:
@@ -82,6 +93,9 @@ Serto vowel signs left in a Madnhaya text:
      Do NOT touch already-pointed ܡܲܢ / ܡ̇ܢ / ܡܵܢ / ܡܼܢ,
      ܡܸܢ inside other roots (ܗܲܝܡܸܢ), or suffixed ܡܸܢܝ / ܡܸܢܹܗ / ܡܸܢܗܘܿܢ.
      Interrogative/relative "who" with ܠ or ܒ: ܠܡܢ → ܠܡܲܢ, ܒܡܢ → ܒܡܲܢ.
+     A targeted --min-only pass rewrites only an already-marked ܡ݂ܢ / ܡܢ݂
+     (rukkakha, hbasa, or breve standing in for the sublinear point) to ܡ̣ܢ.
+     It does not point a bare ܡܢ.
 
 Never delete diacritics: if no remapping rule applies, the mark is kept.
 When soft + hard end up on the same letter, keep soft and drop qushshaya.
@@ -241,6 +255,115 @@ def fix_hbasa_rukkakha(text: str) -> str:
                 if seen_rukk:
                     continue
                 seen_rukk = True
+            new_marks.append(m)
+        result.extend(new_marks)
+    return "".join(result)
+
+
+def _rewrite_rwaha_marks(
+    base: str, marks: list[str], prev_marks: list[str]
+) -> list[str]:
+    """Replace a stand-in rwaha; keep original mark order."""
+    other_vowel = any(m in VOWELS and m != RWAHA for m in marks)
+    has_soft = RUKKAKHA in marks or BREVE_BELOW in marks
+    participle = (
+        base in BGDKPT and other_vowel and ZQAPHA in prev_marks
+    )
+    new_marks: list[str] = []
+    seen_qush = False
+    seen_dot_above = False
+    for m in marks:
+        if m == RWAHA:
+            if base == WAW:
+                new_marks.append(m)
+                continue
+            if base in BGDKPT and not participle:
+                m = QUSHSHAYA
+            else:
+                m = DOT_ABOVE
+        if m == QUSHSHAYA:
+            if has_soft or seen_qush:
+                continue
+            seen_qush = True
+        elif m == DOT_ABOVE:
+            if seen_dot_above:
+                continue
+            seen_dot_above = True
+        new_marks.append(m)
+    return new_marks
+
+
+def fix_rwaha_qushshaya(text: str) -> str:
+    """ܒܿ → ܒ݁ on BGDKPT. Rwaha on waw stays as /o/.
+
+    A vowel-dot used as a square/dot above on a non-waw letter that cannot
+    take qushshaya (or on a CaCeC participle middle radical) becomes U+0307.
+    Marks are rewritten in place; they are not reordered.
+    """
+    if not text or RWAHA not in text:
+        return text
+    result: list[str] = []
+    i = 0
+    n = len(text)
+    prev_marks: list[str] = []
+    while i < n:
+        ch = text[i]
+        result.append(ch)
+        i += 1
+        if not ("\u0710" <= ch <= "\u072f"):
+            if not unicodedata.category(ch).startswith("M"):
+                prev_marks = []
+            continue
+        marks: list[str] = []
+        while i < n and unicodedata.category(text[i]).startswith("M"):
+            marks.append(text[i])
+            i += 1
+        if RWAHA in marks:
+            marks = _rewrite_rwaha_marks(ch, marks, prev_marks)
+        result.extend(marks)
+        prev_marks = marks
+    return "".join(result)
+
+
+def fix_stacked_hbasa_dot_below(text: str) -> str:
+    """Hbasa under /a/ or /ā/ on a non-BGDKPT letter → combining dot below.
+
+    Bare hbasa stays as /i/ or /u/. Yodh is exempt (ܝܼܵ is a mater).
+    BGDKPT is left to the rukkakha pass. Marks are not reordered.
+    """
+    if not text or HBASA not in text:
+        return text
+    result: list[str] = []
+    i = 0
+    n = len(text)
+    while i < n:
+        ch = text[i]
+        result.append(ch)
+        i += 1
+        if not ("\u0710" <= ch <= "\u072f"):
+            continue
+        marks: list[str] = []
+        while i < n and unicodedata.category(text[i]).startswith("M"):
+            marks.append(text[i])
+            i += 1
+        stacked = (
+            HBASA in marks
+            and ch != YUDH
+            and ch not in BGDKPT
+            and any(m in MAIN_ABOVE_VOWELS for m in marks)
+        )
+        if not stacked:
+            result.extend(marks)
+            continue
+        new_marks: list[str] = []
+        seen_dot = False
+        for m in marks:
+            if m == HBASA:
+                m = DOT_BELOW
+            if m == DOT_BELOW:
+                if seen_dot:
+                    continue
+                seen_dot = True
             new_marks.append(m)
         result.extend(new_marks)
     return "".join(result)
@@ -440,6 +563,14 @@ _WHO_MN_DOT_RE = re.compile(
 _FROM_MN_RE = re.compile(
     rf"(?<![{_MN_WORD_CHAR}])([ܘܕ]?)ܡ{_MN_SOFT}?ܢ{_MN_SOFT}?(?![{_MN_WORD_CHAR}])"
 )
+# Targeted ܡ݂ܢ / ܡܢ݂ → ܡ̣ܢ: a below-dot stand-in is already present, so this
+# does not invent pointing on a bare ܡܢ, nor rewrite ܠܡܢ / ܒܡܢ.
+# Proclitic ܘ / ܕ may themselves carry marks (ܘܲܕ݂ܡ݂ܢ).
+_FROM_MN_MARKED_RE = re.compile(
+    rf"(?<![{_MN_WORD_CHAR}])((?:ܘ[{_MARKS}]*)?(?:ܕ[{_MARKS}]*)?)"
+    rf"ܡ(?:{_MN_SOFT}ܢ|ܢ{_MN_SOFT})"
+    rf"(?![{_MN_WORD_CHAR}])"
+)
 # Assyrian ܡܸܢ → ܡ̣ܢ. Standalone particle only: the lookbehind keeps ܗܲܝܡܸܢ
 # out, and the lookahead keeps suffixed forms (ܡܸܢܝ, ܡܸܢܹܗ, ܡܸܢܗܘܿܢ) as they are.
 _FROM_MN_ZLAMA_RE = re.compile(
@@ -467,6 +598,17 @@ def fix_chaldean_min(text: str) -> str:
     text = _FROM_MN_ZLAMA_RE.sub(from_sub, text)
     text = _FROM_MN_RE.sub(from_sub, text)
     return text
+
+
+def fix_min_rukkakha(text: str) -> str:
+    """ܡ݂ܢ → ܡ̣ܢ. Only when a below-dot stand-in is already on mem or nun."""
+    if not text or "ܡ" not in text:
+        return text
+
+    def from_sub(m: re.Match[str]) -> str:
+        return m.group(1) + "ܡ" + DOT_BELOW + "ܢ"
+
+    return _FROM_MN_MARKED_RE.sub(from_sub, text)
 
 
 def process_file(path: Path, *, chaldean_min: bool = False) -> int:
@@ -565,6 +707,19 @@ def _self_check() -> None:
     assert fix_hbasa_rukkakha("ܩܕܝܼܫܵܐ") == "ܩܕܝܼܫܵܐ"  # /i/ on yodh stays
     assert fix_hbasa_rukkakha("ܒܼ݁") == "ܒ݂"  # soft wins over real qushshaya
     assert fix_hbasa_rukkakha("ܟܼ̈") == "ܟ݂̈"  # do not reorder
+    assert fix_rwaha_qushshaya("ܒܬܸܫܒܿܘܿܚܬܵܐ") == "ܒܬܸܫܒ݁ܘܿܚܬܵܐ"
+    assert fix_rwaha_qushshaya("ܡܲܙܡܘܿܪܵܐ") == "ܡܲܙܡܘܿܪܵܐ"  # /o/ on waw stays
+    assert fix_rwaha_qushshaya("ܬܿ") == "ܬ݁"
+    assert fix_rwaha_qushshaya("ܬܹܿ") == "ܬܹ݁"  # do not reorder
+    assert fix_rwaha_qushshaya("ܥܵܒܹܿܕ݂") == "ܥܵܒܹ̇ܕ݂"  # participle reading point
+    assert fix_rwaha_qushshaya("ܒܵܛܹܿܠ") == "ܒܵܛܹ̇ܠ"  # non-BGDKPT square above
+    assert fix_rwaha_qushshaya("ܨܠܵܘܵܬ݂̈ܵܗܿ") == "ܨܠܵܘܵܬ݂̈ܵܗ̇"
+    assert fix_rwaha_qushshaya("ܒ݂ܿ") == "ܒ݂"  # soft wins
+    assert fix_stacked_hbasa_dot_below("ܘܩܼܵܡ") == "ܘܩ̣ܵܡ"
+    assert fix_stacked_hbasa_dot_below("ܗ̄ܘܼܵܘ") == "ܗ̄ܘ̣ܵܘ"
+    assert fix_stacked_hbasa_dot_below("ܫܲܡܼܠܝܼ") == "ܫܲܡܼܠܝܼ"  # /i/ stays
+    assert fix_stacked_hbasa_dot_below("ܚܘܼܕܪܵܐ") == "ܚܘܼܕܪܵܐ"
+    assert fix_stacked_hbasa_dot_below("ܢܒ݂ܝܼܵܐ") == "ܢܒ݂ܝܼܵܐ"  # yodh mater
     assert fix_dots("ܦ݂") == "ܦ݂"  # soft pe keeps rukkakha (breve rule off)
     assert fix_dots("ܦܼ") == "ܦ݂"  # hbasa on pe → rukkakha, not breve
     assert fix_dots("ܘܢܵܦܼܸܠ") == "ܘܢܵܦ݂ܸܠ"
@@ -657,6 +812,15 @@ def _self_check() -> None:
     assert fix_chaldean_min("ܥܲܡܢ") == "ܥܲܡܢ"
     assert fix_chaldean_min("ܡܢܗܘܿܢ") == "ܡܢܗܘܿܢ"
     assert fix_chaldean_min("ܡ̣ܢ ܟܠ") == "ܡ̣ܢ ܟܠ"  # idempotent
+    assert fix_min_rukkakha("ܡ݂ܢ ܫܡܲܝܵܐ") == "ܡ̣ܢ ܫܡܲܝܵܐ"
+    assert fix_min_rukkakha("ܘܡ݂ܢ ܥܵܠܲܡ") == "ܘܡ̣ܢ ܥܵܠܲܡ"
+    assert fix_min_rukkakha("ܕܡ݂ܢ ܩܕ݂ܝܼܡ") == "ܕܡ̣ܢ ܩܕ݂ܝܼܡ"
+    assert fix_min_rukkakha("ܘܲܕ݂ܡ݂ܢ ܥܵܠܲܡ") == "ܘܲܕ݂ܡ̣ܢ ܥܵܠܲܡ"
+    assert fix_min_rukkakha("ܡܢ݂ ܫܡܲܝܵܐ") == "ܡ̣ܢ ܫܡܲܝܵܐ"
+    assert fix_min_rukkakha("ܡܢ ܒܝܼܫܵܐ") == "ܡܢ ܒܝܼܫܵܐ"  # do not invent a point
+    assert fix_min_rukkakha("ܠܡ݂ܢ") == "ܠܡ݂ܢ"  # not the "from" particle
+    assert fix_min_rukkakha("ܣܵܡ݂ ܥܲܠ") == "ܣܵܡ݂ ܥܲܠ"  # rukkakha on other mem
+    assert fix_min_rukkakha("ܡ̣ܢ ܟܠ") == "ܡ̣ܢ ܟܠ"
 
 
 def _apply_to_corpus(ROOT: Path) -> None:
@@ -780,6 +944,67 @@ def _apply_hbasa_only(ROOT: Path) -> None:
     )
 
 
+def _rwaha_on_bgdkpt_left(text: str) -> int:
+    """How many U+073F still sit on a BGDKPT cluster."""
+    n = 0
+    i = 0
+    length = len(text)
+    while i < length:
+        ch = text[i]
+        i += 1
+        if ch not in BGDKPT:
+            continue
+        while i < length and unicodedata.category(text[i]).startswith("M"):
+            if text[i] == RWAHA:
+                n += 1
+            i += 1
+    return n
+
+
+def _apply_rwaha_only(ROOT: Path) -> None:
+    """Rewrite vowel-dot stand-ins for square dots without reordering."""
+    seen: set[Path] = set()
+    changed = 0
+    remaining = 0
+    for path in _corpus_json_files(ROOT):
+        path = path.resolve()
+        if path in seen or not path.is_file():
+            continue
+        seen.add(path)
+        raw = path.read_text(encoding="utf-8")
+        new = fix_stacked_hbasa_dot_below(fix_rwaha_qushshaya(raw))
+        if new != raw:
+            path.write_text(new, encoding="utf-8")
+            changed += 1
+        remaining += _rwaha_on_bgdkpt_left(new)
+    print(
+        f"Rewrote rwaha-as-qushshaya (and stacked hbasa) in {changed} files; "
+        f"{remaining} U+073F still on BGDKPT."
+    )
+
+
+def _apply_min_only(ROOT: Path) -> None:
+    """Rewrite ܡ݂ܢ → ܡ̣ܢ without touching bare ܡܢ or other diacritics."""
+    seen: set[Path] = set()
+    changed = 0
+    remaining = 0
+    for path in _corpus_json_files(ROOT):
+        path = path.resolve()
+        if path in seen or not path.is_file():
+            continue
+        seen.add(path)
+        raw = path.read_text(encoding="utf-8")
+        new = fix_min_rukkakha(raw)
+        if new != raw:
+            path.write_text(new, encoding="utf-8")
+            changed += 1
+        remaining += len(_FROM_MN_MARKED_RE.findall(new))
+    print(
+        f"Rewrote ܡ݂ܢ → ܡ̣ܢ in {changed} files; "
+        f"{remaining} marked-from particles still using rukkakha/hbasa."
+    )
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description=(
@@ -803,6 +1028,19 @@ if __name__ == "__main__":
         help="with --apply, rewrite only ܼ on BGDKPT → ݂ (leave other marks alone)",
     )
     parser.add_argument(
+        "--rwaha-only",
+        action="store_true",
+        help=(
+            "with --apply, rewrite ܿ on BGDKPT → ݁, other non-waw ܿ → ̇, "
+            "and stacked ܼ under /a/ /ā/ on non-BGDKPT → ̣"
+        ),
+    )
+    parser.add_argument(
+        "--min-only",
+        action="store_true",
+        help="with --apply, rewrite only ܡ݂ܢ / ܡܢ݂ → ܡ̣ܢ (leave bare ܡܢ alone)",
+    )
+    parser.add_argument(
         "--self-check",
         action="store_true",
         help="only run the rule regressions (default when --apply is absent)",
@@ -819,5 +1057,9 @@ if __name__ == "__main__":
         _apply_rish_only(root)
     elif args.hbasa_only:
         _apply_hbasa_only(root)
+    elif args.rwaha_only:
+        _apply_rwaha_only(root)
+    elif args.min_only:
+        _apply_min_only(root)
     else:
         _apply_to_corpus(root)

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Convert Quill Delta JSON (as used by hudra.org) to plain text or HTML."""
+"""Convert Quill Delta JSON to plain text or HTML."""
 
 from __future__ import annotations
 

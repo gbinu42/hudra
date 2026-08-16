@@ -6,7 +6,6 @@
 ܙܒܢܐ / Hour: ܠܠܝܐ ܘܡܘܬܒܐ
 Tradition: syriac
 ID: 7f4f0d6a-98aa-415f-aeee-41aeeb15711f
-Source: https://hudra.org
 
 ────────────────────────────────────────
 ܫܒܬܐ ܕܐܪܒܥ ܕܫܠܝܼܚ̈ܐ
