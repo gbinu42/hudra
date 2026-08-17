@@ -9,6 +9,7 @@ from fix_syriac_dots import (
     fix_ayt_hbasa,
     fix_dot_above_qushshaya,
     fix_dots,
+    fix_hbasa_above_dot,
     fix_hbasa_rukkakha,
     fix_macron_linea,
     fix_min_rukkakha,
@@ -30,7 +31,8 @@ def test_vowels_preserved():
     assert fix_dots("ܚܘܼܕܪܵܐ") == "ܚܘܼܕܪܵܐ"
     assert fix_dots("ܡܲܙܡܘܿܪܵܐ") == "ܡܲܙܡܘܿܪܵܐ"
     assert fix_dots("ܩܲܕܝܼܫܵܐ") == "ܩܲܕܝܼܫܵܐ"
-    assert fix_dots("ܫܲܡܼܠܝܼ") == "ܫܲܡܼܠܝܼ"
+    assert fix_dots("ܫܲܡ̣ܠܝܼ") == "ܫܲܡ̣ܠܝܼ"
+    assert fix_dots("ܫܲܡܼܠܝܼ") == "ܫܲܡ̣ܠܝܼ"
 
 
 def test_never_strips_unknown():
@@ -60,7 +62,8 @@ def test_stacked_below_vowel():
 
 def test_serto_vowels():
     assert fix_dots("\u0728\u073d\u0718\u072a") == "\u0728\u0718\u073c\u072a"
-    assert fix_dots("\u072a\u073a\u072b\u0739\u0717") == "\u072a\u0739\u072b\u0739\u0717"
+    assert fix_dots("\u072a\u073a\u072b\u0739\u0717") == "\u072a\u0307\u072b\u0739\u0717"
+    assert fix_dots("\u071d\u073a") == "\u071d\u0739"
     assert fix_dots("\u0712\u071a\u0736\u0721\u072c\u0735\u0710") == "\u0712\u071a\u0738\u0721\u072c\u0735\u0710"
     # A waw that already carries a vowel absorbs the Serto mark.
     assert fix_dots("\u072a\u073d\u0718\u073f\u072a") == "\u072a\u0718\u073f\u072a"
@@ -192,7 +195,9 @@ def test_dot_above_qushshaya_only():
 def test_stacked_hbasa_dot_below_only():
     assert fix_stacked_hbasa_dot_below("ܘܩܼܵܡ") == "ܘܩ̣ܵܡ"
     assert fix_stacked_hbasa_dot_below("ܗ̄ܘܼܵܘ") == "ܗ̄ܘ̣ܵܘ"
-    assert fix_stacked_hbasa_dot_below("ܫܲܡܼܠܝܼ") == "ܫܲܡܼܠܝܼ"
+    assert fix_stacked_hbasa_dot_below("ܫܲܡ̣ܠܝܼ") == "ܫܲܡ̣ܠܝܼ"
+    assert fix_stacked_hbasa_dot_below("ܫܲܡܼܠܝܼ") == "ܫܲܡ̣ܠܝܼ"
+    assert fix_stacked_hbasa_dot_below("ܛܲܥܼܢܹܗ") == "ܛܲܥ̣ܢܹܗ"
     assert fix_stacked_hbasa_dot_below("ܚܘܼܕܪܵܐ") == "ܚܘܼܕܪܵܐ"
     assert fix_stacked_hbasa_dot_below("ܢܒ݂ܝܼܵܐ") == "ܢܒ݂ܝܼܵܐ"
     assert fix_stacked_hbasa_dot_below("ܒܼܵ") == "ܒܼܵ"
@@ -201,6 +206,17 @@ def test_stacked_hbasa_dot_below_only():
     assert fix_stacked_hbasa_dot_below("ܫܒܲܩܼ݇ܢ") == "ܫܒܲܩ̣݇ܢ"
     assert fix_stacked_hbasa_dot_below("ܠܒܸܫܼ") == "ܠܒܸܫ̣"
     assert fix_dots("ܘܲܥܪܲܩܼ") == "ܘܲܥܪܲܩ̣"
+
+
+def test_hbasa_above_dot_only():
+    assert fix_hbasa_above_dot("ܒܺ") == "ܒ݁"
+    assert fix_hbasa_above_dot("ܥܺ") == "ܥ̇"
+    assert fix_hbasa_above_dot("ܝܺ") == "ܝܺ"
+    assert fix_hbasa_above_dot("ܘܺ") == "ܘܺ"
+    assert fix_hbasa_above_dot("ܢܲܺ") == "ܢܲ̇"
+    assert fix_hbasa_above_dot("ܥܵܒܹܺܕ݂") == "ܥܵܒܹ̇ܕ݂"
+    assert fix_dots("ܪܺܫܹܗ") == "ܪ̇ܫܹܗ"
+    assert fix_dots("ܝܺ") == "ܝܹ"
 
 
 def test_macron_linea_only():
@@ -270,6 +286,7 @@ if __name__ == "__main__":
     test_rwaha_qushshaya_only()
     test_dot_above_qushshaya_only()
     test_stacked_hbasa_dot_below_only()
+    test_hbasa_above_dot_only()
     test_macron_linea_only()
     test_ayt_hbasa_only()
     test_min_rukkakha_only()
