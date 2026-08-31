@@ -258,6 +258,31 @@ footer {
   text-align-last: right;
 }
 
+/* Qanke / Raze listing — justify both columns; keep source rubric red. */
+.qanka-hymn {
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: justify;
+  text-justify: inter-word;
+  text-align-last: right;
+  letter-spacing: 0;
+  line-height: 2;
+  text-shadow: 0 0 0 transparent;
+  -webkit-font-smoothing: antialiased;
+}
+
+.qanka-hymn .rubric {
+  color: #c42b2b;
+}
+
+.qanka-hymn ::selection,
+.qanka-hymn *::selection {
+  background-color: #9ebec3 !important;
+  color: #14261c !important;
+  -webkit-text-fill-color: #14261c !important;
+  text-shadow: none !important;
+}
+
 .prayer-body p:last-child {
   margin-bottom: 0;
 }

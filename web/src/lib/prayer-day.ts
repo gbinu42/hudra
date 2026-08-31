@@ -108,6 +108,17 @@ export function matchesWeek(prayerWeek: string, weekNum: number): boolean {
   return parts[parts.length - 1] === letter;
 }
 
+/** 1-based week index from a Hudra label such as `ܫܲܒ݁ܬ݂ܵܐ ܓ`. */
+export function weekNumberFromLabel(week: string): number | undefined {
+  if (!week || week === "—") return undefined;
+  const bare = stripSyriacMarks(week);
+  const m = bare.match(/ܫܒܬܐ\s*([ܐ-ܬ])/);
+  const letter = m?.[1] ?? bare.trim().split(/\s+/).pop();
+  if (!letter) return undefined;
+  const i = WEEK_LETTERS.indexOf(letter);
+  return i >= 0 ? i + 1 : undefined;
+}
+
 /** Strip East Syriac vowels / diacritics so pointed labels still match catalog days. */
 function stripSyriacMarks(s: string): string {
   return s.replace(/[\u0730-\u074A\u0308\u0323\u032E\u0307]/g, "");

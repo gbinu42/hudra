@@ -26,7 +26,7 @@ const SEASON_COLORS: Record<LitSeasonId, string> = {
   "after-nativity": "bg-[#8a7340]/20",
   denha: "bg-[#1a5f6a]/18",
   "great-fast": "bg-[#5c4135]/22",
-  easter: "bg-[#1a5f6a]/28",
+  resurrection: "bg-[#1a5f6a]/28",
   apostles: "bg-[#0f3f47]/18",
   summer: "bg-[#8a7340]/16",
   "elijah-cross": "bg-[#c4b48a]/40",

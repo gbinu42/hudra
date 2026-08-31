@@ -69,3 +69,55 @@ const SEASON_WHEN: Record<string, string> = {
 export function seasonWhen(id: string): string | undefined {
   return SEASON_WHEN[id];
 }
+
+function ordinal(n: number): string {
+  const v = n % 100;
+  if (v >= 11 && v <= 13) return `${n}th`;
+  switch (n % 10) {
+    case 1:
+      return `${n}st`;
+    case 2:
+      return `${n}nd`;
+    case 3:
+      return `${n}rd`;
+    default:
+      return `${n}th`;
+  }
+}
+
+/** Cycle season → distinctive substring in a Friday `seasonWhen` string. */
+const FRIDAY_WHEN_HINT: { id: string; needle: string }[] = [
+  { id: "after-nativity", needle: "Nativity and Denha" },
+  { id: "denha", needle: "of Denha" },
+  { id: "apostles", needle: "of the Apostles" },
+  { id: "summer", needle: "of Summer" },
+  { id: "elijah-cross", needle: "of Elijah" },
+  { id: "resurrection", needle: "after Easter" },
+];
+
+/**
+ * Catalog feast / commemoration seasons observed on this cycle Friday
+ * (e.g. 1st Friday of Denha → Mar John the Baptist).
+ */
+export function feastSeasonIdsForCycleFriday(
+  seasonId: string,
+  weekNum: number,
+  lastWeekNum?: number,
+): string[] {
+  const hint = FRIDAY_WHEN_HINT.find((h) => h.id === seasonId);
+  if (!hint) return [];
+  const ord = ordinal(weekNum);
+  const ids: string[] = [];
+  for (const [id, when] of Object.entries(SEASON_WHEN)) {
+    if (!when.includes("Friday") || !when.includes(hint.needle)) continue;
+    if (when.includes(`${ord} Friday`)) ids.push(id);
+    if (
+      lastWeekNum != null &&
+      weekNum === lastWeekNum &&
+      when.startsWith("Last Friday")
+    ) {
+      ids.push(id);
+    }
+  }
+  return [...new Set(ids)];
+}

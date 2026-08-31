@@ -12,7 +12,7 @@ export type LitSeasonId =
   | "after-nativity"
   | "denha"
   | "great-fast"
-  | "easter"
+  | "resurrection"
   | "apostles"
   | "summer"
   | "elijah-cross"
@@ -79,7 +79,7 @@ const SEASON_META: Record<
   },
   denha: { en: "Epiphany", syr: "ܕܸܢܚܵܐ", order: 3 },
   "great-fast": { en: "Great Fast", syr: "ܨܵܘܡܵܐ ܪܲܒܵܐ", order: 4 },
-  easter: { en: "Resurrection", syr: "ܩܝܵܡܬܵܐ", order: 5 },
+  resurrection: { en: "Resurrection", syr: "ܩܝܵܡܬܵܐ", order: 5 },
   apostles: { en: "Apostles", syr: "ܫܠܝܼ̈ܚܹܐ", order: 6 },
   summer: { en: "Summer", syr: "ܩܲܝܛܵܐ", order: 7 },
   "elijah-cross": {
@@ -380,15 +380,27 @@ function buildSeasonRanges(year: number, easter: Date): LitSeasonRange[] {
   const advent = adventSunday(year);
   const xmas = new Date(year, 11, 25);
   const denhaStart = firstSundayOnOrAfter(new Date(year, 0, 6));
-  const lent = lentMonday(easter);
+  const peturta = addDays(easter, -49); // Entry Sunday to the Great Fast
   const pentecost = nthWeekdayAfter(easter, 0, 7);
-  const summer = addDays(pentecost, 49); // 7th Sunday after Pentecost
-  const cross = holyCrossSunday(year);
+  const summer = addDays(pentecost, 49); // 7th Sunday after Pentecost (Nusardel)
+
+  // Qayta is a 7-week season. Elijah begins on the 7th Sunday after Summer begins
+  // (14th Sunday after Pentecost). In the rare case of a very late Easter where
+  // Elijah 1 would fall on/after the Feast of the Holy Cross (13/14 Sept),
+  // Qayta is compressed to 6 weeks so Elijah 1 still precedes the Cross.
+  const crossFeast = new Date(year, 8, 13);
+  const eliyahNormal = addDays(summer, 49);
+  const eliyah = eliyahNormal >= crossFeast ? addDays(summer, 42) : eliyahNormal;
+
+  const crossSunday1 = holyCrossSunday(year);
   const dedication = dedicationSunday(year);
-  // Moses: ~4 weeks before Dedication
-  const moses = addDays(dedication, -28);
-  // Elijah starts at Cross Sunday (or a few weeks before if summer runs long)
-  const eliyah = cross < summer ? summer : cross;
+
+  // Moses begins after the 4 Sundays of the Cross (Sunday after 4th Sunday of Cross)
+  // and fills the remaining Sundays until Dedication of the Church.
+  const mosesStart = addDays(crossSunday1, 28);
+  const hasMoses = mosesStart < dedication;
+  const eliyahEnd = hasMoses ? mosesStart : dedication;
+  const moses = mosesStart;
 
   const endOf = (start: Date, next: Date) => addDays(next, -1);
 
@@ -398,13 +410,15 @@ function buildSeasonRanges(year: number, easter: Date): LitSeasonRange[] {
   const yEnd = new Date(year, 11, 31);
 
   const raw: { id: LitSeasonId; start: Date; end: Date }[] = [
-    { id: "denha", start: denhaStart, end: endOf(denhaStart, lent) },
-    { id: "great-fast", start: lent, end: endOf(lent, easter) },
-    { id: "easter", start: easter, end: endOf(easter, pentecost) },
+    { id: "denha", start: denhaStart, end: endOf(denhaStart, peturta) },
+    { id: "great-fast", start: peturta, end: endOf(peturta, easter) },
+    { id: "resurrection", start: easter, end: endOf(easter, pentecost) },
     { id: "apostles", start: pentecost, end: endOf(pentecost, summer) },
     { id: "summer", start: summer, end: endOf(summer, eliyah) },
-    { id: "elijah-cross", start: eliyah, end: endOf(eliyah, moses) },
-    { id: "moses", start: moses, end: endOf(moses, dedication) },
+    { id: "elijah-cross", start: eliyah, end: endOf(eliyah, eliyahEnd) },
+    ...(hasMoses
+      ? [{ id: "moses" as LitSeasonId, start: moses, end: endOf(moses, dedication) }]
+      : []),
     { id: "dedication", start: dedication, end: endOf(dedication, advent) },
     { id: "subara", start: advent, end: endOf(advent, xmas) },
     {
@@ -455,12 +469,14 @@ function pushFeast(
 export function buildLiturgicalYear(year: number): LitYear {
   const easter = isaacEaster(year);
   const lent = lentMonday(easter);
+  const peturta = addDays(easter, -49);
   const pentecost = nthWeekdayAfter(easter, 0, 7);
   const advent = adventSunday(year);
   const seasons = buildSeasonRanges(year, easter);
   const summer = addDays(pentecost, 49);
-  const cross = holyCrossSunday(year);
-  const eliyah = cross < summer ? summer : cross;
+  const crossFeast = new Date(year, 8, 13);
+  const eliyahNormal = addDays(summer, 49);
+  const eliyah = eliyahNormal >= crossFeast ? addDays(summer, 42) : eliyahNormal;
 
   const feasts: LitYear["feasts"] = FIXED_FEASTS.map((f) => ({
     date: toISO(new Date(year, f.m - 1, f.d)),
@@ -474,6 +490,7 @@ export function buildLiturgicalYear(year: number): LitYear {
     { offset: -69, en: "Baʿutha of the Ninevites (day 1)" },
     { offset: -68, en: "Baʿutha of the Ninevites (day 2)" },
     { offset: -67, en: "Baʿutha of the Ninevites (day 3)" },
+    { offset: -49, en: "Sunday of the Entry to the Fast (Peturta)" },
     { offset: -48, en: "Beginning of the Great Fast" },
     { offset: -9, en: "Friday of Lazarus" },
     { offset: -7, en: "Hosanna Sunday" },
@@ -491,7 +508,16 @@ export function buildLiturgicalYear(year: number): LitYear {
     pushFeast(feasts, addDays(easter, m.offset), m.en);
   }
 
-  pushFeast(feasts, winterMaryDukhrana(year), "Dukhrana of Mart Maryam in Winter");
+  // Winter dukhrana of Mart Maryam: Friday between 25 Dec and 6 Jan.
+  const janMary = winterMaryDukhrana(year);
+  if (janMary.getFullYear() === year) {
+    pushFeast(feasts, janMary, "Dukhrana of Mart Maryam in Winter");
+  }
+  const decMary = winterMaryDukhrana(year + 1);
+  if (decMary.getFullYear() === year) {
+    pushFeast(feasts, decMary, "Dukhrana of Mart Maryam in Winter");
+  }
+
   pushFeast(feasts, firstWeekdayOfMonth(year, 4, 2), "Commemoration of Shmuni and her Sons");
   pushFeast(feasts, nthWeekdayAfter(pentecost, 5, 1), "Golden Friday");
   pushFeast(feasts, addDays(pentecost, 11), "Corpus Christi");
@@ -499,11 +525,13 @@ export function buildLiturgicalYear(year: number): LitYear {
   pushFeast(feasts, fridayOfWeek(pentecost, 7), "Commemoration of the Seventy-two Disciples");
   pushFeast(feasts, summer, "Commemoration of the Twelve Apostles");
   pushFeast(feasts, fridayOfWeek(summer, 6), "Commemoration of Mar Simeon bar Sabbaʿe");
-  pushFeast(feasts, fridayOfWeek(summer, 7), "Commemoration of Mar Qardagh");
+  if (eliyah === eliyahNormal) {
+    pushFeast(feasts, fridayOfWeek(summer, 7), "Commemoration of Mar Qardagh");
+  }
   pushFeast(feasts, fridayOfWeek(eliyah, 1), "Commemoration of Mar Papa");
   pushFeast(feasts, lastWeekdayOfMonth(year, 9, 0), "Jesus the King");
 
-  const denhaFridays = fridaysAfterUntil(new Date(year, 0, 6), lent);
+  const denhaFridays = fridaysAfterUntil(new Date(year, 0, 6), peturta);
   if (denhaFridays.length > 0) {
     pushFeast(
       feasts,

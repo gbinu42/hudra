@@ -14,6 +14,7 @@ const publicData = path.join(webRoot, "public", "data");
 const prayersSrc = path.join(repoRoot, "data", "prayers");
 const psalmsSrc = path.join(repoRoot, "data", "psalms");
 const catalogSrc = path.join(webRoot, "data", "catalog.json");
+const qankaRazaSrc = path.join(webRoot, "data", "qanka-raza.json");
 const prayersDest = path.join(publicData, "prayers");
 const psalmsDest = path.join(publicData, "psalms");
 
@@ -25,6 +26,13 @@ if (!fs.existsSync(catalogSrc)) {
 }
 fs.copyFileSync(catalogSrc, path.join(publicData, "catalog.json"));
 console.log("Copied catalog.json");
+
+if (fs.existsSync(qankaRazaSrc)) {
+  fs.copyFileSync(qankaRazaSrc, path.join(publicData, "qanka-raza.json"));
+  console.log("Copied qanka-raza.json");
+} else {
+  console.warn("No qanka-raza.json — run python3 scripts/extract_qanka_raza.py");
+}
 
 if (!fs.existsSync(prayersSrc)) {
   console.error("Missing", prayersSrc);
