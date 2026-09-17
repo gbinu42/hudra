@@ -8,7 +8,6 @@ const links: { href: string; label: string; short?: string }[] = [
   { href: "/qanka-raza", label: "Qanke & Raze", short: "Qanke" },
   { href: "/psalms", label: "Psalms" },
   { href: "/commemorations", label: "Commemorations", short: "Feasts" },
-  { href: "/research", label: "Research" },
   { href: "/search", label: "Search" },
 ];
 

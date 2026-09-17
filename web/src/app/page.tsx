@@ -68,13 +68,6 @@ export default function HomePage() {
                 Psalms
               </Link>
               <Link
-                href="/research"
-                className="rounded-sm border border-line bg-paper/70 px-5 py-2.5 text-sm tracking-wide text-ink transition hover:border-teal/40"
-                style={{ fontFamily: "var(--font-display), Georgia, serif" }}
-              >
-                Research
-              </Link>
-              <Link
                 href="/search"
                 className="rounded-sm border border-line bg-paper/70 px-5 py-2.5 text-sm tracking-wide text-ink transition hover:border-teal/40"
                 style={{ fontFamily: "var(--font-display), Georgia, serif" }}
