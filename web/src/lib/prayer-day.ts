@@ -16,7 +16,7 @@ export const CALENDAR_FEAST_SEASONS: Record<string, string[]> = {
   "Visitation of Mart Maryam": ["feast-341511c"],
   "Mother of Perpetual Help": ["feast-2e0bfd0"],
   "Queen of Heaven and Earth": ["feast-5e56f42"],
-  "Solemnity of the Holy Cross": ["feast-11e9713"],
+  "Holy Cross": ["feast-11e9713"],
   "Golden Friday": ["feast-212f9da"],
   "Corpus Christi": ["feast-2d84be4"],
   "Sacred Heart of our Lord": ["feast-2f4b12a"],

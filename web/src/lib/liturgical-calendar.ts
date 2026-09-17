@@ -276,7 +276,8 @@ export function lentMonday(easter: Date): Date {
 }
 
 function holyCrossSunday(year: number): Date {
-  return firstSundayOnOrAfter(new Date(year, 8, 14));
+  // Hudra: feast of the Cross on 13 Ilul every year, whichever weekday.
+  return firstSundayOnOrAfter(new Date(year, 8, 13));
 }
 
 function dedicationSunday(year: number): Date {
@@ -332,17 +333,16 @@ function winterMaryDukhrana(year: number): Date {
   return nthWeekdayAfter(nativity, 5, 2);
 }
 
-/** Denha Friday commemorations, first → last-but-one. Last Friday is always the Departed. */
-const DENHA_FRIDAY_FEASTS = [
-  "Commemoration of Mar John the Baptist",
-  "Commemoration of Mar Peter and Paul",
-  "Commemoration of the Four Evangelists",
-  "Commemoration of Mar Stephen",
-  "Commemoration of the Greek Teachers",
-  "Commemoration of the Syriac and Roman Teachers",
-  "Commemoration of the One Person",
-  "Commemoration of the Forty Martyrs",
-];
+/** Full nine-Friday Denha sequence (Shamasha t67). Last Friday is always the Departed. */
+const DENHA_JOHN = "Commemoration of Mar John the Baptist";
+const DENHA_PETER_PAUL = "Commemoration of Mar Peter and Paul";
+const DENHA_EVANGELISTS = "Commemoration of the Four Evangelists";
+const DENHA_STEPHEN = "Commemoration of Mar Stephen";
+const DENHA_GREEK = "Commemoration of the Greek Teachers";
+const DENHA_SYRIAC = "Commemoration of the Syriac and Roman Teachers";
+const DENHA_ONE_PERSON = "Commemoration of the One Person";
+const DENHA_FORTY = "Commemoration of the Forty Martyrs";
+const DENHA_DEPARTED = "Friday of the Departed";
 
 const FIXED_FEASTS: { m: number; d: number; en: string }[] = [
   { m: 1, d: 1, en: "Circumcision of the Lord" },
@@ -365,8 +365,10 @@ const FIXED_FEASTS: { m: number; d: number; en: string }[] = [
   { m: 8, d: 15, en: "Assumption of the Virgin Mary" },
   { m: 8, d: 22, en: "Queen of Heaven and Earth" },
   { m: 9, d: 8, en: "Nativity of the Virgin Mary" },
-  { m: 9, d: 14, en: "Solemnity of the Holy Cross" },
-  { m: 11, d: 27, en: "Commemoration of Mar Jacob the Intercisus" },
+  // Hudra Ramsha: ܒܲܬ݂ܠܵܬܲܥܣܲܪ ܒܐܝܼܠܘܿܠ — 13 September every year.
+  { m: 9, d: 13, en: "Holy Cross" },
+  // Hudra Ramsha: ܝܛ . ܒܬܸܫܪܝܼܢ ܐ݇ܚܪܵܝ — 19 November.
+  { m: 11, d: 19, en: "Commemoration of Mar Jacob the Intercisus" },
   { m: 12, d: 4, en: "Commemoration of Mart Barbara" },
   { m: 12, d: 6, en: "Saint Nicolas" },
   { m: 12, d: 8, en: "Immaculate Conception" },
@@ -386,7 +388,7 @@ function buildSeasonRanges(year: number, easter: Date): LitSeasonRange[] {
 
   // Qayta is a 7-week season. Elijah begins on the 7th Sunday after Summer begins
   // (14th Sunday after Pentecost). In the rare case of a very late Easter where
-  // Elijah 1 would fall on/after the Feast of the Holy Cross (13/14 Sept),
+  // Elijah 1 would fall on/after the Feast of the Holy Cross (13 Sept),
   // Qayta is compressed to 6 weeks so Elijah 1 still precedes the Cross.
   const crossFeast = new Date(year, 8, 13);
   const eliyahNormal = addDays(summer, 49);
@@ -466,6 +468,66 @@ function pushFeast(
   feasts.push({ date: toISO(date), en, syr: "", movable });
 }
 
+/**
+ * Place Denha Friday commemorations, compressing when Lent comes early
+ * (Shamasha t67 notes 1–6). `n` is the number of Fridays after 6 Jan and
+ * before Peturta; the last of those is always the Departed.
+ */
+function assignDenhaFridays(
+  year: number,
+  peturta: Date,
+  feasts: LitYear["feasts"],
+): number {
+  const epiphany = new Date(year, 0, 6);
+  const denhaFridays = fridaysAfterUntil(epiphany, peturta);
+  const n = denhaFridays.length;
+  if (n === 0) return 0;
+
+  const slots = n - 1;
+  pushFeast(feasts, denhaFridays[n - 1], DENHA_DEPARTED);
+
+  const omitForty = n < 9;
+  const omitPeterPaul = n < 8;
+  const stephenOnSunday = n < 7;
+  const combineTeachers = n < 6;
+
+  const groups: string[][] = [[DENHA_JOHN]];
+  if (!omitPeterPaul) groups.push([DENHA_PETER_PAUL]);
+  groups.push([DENHA_EVANGELISTS]);
+  if (!stephenOnSunday) groups.push([DENHA_STEPHEN]);
+  if (combineTeachers) {
+    groups.push([DENHA_GREEK, DENHA_SYRIAC]);
+  } else {
+    groups.push([DENHA_GREEK], [DENHA_SYRIAC]);
+  }
+  groups.push([DENHA_ONE_PERSON]);
+  if (!omitForty) groups.push([DENHA_FORTY]);
+
+  while (groups.length > slots) {
+    const ev = groups.findIndex(
+      (g) => g.length === 1 && g[0] === DENHA_EVANGELISTS,
+    );
+    if (ev < 0) break;
+    groups.splice(ev, 1);
+  }
+
+  groups.slice(0, slots).forEach((names, i) => {
+    for (const en of names) pushFeast(feasts, denhaFridays[i], en);
+  });
+
+  if (omitForty) {
+    pushFeast(feasts, new Date(year, 2, 9), DENHA_FORTY);
+  }
+  if (stephenOnSunday) {
+    const firstSunday = firstSundayOnOrAfter(epiphany);
+    if (firstSunday < peturta) {
+      pushFeast(feasts, firstSunday, DENHA_STEPHEN);
+    }
+  }
+
+  return n;
+}
+
 export function buildLiturgicalYear(year: number): LitYear {
   const easter = isaacEaster(year);
   const lent = lentMonday(easter);
@@ -478,7 +540,15 @@ export function buildLiturgicalYear(year: number): LitYear {
   const eliyahNormal = addDays(summer, 49);
   const eliyah = eliyahNormal >= crossFeast ? addDays(summer, 42) : eliyahNormal;
 
-  const feasts: LitYear["feasts"] = FIXED_FEASTS.map((f) => ({
+  const denhaFridayCount = fridaysAfterUntil(
+    new Date(year, 0, 6),
+    peturta,
+  ).length;
+  const peterPaulOnDenhaFriday = denhaFridayCount >= 8;
+
+  const feasts: LitYear["feasts"] = FIXED_FEASTS.filter(
+    (f) => !(f.m === 6 && f.d === 29 && peterPaulOnDenhaFriday),
+  ).map((f) => ({
     date: toISO(new Date(year, f.m - 1, f.d)),
     en: f.en,
     syr: "",
@@ -531,20 +601,7 @@ export function buildLiturgicalYear(year: number): LitYear {
   pushFeast(feasts, fridayOfWeek(eliyah, 1), "Commemoration of Mar Papa");
   pushFeast(feasts, lastWeekdayOfMonth(year, 9, 0), "Jesus the King");
 
-  const denhaFridays = fridaysAfterUntil(new Date(year, 0, 6), peturta);
-  if (denhaFridays.length > 0) {
-    pushFeast(
-      feasts,
-      denhaFridays[denhaFridays.length - 1],
-      "Friday of the Departed",
-    );
-    const slots = denhaFridays.length - 1;
-    const pool = DENHA_FRIDAY_FEASTS.slice(0, Math.max(0, slots));
-    pool.forEach((en, i) => pushFeast(feasts, denhaFridays[i], en));
-    if (!pool.includes("Commemoration of the Forty Martyrs")) {
-      pushFeast(feasts, new Date(year, 2, 9), "Commemoration of the Forty Martyrs");
-    }
-  }
+  assignDenhaFridays(year, peturta, feasts);
 
   feasts.sort((a, b) => a.date.localeCompare(b.date) || a.en.localeCompare(b.en));
 
