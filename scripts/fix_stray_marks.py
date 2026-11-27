@@ -32,16 +32,16 @@ import json
 import re
 from pathlib import Path
 
-MARKS = "̀-ͯܰ-ً݊-ٟ"
-LETTERS = "ܐ-ܯݍ-ݏ"
-TATWEEL = "ـ"
-VOWELS = set("ܱܴܷܸܹܻܼܾܰܲܳܵܶܺܽܿ")
+MARKS = "\u0300-\u036f\u0730-\u074a\u064b-\u065f"
+LETTERS = "\u0710-\u072f\u074d-\u074f"
+TATWEEL = "\u0640"
+VOWELS = set("\u0730\u0731\u0732\u0733\u0734\u0735\u0736\u0737\u0738\u0739\u073a\u073b\u073c\u073d\u073e\u073f")
 
-LINEA = "݇"
-RUKKAKHA = "݂"
-DOT_BELOW = "̣"
-PTHAHA = "ܲ"
-PTHAHA_BELOW = "ܱ"
+LINEA = "\u0747"
+RUKKAKHA = "\u0742"
+DOT_BELOW = "\u0323"
+PTHAHA = "\u0732"
+PTHAHA_BELOW = "\u0731"
 
 WORD_FIXES = {
     "ܘܲܙܟ݂ ܵܘ": "ܘܲܙܟ݂ܵܘ",
@@ -55,14 +55,14 @@ WORD_FIXES = {
     "ܕܲܢܩܲܒ݁ܠܘܼܢ ܸܘܼܫܡܵܐ": "ܕܲܢܩܲܒ݁ܠܘܼܢ ܪܘܼܫܡܵܐ",
     "ܐܲܠܨܸ݁ܬ̣ ܲܒ݂ܥܸܠܕܒ݂ܵܒܲܝ": "ܐܲܠܨܸ݁ܬ̣ ܠܲܒ݂ܥܸܠܕܒ݂ܵܒܲܝ",
 }
-MISSING_ALAPH = re.compile(f"(?<![{LETTERS}{MARKS}])ܲ?ܪܒܲܥܫܲܒܵܐ ܕܸܫܬܵܐ")
+MISSING_ALAPH = re.compile(f"(?<![{LETTERS}{MARKS}])\u0732?ܪܒܲܥܫܲܒܵܐ ܕܸܫܬܵܐ")
 
-LINEA_STANDIN = re.compile("[َ݉]")
+LINEA_STANDIN = re.compile("[\u0749\u064e]")
 LINEA_THEN_DOT = re.compile(LINEA + DOT_BELOW)
-KAPH_RUKKAKHA_STANDIN = re.compile("ܟ([ٍ̰])")
-PE_TILDE = re.compile("ܦ̰")
+KAPH_RUKKAKHA_STANDIN = re.compile("\u071f([\u064d\u0330])")
+PE_TILDE = re.compile("\u0726\u0330")
 CLUSTER = re.compile(f"([{LETTERS}])([{MARKS}]+)")
-INVISIBLE = re.compile("[‌﻿]")
+INVISIBLE = re.compile("[\u200c\ufeff]")
 SEP = "(?:<[^>]+>|&nbsp;|\\s)+"
 SEPARATED = re.compile(
     f"([{LETTERS}{TATWEEL}][{MARKS}]*)?((?:{SEP}[{MARKS}]+)+)(?=(.?))",
@@ -101,8 +101,8 @@ def fix_marks(text: str) -> str:
     text = MISSING_ALAPH.sub("ܐܲܪܒܲܥܫܲܒܵܐ ܕܸܫܬܵܐ", text)
     text = LINEA_STANDIN.sub(LINEA, text)
     text = LINEA_THEN_DOT.sub(DOT_BELOW + LINEA, text)
-    text = KAPH_RUKKAKHA_STANDIN.sub("ܟ" + RUKKAKHA, text)
-    text = PE_TILDE.sub("ܦ", text)
+    text = KAPH_RUKKAKHA_STANDIN.sub("\u071f" + RUKKAKHA, text)
+    text = PE_TILDE.sub("\u0726", text)
     text = CLUSTER.sub(_pthaha_below, text)
     text = INVISIBLE.sub("", text)
     text = SEPARATED.sub(_separated, text)

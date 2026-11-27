@@ -25,40 +25,40 @@ import argparse
 import re
 from pathlib import Path
 
-MARKS = "̀-ͯܰ-݊"
-LETTERS = "ܐ-ܯݍ-ݏ"
-DOT_BELOW = "̣"
-RUKKAKHA = "݂"
+MARKS = "\u0300-\u036f\u0730-\u074a"
+LETTERS = "\u0710-\u072f\u074d-\u074f"
+DOT_BELOW = "\u0323"
+RUKKAKHA = "\u0742"
 
-TAW_ALAPH = re.compile(f"[ܞܧ]([{MARKS}]*)([{LETTERS}])?")
-YAH = re.compile(f"(?<![{LETTERS}{MARKS}])ܞܵ(?![{LETTERS}{MARKS}])")
-HE_YODH = re.compile(f"ܜ([{MARKS}]*)(?![{LETTERS}{MARKS}])")
-TETH_GARSHUNI = "ܜ"
-FINAL_SEMKATH = "ܤ"
-STRAY_GAMAL = re.compile(f"(ܗ[{MARKS}]*ܝ[{MARKS}]*)ܔ([{MARKS}]*)")
+TAW_ALAPH = re.compile(f"[\u071e\u0727]([{MARKS}]*)([{LETTERS}])?")
+YAH = re.compile(f"(?<![{LETTERS}{MARKS}])\u071e\u0735(?![{LETTERS}{MARKS}])")
+HE_YODH = re.compile(f"\u071c([{MARKS}]*)(?![{LETTERS}{MARKS}])")
+TETH_GARSHUNI = "\u071c"
+FINAL_SEMKATH = "\u0724"
+STRAY_GAMAL = re.compile(f"(\u0717[{MARKS}]*\u071d[{MARKS}]*)\u0714([{MARKS}]*)")
 
-CORRUPT = "ܞܧܜܤ"
+CORRUPT = "\u071e\u0727\u071c\u0724"
 
 
 def _taw_alaph(m: re.Match) -> str:
     marks = m.group(1).replace(DOT_BELOW, RUKKAKHA)
     after = m.group(2)
-    return "ܬ" + marks + "ܐ" + (" " + after if after else "")
+    return "\u072c" + marks + "\u0710" + (" " + after if after else "")
 
 
 def _stray_gamal(m: re.Match) -> str:
     head, marks = m.group(1), m.group(2)
-    if marks == DOT_BELOW and head == "ܗ݇ܝ":
-        return "ܗ̣݇ܝ"  # ܗ݇ܝܔ̣ → ܗ̣݇ܝ, as in the clean copies
+    if marks == DOT_BELOW and head == "\u0717\u0747\u071d":
+        return "\u0717\u0323\u0747\u071d"  # ܗ݇ܝܔ̣ → ܗ̣݇ܝ, as in the clean copies
     return head + marks
 
 
 def fix_ligatures(text: str) -> str:
-    text = YAH.sub("ܝܲܗ", text)
+    text = YAH.sub("\u071d\u0732\u0717", text)
     text = TAW_ALAPH.sub(_taw_alaph, text)
-    text = HE_YODH.sub(lambda m: "ܗܝ" + m.group(1), text)
-    text = text.replace(TETH_GARSHUNI, "ܛ")
-    text = text.replace(FINAL_SEMKATH, "ܣ")
+    text = HE_YODH.sub(lambda m: "\u0717\u071d" + m.group(1), text)
+    text = text.replace(TETH_GARSHUNI, "\u071b")
+    text = text.replace(FINAL_SEMKATH, "\u0723")
     text = STRAY_GAMAL.sub(_stray_gamal, text)
     return text
 
